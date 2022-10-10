@@ -1,7 +1,5 @@
-import re
-import requests
-import argparse
-import validators
+from rich.console import Console
+from subdomainslookup import *
 
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
@@ -15,8 +13,16 @@ def main():
     )
 
     parser.add_argument(
+        "-q", "--quiet",
+        dest='output_file',
+        help="Do not show output in the terminal",
+        default=None,
+        type=argparse.FileType(mode='wt',encoding='utf-8'),
+    )
+
+    parser.add_argument(
         "-o", "--output",
-        dest='output_file_name',
+        dest='output_file',
         help="Save results to the specified file",
         default=None,
         nargs='?',
@@ -24,10 +30,12 @@ def main():
     )
 
     args = parser.parse_args()
+    client = Client('api_key')
 
     for domain in args.domains:
-        if(not (validators.domain(domain))):
-            print("Invalid domain name(s)")
+        response = client.get(domain)
 
+        for record in response.result.records:
+            print("Domain: " + record.domain)
 
 main()
