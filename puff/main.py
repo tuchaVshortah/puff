@@ -14,6 +14,15 @@ def main():
         nargs="+"
     )
 
+    parser.add_argument(
+        "-o", "--output",
+        dest='output_file_name',
+        help="Save results to the specified file",
+        default=None,
+        nargs='?',
+        type=argparse.FileType(mode='wt',encoding='utf-8'),
+    )
+
     args = parser.parse_args()
 
     for domain in args.domains:
