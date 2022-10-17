@@ -1,5 +1,6 @@
 import argparse
 import json
+import xml
 from rich.console import Console
 from subdomainslookup import *
 
@@ -14,9 +15,16 @@ def main():
         nargs="+"
     )
 
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-q","--quiet",
-        help="Do not show output in the terminal",
+        help="Do not show formatted (beautified) output in the terminal",
+        action="store_true"
+    )1
+
+    group.add_argument(
+        "-r", "--raw",
+        help="Output raw data to the terminal",
         action="store_true"
     )
 
@@ -33,12 +41,11 @@ def main():
     )
 
     parser.add_argument(
-        "-o", "--output",
-        dest="output_file",
+        "-f", "--file",
         help="Save results to the specified file",
         default=None,
         nargs='?',
-        type=argparse.FileType(mode='wt',encoding='utf-8'),
+        type=argparse.FileType(mode='a+',encoding='utf-8'),
     )
 
     args = parser.parse_args()
@@ -49,15 +56,15 @@ def main():
     if(args.json == True):
         for domain in args.domains:
             response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
-            print("Subdomains for " + domain)
-            for record in response.result.records:
-                print("    " + record.domain)
+            response_data = json.loads(response)
+            pretty_response = json.dumps(response_data, indent=2)
+            print(pretty_response)
+            if(args.file is not None):
+                args.file.write(pretty_response)
     elif(args.xml == True):
         for domain in args.domains:
             response = client.get_raw(domain, output_format=Client.XML_FORMAT)
-            print("Subdomains for " + domain)
-            for record in response.result.records:
-                print("    " + record.domain)
+            
     else:
         for domain in args.domains:
             response = client.get(domain)
