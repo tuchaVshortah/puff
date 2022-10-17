@@ -20,7 +20,7 @@ def main():
         "-q","--quiet",
         help="Do not show formatted (beautified) output in the terminal",
         action="store_true"
-    )1
+    )
 
     group.add_argument(
         "-r", "--raw",
