@@ -1,6 +1,7 @@
 import argparse
 import json
 import xml
+import requests
 from rich.console import Console
 from subdomainslookup import *
 
@@ -57,37 +58,39 @@ def main():
         response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
         response_data = json.loads(response)
         pretty_response = json.dumps(response_data, indent=2)
+        print("JSON data for: " + domain)
         print(pretty_response)
 
         if(args.file is not None):
             args.file.write(pretty_response)
 
         elif(args.file is None):
-                with open("subdomains" + domain + ".json", "a+") as file:
+                with open("subdomains." + domain + ".json", "a+") as file:
                     file.write(pretty_response)
 
     elif(args.xml == True):
         response = client.get_raw(domain, output_format=Client.XML_FORMAT)
-        
+        print("XML data for: " + domain)
+        print(response)
         if(args.file is not None):
-            args.file.write(response.text)
+            args.file.write(response)
 
         elif(args.file is None):
-                with open("subdomains" + domain + ".xml", "a+") as file:
-                    file.write(response.text)
+                with open("subdomains." + domain + ".xml", "a+") as file:
+                    file.write(response)
         
     else:
         response = client.get(domain)
-        print("Subdomains for " + domain)
+        print("Subdomains for: " + domain)
         
         for record in response.result.records:
             print("    " + record.domain)
 
             if(args.file is not None):
                 args.file.write(record.domain + "\n")
-
+                
             elif(args.file is None):
-                with open("subdomains" + domain + ".txt", "a+") as file:
+                with open("subdomains." + domain + ".txt", "a+") as file:
                     file.write(record.domain + "\n")
 
 main()
