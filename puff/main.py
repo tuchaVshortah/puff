@@ -8,34 +8,43 @@ from subdomainslookup import *
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
     
-    parser.add_argument(
+    domain_group = parser.add_mutually_exclusive_group()
+    domain_group.add_argument(
         "domain", 
-        help="Specify domain to enumerate",
-        default=[],
+        help="Specify the domain to enumerate",
+        default=None,
+        type=str,
+        nargs=1
+    )
+
+    domain_group.add_argument(
+        "-d", "--domain",
+        help="Specify the domain to enumerate",
+        default=None,
         type=str,
         nargs=1
     )
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument(
+    output_format_group.add_argument(
         "-q","--quiet",
         help="Do not show formatted (beautified) output in the terminal",
         action="store_true"
     )
 
-    group.add_argument(
+    output_format_group.add_argument(
         "-r", "--raw",
         help="Output raw data to the terminal",
         action="store_true"
     )
 
-    parser.add_argument(
+    output_format_group.add_argument(
         "-j","--json",
         help="Output in the JSON format",
         action="store_true"
     )
 
-    parser.add_argument(
+    output_format_group.add_argument(
         "-x","--xml",
         help="Output in the XML format",
         action="store_true"
