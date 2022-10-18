@@ -12,11 +12,12 @@ def main():
         "-d", "--domain",
         help="Specify the domain to enumerate",
         default=None,
+        required=True,
         type=str,
         nargs=1
     )
 
-    group = parser.add_mutually_exclusive_group()
+    output_format_group = parser.add_mutually_exclusive_group()
     output_format_group.add_argument(
         "-q","--quiet",
         help="Do not show formatted (beautified) output in the terminal",
@@ -52,7 +53,7 @@ def main():
     args = parser.parse_args()
 
     client = Client("api_key")
-    domain = args.domain[0]
+    domain = args.domain
 
     if(args.json == True):
         response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
