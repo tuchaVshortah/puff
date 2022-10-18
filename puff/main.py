@@ -1,7 +1,7 @@
 import argparse
 import json
 import xml
-import requests
+from requests import request, Response
 from rich.console import Console
 from subdomainslookup import *
 
@@ -15,6 +15,13 @@ def main():
         required=True,
         type=str,
         nargs=1
+    )
+
+    parser.add_argument(
+        "-x", "--no-api-keys",
+        help="Pass this argument if you don't have API keys",
+        action="store_true",
+        dest="no_api_keys"
     )
 
     output_format_group = parser.add_mutually_exclusive_group()
@@ -79,7 +86,9 @@ def main():
         elif(args.file is None):
                 with open("subdomains." + domain + ".xml", "a+") as file:
                     file.write(response)
-        
+    
+    #elif(argparse.no_api_keys):
+        #do something in this case
     else:
         response = client.get(domain)
         print("Subdomains for: " + domain)
