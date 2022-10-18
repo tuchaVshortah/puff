@@ -7,17 +7,8 @@ from subdomainslookup import *
 
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
-    
-    domain_group = parser.add_mutually_exclusive_group()
-    domain_group.add_argument(
-        "domain", 
-        help="Specify the domain to enumerate",
-        default=None,
-        type=str,
-        nargs=1
-    )
 
-    domain_group.add_argument(
+    parser.add_argument(
         "-d", "--domain",
         help="Specify the domain to enumerate",
         default=None,
