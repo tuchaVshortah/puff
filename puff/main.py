@@ -1,9 +1,37 @@
 import argparse
 import json
 import xml
-from requests import request, Response
+from requests import request, Response, Session
+import base64
 from rich.console import Console
 from subdomainslookup import *
+
+class PuffApiRequester(ApiRequester):
+    def post(self, data: dict) -> str:
+        headers = {
+            "User-Agent": ApiRequester.__user_agent,
+            "Connection": "close"
+        }
+        if "apiKey" in data:
+            headers["X-CSRF-TOKEN"] = data.pop("csrf_token")
+        
+        response = request(
+            "POST",
+            "https://subdomains.whoisxmlapi.com/api/web",
+            json=data,
+            headers=headers,
+            timeout=(ApiRequester.__connect_timeout, self.timeout)
+        )
+
+        return ApiRequester._handle_response(response)
+
+def getCsrfToken():
+    session = Session()
+    response = session.get("https://subdomains.whoisxmlapi.com/api/")
+    cookies = session.cookies.get_dict()
+    XSRF_TOKEN = cookies["XSRF-TOKEN"]
+    return XSRF_TOKEN
+    
 
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
@@ -87,8 +115,9 @@ def main():
                 with open("subdomains." + domain + ".xml", "a+") as file:
                     file.write(response)
     
-    #elif(argparse.no_api_keys):
-        #do something in this case
+    elif(argparse.no_api_keys):
+        api_requester = ApiRequester("https://subdomains.whoisxmlapi.com/api/web")
+
     else:
         response = client.get(domain)
         print("Subdomains for: " + domain)
@@ -102,5 +131,3 @@ def main():
             elif(args.file is None):
                 with open("subdomains." + domain + ".txt", "a+") as file:
                     file.write(record.domain + "\n")
-
-main()
