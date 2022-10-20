@@ -2,7 +2,6 @@ import argparse
 import json
 import xml
 from requests import request, Response, Session
-import base64
 from rich.console import Console
 from subdomainslookup import *
 
