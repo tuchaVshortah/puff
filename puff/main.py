@@ -40,6 +40,7 @@ class PuffApiRequester(ApiRequester):
             "Accept-Language": "en-US,en;q=0.9"
         }
 
+
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
@@ -167,7 +168,7 @@ def main():
     if(args.whoisxmlapi_api_key):
         client = Client(args.whoisxml_api_key)
         
-    domain = args.domain
+    domain = args.domain[0]
 
     if(args.json == True):
         response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
