@@ -73,13 +73,13 @@ def buildPayload(domain) -> dict:
 
 def saveJsonResponse(file, domain, response: Response):
     if(file is not None):
-        file.write(pretty_response)
+        file.write(response)
 
     elif(file is None):
         with open("subdomains." + domain + ".json", "a+") as file:
-            file.write(pretty_response)
+            file.write(response)
 
-def saveXmlResponse(file, domain,response: Response):
+def saveXmlResponse(file, domain, response: Response):
     if(file is not None):
         file.write(response)
 
