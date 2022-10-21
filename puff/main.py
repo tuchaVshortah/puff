@@ -71,15 +71,15 @@ def buildPayload(domain) -> dict:
 
     return payload
 
-def saveJsonResponse(file, response: Response):
+def saveJsonResponse(file, domain, response: Response):
     if(file is not None):
-        args.file.write(pretty_response)
+        file.write(pretty_response)
 
     elif(file is None):
         with open("subdomains." + domain + ".json", "a+") as file:
             file.write(pretty_response)
 
-def saveXmlResponse(file, response: Response):
+def saveXmlResponse(file, domain,response: Response):
     if(file is not None):
         file.write(response)
 
@@ -87,7 +87,7 @@ def saveXmlResponse(file, response: Response):
         with open("subdomains." + domain + ".xml", "a+") as file:
             file.write(response)
 
-def saveTxtResponse(file, response: Response):
+def saveTxtResponse(file, domain, response: Response):
     for record in response.result.records:
         print("    " + record.domain)
 
@@ -177,14 +177,14 @@ def main():
         print("JSON data for: " + domain)
         print(pretty_response)
 
-        saveJsonResponse(args.file, pretty_response)
+        saveJsonResponse(args.file, domain, pretty_response)
 
     elif(args.xml == True):
         response = client.get_raw(domain, output_format=Client.XML_FORMAT)
         print("XML data for: " + domain)
         print(response)
 
-        saveXmlResponse(args.file, response)
+        saveXmlResponse(args.file, domain, response)
     
     elif(args.no_api_keys):
         puff_api_requester = PuffApiRequester()
@@ -198,7 +198,7 @@ def main():
             print("JSON data for: " + domain)
             print(pretty_response)
 
-            saveJsonResponse(args.file, pretty_response)
+            saveJsonResponse(args.file, domain, pretty_response)
             """
 
             if 'result' in parsed:
