@@ -1,36 +1,74 @@
 import argparse
-import json
+from json import *
 import xml
 from requests import request, Response, Session
+from bs4 import BeautifulSoup
+import base64
 from rich.console import Console
 from subdomainslookup import *
 
 class PuffApiRequester(ApiRequester):
     def post(self, data: dict) -> str:
+
+        response = getResponse()
+
+        soup = BeautifulSoup(response.text, "lxml")
+
+        csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
+
+        cookies = response.cookies.get_dict()
+
         headers = {
-            "User-Agent": ApiRequester.__user_agent,
-            "Connection": "close"
+            "Host": "subdomains.whoisxmlapi.com",
+            "Cookie": "XSRF-TOKEN=" + cookies["XSRF-TOKEN"] + "; " + \
+                    "emailverification_session=" + cookies["emailverification_session"],
+            "Sec-Ch-Ua": '"Chromium";v="105", "Not)A;Brand";v="8"',
+            "X-Csrf-Token": csrf_token,
+            "Sec-Ch-Ua-Mobile": "?0",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/plain, */*",
+            "X-Requested-With": "XMLHttpRequest",
+            "Sec-Ch-Ua-Platform": "Windows",
+            "Origin": "https://subdomains.whoisxmlapi.com",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            "Referer": "https://subdomains.whoisxmlapi.com/",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "en-US,en;q=0.9"
         }
-        if "apiKey" in data:
-            headers["X-CSRF-TOKEN"] = data.pop("csrf_token")
-        
+
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
             json=data,
             headers=headers,
-            timeout=(ApiRequester.__connect_timeout, self.timeout)
+            timeout=(10, self.timeout)
         )
 
         return ApiRequester._handle_response(response)
 
-def getCsrfToken():
+def getResponse() -> Response:
     session = Session()
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
+        "Connection": "keep-alive"
+    }
     response = session.get("https://subdomains.whoisxmlapi.com/api/")
-    cookies = session.cookies.get_dict()
-    XSRF_TOKEN = cookies["XSRF-TOKEN"]
-    return XSRF_TOKEN
     
+    return response
+    
+def buildPayload(domain) -> dict:
+    payload = {
+        "domainName": domain,
+        "g-recaptcha-response": None,
+        "search": domain,
+        "web-lookup-search": True
+    }
+
+    return payload
 
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
@@ -44,9 +82,20 @@ def main():
         nargs=1
     )
 
-    parser.add_argument(
-        "-x", "--no-api-keys",
+    api_group = parser.add_mutually_exclusive_group()
+
+    api_group.add_argument(
+        "-wak", "--whoisxmlapi-api-key",
+        help="Specify your API key for whoisxmlapi.com",
+        dest="whoisxmlapi_api_key",
+        type=str,
+        nargs=1
+    )
+
+    api_group.add_argument(
+        "-X", "--no-api-keys",
         help="Pass this argument if you don't have API keys",
+        default=False,
         action="store_true",
         dest="no_api_keys"
     )
@@ -86,7 +135,10 @@ def main():
 
     args = parser.parse_args()
 
-    client = Client("api_key")
+    client = None
+    if(args.whoisxmlapi_api_key):
+        client = Client(args.whoisxml_api_key)
+        
     domain = args.domain
 
     if(args.json == True):
@@ -114,8 +166,19 @@ def main():
                 with open("subdomains." + domain + ".xml", "a+") as file:
                     file.write(response)
     
-    elif(argparse.no_api_keys):
-        api_requester = ApiRequester("https://subdomains.whoisxmlapi.com/api/web")
+    elif(args.no_api_keys):
+        puff_api_requester = PuffApiRequester()
+        payload = buildPayload("google.com")
+        response = puff_api_requester.post(payload)
+
+        try:
+            parsed = loads(str(response))
+            if 'result' in parsed:
+                print(Response(parsed))
+            raise UnparsableApiResponseError(
+                "Could not find the correct root element.", None)
+        except JSONDecodeError as error:
+            raise UnparsableApiResponseError("Could not parse API response", error)
 
     else:
         response = client.get(domain)
@@ -130,3 +193,14 @@ def main():
             elif(args.file is None):
                 with open("subdomains." + domain + ".txt", "a+") as file:
                     file.write(record.domain + "\n")
+
+def debug():
+        response = getResponse()
+        soup = BeautifulSoup(response.text, "lxml")
+        csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
+        print(csrf_token)
+        cookies = response.cookies.get_dict()
+        print("\n\n\n\n___________________\n\n\n\n")
+        print(cookies)
+
+main()
