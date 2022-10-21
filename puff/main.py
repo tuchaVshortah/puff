@@ -132,25 +132,29 @@ def main():
     output_format_group = parser.add_mutually_exclusive_group()
     output_format_group.add_argument(
         "-q","--quiet",
-        help="Do not show formatted (beautified) output in the terminal",
+        help="Do not show any output in the terminal",
+        default=False,
         action="store_true"
     )
 
     output_format_group.add_argument(
         "-r", "--raw",
         help="Output raw data to the terminal",
+        default=False,
         action="store_true"
     )
 
     output_format_group.add_argument(
         "-j","--json",
         help="Output in the JSON format",
+        default=False,
         action="store_true"
     )
 
     output_format_group.add_argument(
         "-x","--xml",
         help="Output in the XML format",
+        default=False,
         action="store_true"
     )
 
@@ -174,15 +178,19 @@ def main():
         response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
         response_data = loads(response)
         pretty_response = dumps(response_data, indent=2)
-        print("JSON data for: " + domain)
-        print(pretty_response)
+        
+        if(not args.quiet):
+            print("JSON data for: " + domain)
+            print(pretty_response)
 
         saveJsonResponse(args.file, domain, pretty_response)
 
     elif(args.xml == True):
         response = client.get_raw(domain, output_format=Client.XML_FORMAT)
-        print("XML data for: " + domain)
-        print(response)
+        
+        if(not args.quiet):
+            print("XML data for: " + domain)
+            print(response)
 
         saveXmlResponse(args.file, domain, response)
     
@@ -195,8 +203,9 @@ def main():
             response_data = loads(response)
             pretty_response = dumps(response_data, indent=2)
 
-            print("JSON data for: " + domain)
-            print(pretty_response)
+            if(not args.quiet):
+                print("JSON data for: " + domain)
+                print(pretty_response)
 
             saveJsonResponse(args.file, domain, pretty_response)
             """
@@ -212,7 +221,9 @@ def main():
 
     else:
         response = client.get(domain)
-        print("Subdomains for: " + domain)
+
+        if(not args.quiet):
+            print("Subdomains for: " + domain)
         
         saveTxtResponse(args.file, response)
 
