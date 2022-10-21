@@ -1,5 +1,4 @@
 # puff
-Yet another domain enumeration tool
 
 Works by querying whoisxmlapi.com
 
@@ -12,3 +11,5 @@ Stuff to do:
   4. Divide the code base into several files/modules;
   5. Beautiful documentation;
   6. Add support for another resources/sites;
+  7. Create requirements.txt;
+  8. Configurability;
