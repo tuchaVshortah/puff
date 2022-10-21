@@ -194,13 +194,4 @@ def main():
                 with open("subdomains." + domain + ".txt", "a+") as file:
                     file.write(record.domain + "\n")
 
-def debug():
-        response = getResponse()
-        soup = BeautifulSoup(response.text, "lxml")
-        csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
-        print(csrf_token)
-        cookies = response.cookies.get_dict()
-        print("\n\n\n\n___________________\n\n\n\n")
-        print(cookies)
-
 main()
