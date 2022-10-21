@@ -26,7 +26,7 @@ class PuffApiRequester(ApiRequester):
             "X-Csrf-Token": csrf_token,
             "Sec-Ch-Ua-Mobile": "?0",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36",
-            "Connection": "keep-alive",
+            "Connection": "close",
             "Content-Type": "application/json",
             "Accept": "application/json, text/plain, */*",
             "X-Requested-With": "XMLHttpRequest",
