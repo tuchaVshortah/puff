@@ -1,6 +1,6 @@
 import argparse
 from json import *
-import xml
+import xml.dom.minidom
 from requests import request, Response, Session
 from bs4 import BeautifulSoup
 import base64
@@ -61,12 +61,13 @@ def getResponse() -> Response:
     
     return response
     
-def buildPayload(domain) -> dict:
+def buildPayload(domainName, outputFormat="json") -> dict:
     payload = {
-        "domainName": domain,
+        "domainName": domainName,
         "g-recaptcha-response": None,
-        "search": domain,
-        "web-lookup-search": True
+        "search": domainName,
+        "web-lookup-search": True,
+        "outputFormat": outputFormat
     }
 
     return payload
@@ -181,11 +182,13 @@ def main():
             response_data = loads(response)
             pretty_response = dumps(response_data, indent=2)
             
+            response = pretty_response
+
             if(not args.quiet):
                 print("JSON data for: " + domain)
-                print(pretty_response)
+                print(response)
 
-            saveJsonResponse(args.file, domain, pretty_response)
+            saveJsonResponse(args.file, domain, response)
 
         elif(args.xml == True):
 
@@ -204,27 +207,36 @@ def main():
             if(not args.quiet):
                 print("Subdomains for: " + domain)
             
-            saveTxtResponse(args.file, response)
+            saveTxtResponse(args.file, domain, response)
 
 
     
     elif(args.no_api_keys):
 
         puff_api_requester = PuffApiRequester()
-        payload = buildPayload(domain)
-        response = puff_api_requester.post(payload)
 
-        try:
+        if(args.json == True):
 
-            response_data = loads(response)
-            pretty_response = dumps(response_data, indent=2)
+            payload = buildPayload(domain, "json")
+            response = puff_api_requester.post(payload)
+
+            try:
+
+                response_data = loads(response)
+                pretty_response = dumps(response_data, indent=2)
+
+                response = pretty_response
+
+            except error:
+
+                raise UnparsableApiResponseError("Could not parse API response", error)
 
             if(not args.quiet):
 
                 print("JSON data for: " + domain)
-                print(pretty_response)
+                print(response)
 
-            saveJsonResponse(args.file, domain, pretty_response)
+            saveJsonResponse(args.file, domain, response)
 
             """
 
@@ -235,9 +247,31 @@ def main():
 
             """
 
-        except JSONDecodeError as error:
+            
 
-            raise UnparsableApiResponseError("Could not parse API response", error)
+        
+        elif(args.xml == True):
+
+            payload = buildPayload(domain, "xml")
+            response = puff_api_requester.post(payload)
+
+            try:
+
+                response_data = xml.dom.minidom.parseString(response)
+                pretty_response = response_data.toprettyxml()
+
+                response = pretty_response
+
+            except error:
+
+                print("Could not parse API response", error)
+
+            if(not args.quiet):
+
+                print("XML data for: " + domain)
+                print(response)
+
+            saveXmlResponse(args.file, domain, response)
 
 
 
