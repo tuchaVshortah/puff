@@ -173,7 +173,7 @@ def main():
 
     if(args.whoisxmlapi_api_key):
 
-        client = Client(args.whoisxml_api_key)
+        client = Client(args.whoisxmlapi_api_key)
 
         if(args.json == True):
 
@@ -225,7 +225,7 @@ def main():
                 print(pretty_response)
 
             saveJsonResponse(args.file, domain, pretty_response)
-            
+
             """
 
             if 'result' in parsed:
