@@ -167,47 +167,65 @@ def main():
     )
 
     args = parser.parse_args()
-
+    
     client = None
-    if(args.whoisxmlapi_api_key):
-        client = Client(args.whoisxml_api_key)
-        
     domain = args.domain[0]
 
-    if(args.json == True):
-        response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
-        response_data = loads(response)
-        pretty_response = dumps(response_data, indent=2)
-        
-        if(not args.quiet):
-            print("JSON data for: " + domain)
-            print(pretty_response)
+    if(args.whoisxmlapi_api_key):
 
-        saveJsonResponse(args.file, domain, pretty_response)
+        client = Client(args.whoisxml_api_key)
 
-    elif(args.xml == True):
-        response = client.get_raw(domain, output_format=Client.XML_FORMAT)
-        
-        if(not args.quiet):
-            print("XML data for: " + domain)
-            print(response)
+        if(args.json == True):
 
-        saveXmlResponse(args.file, domain, response)
-    
-    elif(args.no_api_keys):
-        puff_api_requester = PuffApiRequester()
-        payload = buildPayload(domain)
-        response = puff_api_requester.post(payload)
-
-        try:
+            response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
             response_data = loads(response)
             pretty_response = dumps(response_data, indent=2)
-
+            
             if(not args.quiet):
                 print("JSON data for: " + domain)
                 print(pretty_response)
 
             saveJsonResponse(args.file, domain, pretty_response)
+
+        elif(args.xml == True):
+
+            response = client.get_raw(domain, output_format=Client.XML_FORMAT)
+            
+            if(not args.quiet):
+                print("XML data for: " + domain)
+                print(response)
+
+            saveXmlResponse(args.file, domain, response)
+
+        else:
+
+            response = client.get(domain)
+
+            if(not args.quiet):
+                print("Subdomains for: " + domain)
+            
+            saveTxtResponse(args.file, response)
+
+
+    
+    elif(args.no_api_keys):
+
+        puff_api_requester = PuffApiRequester()
+        payload = buildPayload(domain)
+        response = puff_api_requester.post(payload)
+
+        try:
+
+            response_data = loads(response)
+            pretty_response = dumps(response_data, indent=2)
+
+            if(not args.quiet):
+
+                print("JSON data for: " + domain)
+                print(pretty_response)
+
+            saveJsonResponse(args.file, domain, pretty_response)
+            
             """
 
             if 'result' in parsed:
@@ -216,15 +234,11 @@ def main():
                 "Could not find the correct root element.", None)
 
             """
+
         except JSONDecodeError as error:
+
             raise UnparsableApiResponseError("Could not parse API response", error)
 
-    else:
-        response = client.get(domain)
 
-        if(not args.quiet):
-            print("Subdomains for: " + domain)
-        
-        saveTxtResponse(args.file, response)
 
 main()
