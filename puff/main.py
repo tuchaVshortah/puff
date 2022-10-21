@@ -3,7 +3,6 @@ from json import *
 import xml.dom.minidom
 from requests import request, Response, Session
 from bs4 import BeautifulSoup
-import base64
 from rich.console import Console
 from subdomainslookup import *
 
