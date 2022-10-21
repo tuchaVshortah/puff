@@ -162,7 +162,7 @@ def main():
         "-f", "--file",
         help="Save results to the specified file",
         default=None,
-        nargs='?',
+        nargs="?",
         type=argparse.FileType(mode='a+',encoding='utf-8'),
     )
 
