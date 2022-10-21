@@ -187,7 +187,7 @@ def main():
     
     elif(args.no_api_keys):
         puff_api_requester = PuffApiRequester()
-        payload = buildPayload("google.com")
+        payload = buildPayload(domain)
         response = puff_api_requester.post(payload)
 
         try:
