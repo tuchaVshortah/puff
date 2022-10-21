@@ -70,6 +70,34 @@ def buildPayload(domain) -> dict:
 
     return payload
 
+def saveJsonResponse(file, response: Response):
+    if(args.file is not None):
+        args.file.write(pretty_response)
+
+    elif(args.file is None):
+        with open("subdomains." + domain + ".json", "a+") as file:
+            file.write(pretty_response)
+
+def saveXmlResponse(file, response: Response):
+    if(file is not None):
+        args.file.write(response)
+
+    elif(file is None):
+        with open("subdomains." + domain + ".xml", "a+") as file:
+            file.write(response)
+
+def saveTxtResponse(file, response: Response):
+    for record in response.result.records:
+        print("    " + record.domain)
+
+        if(args.file is not None):
+            args.file.write(record.domain + "\n")
+            
+        elif(args.file is None):
+            with open("subdomains." + domain + ".txt", "a+") as file:
+                file.write(record.domain + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
 
@@ -159,6 +187,7 @@ def main():
         response = client.get_raw(domain, output_format=Client.XML_FORMAT)
         print("XML data for: " + domain)
         print(response)
+
         if(args.file is not None):
             args.file.write(response)
 
@@ -173,10 +202,16 @@ def main():
 
         try:
             parsed = loads(str(response))
+            print(Response(parsed))
+
+            """
+
             if 'result' in parsed:
                 print(Response(parsed))
             raise UnparsableApiResponseError(
                 "Could not find the correct root element.", None)
+
+            """
         except JSONDecodeError as error:
             raise UnparsableApiResponseError("Could not parse API response", error)
 
