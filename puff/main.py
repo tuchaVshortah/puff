@@ -71,7 +71,7 @@ def buildPayload(domainName, outputFormat="json") -> dict:
 
     return payload
 
-def saveJsonResponse(file, domain, response: Response):
+def saveJsonResponse(file, domain, response: str):
     if(file is not None):
         file.write(response)
 
@@ -79,7 +79,7 @@ def saveJsonResponse(file, domain, response: Response):
         with open("subdomains." + domain + ".json", "a+") as file:
             file.write(response)
 
-def saveXmlResponse(file, domain, response: Response):
+def saveXmlResponse(file, domain, response: str):
     if(file is not None):
         file.write(response)
 
@@ -88,14 +88,14 @@ def saveXmlResponse(file, domain, response: Response):
             file.write(response)
 
 def saveTxtResponse(file, domain, response: Response):
-    for record in response.result.records:
-        print("    " + record.domain)
-
-        if(file is not None):
+    
+    if(file is not None):
+        for record in response.result.records:
             file.write(record.domain + "\n")
-            
-        elif(file is None):
-            with open("subdomains." + domain + ".txt", "a+") as file:
+        
+    elif(file is None):
+        with open("subdomains." + domain + ".txt", "a+") as file:
+            for record in response.result.records:
                 file.write(record.domain + "\n")
 
 
@@ -116,7 +116,7 @@ def main():
     api_group.add_argument(
         "-wak", "--whoisxmlapi-api-key",
         help="Specify your API key for whoisxmlapi.com",
-        dest="whoisxmlapi_api_key",
+        default=None,
         type=str,
         nargs=1
     )
@@ -126,7 +126,6 @@ def main():
         help="Pass this argument if you don't have API keys",
         default=False,
         action="store_true",
-        dest="no_api_keys"
     )
 
     output_format_group = parser.add_mutually_exclusive_group()
@@ -158,12 +157,20 @@ def main():
         action="store_true"
     )
 
-    parser.add_argument(
+    output_file_group = parser.add_mutually_exclusive_group()
+    output_file_group.add_argument(
         "-f", "--file",
         help="Save results to the specified file",
         default=None,
         nargs="?",
-        type=argparse.FileType(mode='a+',encoding='utf-8'),
+        type=argparse.FileType(mode="a+",encoding="utf-8")
+    )
+
+    output_file_group.add_argument(
+        "-df", "--default-file",
+        help="Save results in the subdomains.<domain>.txt files",
+        default=False,
+        action="store_true"
     )
 
     args = parser.parse_args()
@@ -171,9 +178,9 @@ def main():
     client = None
     domain = args.domain[0]
 
-    if(args.whoisxmlapi_api_key):
+    if(args.whoisxmlapi_api_key is not None):
 
-        client = Client(args.whoisxmlapi_api_key)
+        client = Client(args.whoisxmlapi_api_key[0])
 
         if(args.json == True):
 
@@ -187,7 +194,11 @@ def main():
                 print("JSON data for: " + domain)
                 print(response)
 
-            saveJsonResponse(args.file, domain, response)
+            if(args.file is not None):
+                saveJsonResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveJsonResponse(None, domain, response)
+
 
         elif(args.xml == True):
 
@@ -197,7 +208,10 @@ def main():
                 print("XML data for: " + domain)
                 print(response)
 
-            saveXmlResponse(args.file, domain, response)
+            if(args.file is not None):
+                saveXmlResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveXmlResponse(None, domain, response)
 
         else:
 
@@ -206,11 +220,14 @@ def main():
             if(not args.quiet):
                 print("Subdomains for: " + domain)
             
-            saveTxtResponse(args.file, domain, response)
+            if(args.file is not None):
+                saveTxtResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveTxtResponse(None, domain, response)
 
 
     
-    elif(args.no_api_keys):
+    elif(args.no_api_keys == True):
 
         puff_api_requester = PuffApiRequester()
 
@@ -235,7 +252,11 @@ def main():
                 print("JSON data for: " + domain)
                 print(response)
 
-            saveJsonResponse(args.file, domain, response)
+            if(args.file is not None):
+                saveJsonResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveJsonResponse(None, domain, response)
+
 
             """
 
@@ -247,8 +268,6 @@ def main():
             """
 
             
-
-        
         elif(args.xml == True):
 
             payload = buildPayload(domain, "xml")
@@ -270,8 +289,37 @@ def main():
                 print("XML data for: " + domain)
                 print(response)
 
-            saveXmlResponse(args.file, domain, response)
+            if(args.file is not None):
+                saveXmlResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveXmlResponse(None, domain, response)
 
+
+        else:
+
+            payload = buildPayload(domain, "json")
+            response = puff_api_requester.post(payload)
+
+            try:
+
+                response_data = loads(response)
+
+            except error:
+
+                raise UnparsableApiResponseError("Could not parse API response", error)
+
+            if(not args.quiet):
+
+                response = Response(response_data)
+
+                print("Subdomains for: " + domain)
+                for record in response.result.records:
+                    print("Domain: " + record.domain)
+
+            if(args.file is not None):
+                saveTxtResponse(args.file, domain, response)
+            elif(args.default_file == True):
+                saveTxtResponse(None, domain, response)
 
 
 main()
