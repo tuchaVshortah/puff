@@ -192,7 +192,6 @@ def main():
             response = pretty_response
 
             if(not args.quiet):
-                print("JSON data for: " + domain)
                 print(response)
 
             if(args.file is not None):
@@ -206,7 +205,6 @@ def main():
             response = client.get_raw(domain, output_format=Client.XML_FORMAT)
             
             if(not args.quiet):
-                print("XML data for: " + domain)
                 print(response)
 
             if(args.file is not None):
@@ -214,12 +212,14 @@ def main():
             elif(args.default_file == True):
                 saveXmlResponse(None, domain, response)
 
-        else:
+        elif(args.raw == True):
 
             response = client.get(domain)
 
             if(not args.quiet):
-                print("Subdomains for: " + domain)
+                
+                for record in response.result.records:
+                        print(record.domain)
             
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
@@ -250,7 +250,6 @@ def main():
 
             if(not args.quiet):
 
-                print("JSON data for: " + domain)
                 print(response)
 
             if(args.file is not None):
@@ -287,7 +286,6 @@ def main():
 
             if(not args.quiet):
 
-                print("XML data for: " + domain)
                 print(response)
 
             if(args.file is not None):
@@ -315,9 +313,8 @@ def main():
 
                 if(not args.quiet):
 
-                    print("Subdomains for: " + domain)
                     for record in response.result.records:
-                        print("Domain: " + record.domain)
+                        print(record.domain)
 
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
