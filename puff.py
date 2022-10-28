@@ -135,23 +135,23 @@ def main():
         action="store_true",
     )
 
-    output_format_group = parser.add_mutually_exclusive_group()
+    format_group = parser.add_mutually_exclusive_group()
 
-    output_format_group.add_argument(
+    format_group.add_argument(
         "-r", "--raw",
         help="Output raw data to the terminal",
         default=True,
         action="store_true"
     )
 
-    output_format_group.add_argument(
+    format_group.add_argument(
         "-j","--json",
         help="Output in the JSON format",
         default=False,
         action="store_true"
     )
 
-    output_format_group.add_argument(
+    format_group.add_argument(
         "-x","--xml",
         help="Output in the XML format",
         default=False,
