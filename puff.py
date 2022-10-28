@@ -139,7 +139,7 @@ def main():
     output_format_group.add_argument(
         "-r", "--raw",
         help="Output raw data to the terminal",
-        default=False,
+        default=True,
         action="store_true"
     )
 
