@@ -124,7 +124,7 @@ def main():
     api_group.add_argument(
         "-X", "--no-api-keys",
         help="Pass this argument if you don't have API keys",
-        default=False,
+        default=True,
         action="store_true",
     )
 
