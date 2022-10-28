@@ -111,6 +111,13 @@ def main():
         nargs=1
     )
 
+    parser.add_argument(
+        "-q","--quiet",
+        help="Do not show any output in the terminal",
+        default=False,
+        action="store_true"
+    )
+
     api_group = parser.add_mutually_exclusive_group()
 
     api_group.add_argument(
@@ -129,12 +136,6 @@ def main():
     )
 
     output_format_group = parser.add_mutually_exclusive_group()
-    output_format_group.add_argument(
-        "-q","--quiet",
-        help="Do not show any output in the terminal",
-        default=False,
-        action="store_true"
-    )
 
     output_format_group.add_argument(
         "-r", "--raw",
