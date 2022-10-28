@@ -295,7 +295,7 @@ def main():
                 saveXmlResponse(None, domain, response)
 
 
-        else:
+        elif(args.raw == True):
 
             payload = buildPayload(domain, "json")
             response = puff_api_requester.post(payload)
@@ -312,9 +312,11 @@ def main():
 
                 response = Response(response_data)
 
-                print("Subdomains for: " + domain)
-                for record in response.result.records:
-                    print("Domain: " + record.domain)
+                if(not args.quiet):
+
+                    print("Subdomains for: " + domain)
+                    for record in response.result.records:
+                        print("Domain: " + record.domain)
 
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
