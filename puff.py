@@ -9,7 +9,7 @@ from subdomainslookup import *
 class PuffApiRequester(ApiRequester):
     def post(self, data: dict) -> str:
 
-        response = getResponse()
+        response = self.__getResponse()
 
         soup = BeautifulSoup(response.text, "lxml")
 
@@ -50,15 +50,15 @@ class PuffApiRequester(ApiRequester):
 
         return ApiRequester._handle_response(response)
 
-def getResponse() -> Response:
-    session = Session()
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
-        "Connection": "keep-alive"
-    }
-    response = session.get("https://subdomains.whoisxmlapi.com/api/")
-    
-    return response
+    def __getResponse(self) -> Response:
+        session = Session()
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
+            "Connection": "keep-alive"
+        }
+        response = session.get("https://subdomains.whoisxmlapi.com/api/")
+        
+        return response
     
 def buildPayload(domainName, outputFormat="json") -> dict:
     payload = {
