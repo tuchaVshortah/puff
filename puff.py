@@ -3,6 +3,7 @@ from json import *
 import xml.dom.minidom
 from requests import request, Response, Session
 from bs4 import BeautifulSoup
+from rich.console import Console
 from subdomainslookup import *
 
 class PuffApiRequester(ApiRequester):
@@ -245,7 +246,8 @@ def puff():
 
             except error:
 
-                raise UnparsableApiResponseError("Could not parse API response", error)
+                print("Could not parse API response", error)
+                exit()
 
             if(not args.quiet):
 
@@ -280,6 +282,7 @@ def puff():
             except error:
 
                 print("Could not parse API response", error)
+                exit()
 
             if(not args.quiet):
 
@@ -300,18 +303,17 @@ def puff():
 
                 response_data = loads(response)
 
+                response = Response(response_data)
+
             except error:
 
-                raise UnparsableApiResponseError("Could not parse API response", error)
+                print("Could not parse API response", error)
+                exit()
 
             if(not args.quiet):
 
-                response = Response(response_data)
-
-                if(not args.quiet):
-
-                    for record in response.result.records:
-                        print(record.domain)
+                for record in response.result.records:
+                    print(record.domain)
 
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
