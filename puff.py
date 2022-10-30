@@ -3,7 +3,6 @@ from json import *
 import xml.dom.minidom
 from requests import request, Response, Session
 from bs4 import BeautifulSoup
-from rich.console import Console
 from subdomainslookup import *
 
 class PuffApiRequester(ApiRequester):
@@ -259,12 +258,10 @@ def puff():
 
 
             """
-
             if 'result' in parsed:
                 print(Response(parsed))
             raise UnparsableApiResponseError(
                 "Could not find the correct root element.", None)
-
             """
 
             
