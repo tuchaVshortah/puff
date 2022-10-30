@@ -219,7 +219,7 @@ def puff():
             if(not args.quiet):
                 
                 for record in response.result.records:
-                        print(record.domain)
+                    print(record.domain)
             
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
