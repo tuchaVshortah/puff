@@ -99,7 +99,7 @@ def saveTxtResponse(file, domain, response: Response):
                 file.write(record.domain + "\n")
 
 
-def main():
+def puff():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
 
     parser.add_argument(
@@ -322,4 +322,4 @@ def main():
                 saveTxtResponse(None, domain, response)
 
 
-main()
+puff()
