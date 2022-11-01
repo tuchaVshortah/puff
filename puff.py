@@ -1,9 +1,7 @@
 import argparse
-from json import *
+from json import loads, dumps
 import xml.dom.minidom
 from requests import request, Session
-from bs4 import BeautifulSoup
-from rich.console import Console
 from subdomainslookup import Client
 from subdomainslookup.models.response import Response as ApiResponse
 from apis.whoisxmlapi import *
