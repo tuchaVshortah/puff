@@ -67,3 +67,30 @@ def buildPayload(domainName, outputFormat="json") -> dict:
     }
 
     return payload
+
+def saveJsonResponse(file, domain, response: str):
+    if(file is not None):
+        file.write(response)
+
+    elif(file is None):
+        with open("subdomains." + domain + ".json", "a+") as file:
+            file.write(response)
+
+def saveXmlResponse(file, domain, response: str):
+    if(file is not None):
+        file.write(response)
+
+    elif(file is None):
+        with open("subdomains." + domain + ".xml", "a+") as file:
+            file.write(response)
+
+def saveTxtResponse(file, domain, response: ApiResponse):
+    
+    if(file is not None):
+        for record in response.result.records:
+            file.write(record.domain + "\n")
+        
+    elif(file is None):
+        with open("subdomains." + domain + ".txt", "a+") as file:
+            for record in response.result.records:
+                file.write(record.domain + "\n")
