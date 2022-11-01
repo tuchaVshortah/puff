@@ -22,7 +22,7 @@ def saveXmlResponse(file, domain, response: str):
         with open("subdomains." + domain + ".xml", "a+") as file:
             file.write(response)
 
-def saveTxtResponse(file, domain, response: Response):
+def saveTxtResponse(file, domain, response: ApiResponse):
     
     if(file is not None):
         for record in response.result.records:
