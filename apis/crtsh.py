@@ -1,7 +1,7 @@
 import requests
 from json import loads
 
-def getSubdomains(domain):
+def getSubdomains(domain) -> list:
 
     url = "https://crt.sh/?q={}&output=json".format(domain)
 
