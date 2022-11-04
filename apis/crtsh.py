@@ -29,5 +29,3 @@ def getSubdomains(domain):
             print(e)
 
     return list(set(subdomains))
-
-print(getSubdomains("astanait.edu.kz"))
