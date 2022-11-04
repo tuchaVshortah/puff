@@ -95,10 +95,18 @@ def puff():
         if(args.json == True):
 
             response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
-            response_data = loads(response)
-            pretty_response = dumps(response_data, indent=2)
-            
-            response = pretty_response
+
+            try:
+
+                response_data = loads(response)
+                pretty_response = dumps(response_data, indent=2)
+
+                response = pretty_response
+
+            except Exception as error:
+
+                print("Could not parse API response\n", error)
+                exit()
 
             if(not args.quiet):
                 print(response)
@@ -112,6 +120,18 @@ def puff():
         elif(args.xml == True):
 
             response = client.get_raw(domain, output_format=Client.XML_FORMAT)
+
+            try:
+
+                response_data = xml.dom.minidom.parseString(response)
+                pretty_response = response_data.toprettyxml()
+
+                response = pretty_response
+
+            except Exception as error:
+
+                print("Could not parse API response\n", error)
+                exit()
             
             if(not args.quiet):
                 print(response)
