@@ -1,11 +1,11 @@
 import json
+from subdomainslookup.models.response import Response as ApiResponse
 
-
-def updateJsonResponse():
+def updateJsonResponse(json_response: str):
     pass
 
-def updateXmlResponse():
+def updateXmlResponse(xml_response: str):
     pass
 
-def updateRawResponse():
+def updateRawResponse(raw_response: ApiResponse):
     pass
