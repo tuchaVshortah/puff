@@ -167,14 +167,6 @@ def puff():
             elif(args.default_file == True):
                 saveJsonResponse(None, domain, response)
 
-
-            """
-            if 'result' in parsed:
-                print(Response(parsed))
-            raise UnparsableApiResponseError(
-                "Could not find the correct root element.", None)
-            """
-
             
         elif(args.xml == True):
 
