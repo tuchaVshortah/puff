@@ -1,7 +1,8 @@
 from json import loads, dumps
 import xml.dom.minidom
 from xml.etree import ElementTree as ET
-from subdomainslookup.models.response import Response as ApiResponse
+from subdomainslookup.models.response import Result, Record, Response as ApiResponse
+from subdomainslookup.models.response import _list_of_objects
 
 def updateJsonResponse(json_response: str, new_subdomains: list) -> str:
     
@@ -52,13 +53,32 @@ def updateXmlResponse(xml_response: str, new_subdomains: list) -> str:
         records.append(new_record)
         
 
-def updateRawResponse(raw_response: ApiResponse, new_subdomains: list) -> ApiResponse:
+def updateRawResponse(raw_response: ApiResponse, new_subdomains: list):
 
     subdomains = []
-    subdomains.extend(raw_response.result.records)
+
+    old_subdomains = []
+    for record in raw_response.result.records:
+        old_subdomains.append(record["domain"])
+
+    subdomains.extend(old_subdomains)
     subdomains.extend(new_subdomains)
 
     unique_subdomains = list(set(subdomains))
-    raw_response.result.records = unique_subdomains
+    
+    new_records = {
+        "records": []
+    }
 
-    return raw_response
+    for subdomain in unique_subdomains:
+        new_record = {
+            "domain": subdomain,
+            "first_seen": None,
+            "last_seen": None
+        }
+
+        new_records["records"].append(new_record)
+
+    raw_response.result.records.extend(_list_of_objects(new_records, "records", "Record"))
+
+        

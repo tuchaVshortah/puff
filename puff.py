@@ -5,7 +5,9 @@ from requests import request, Session
 from subdomainslookup import Client
 from subdomainslookup.models.response import Response as ApiResponse
 from apis.whoisxmlapi import *
+from apis.crtsh import *
 from utils.savers import *
+from utils.updaters import *
 
 
 def puff():
@@ -226,6 +228,9 @@ def puff():
 
                 response = ApiResponse(response_data)
 
+                new_subdomains = getSubdomains(domain)
+                updateRawResponse(response, new_subdomains)
+
             except Exception as error:
                 
                 print("Could not parse API response\n", error)
@@ -235,6 +240,7 @@ def puff():
 
                 for record in response.result.records:
                     print(record.domain)
+
 
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
