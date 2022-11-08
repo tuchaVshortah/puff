@@ -1,6 +1,6 @@
 from json import loads, dumps
 import xml.dom.minidom
-from xml.etree import ElementTree as ET
+from xml.dom.minidom import Document
 from subdomainslookup.models.response import Result, Record, Response as ApiResponse
 from subdomainslookup.models.response import _list_of_objects
 
@@ -30,27 +30,43 @@ def updateJsonResponse(json_response: str, new_subdomains: list) -> str:
 
     return json_response
 
-def updateXmlResponse(xml_response: str, new_subdomains: list) -> str:
+def updateXmlResponse(xml_response: Document, new_subdomains: list) -> str:
     
-    response_data = xml.dom.minidom.parseString(xml_response)
-    old_subdomains = response_data.getElementsByTagName("domain")
+    old_subdomains = []
+    old_subdomains_xml = xml_response.getElementsByTagName("domain")
+    for subdomain in old_subdomains_xml:
+        old_subdomains.append(subdomain.firstChild.nodeValue)      
     
+    print("Printing an element from parsed old_subdomains_xml: " + old_subdomains[0])
+
     subdomains = []
     subdomains.extend(old_subdomains)
     subdomains.extend(new_subdomains)
 
     unique_subdomains = list(set(subdomains))
 
-    records = response_data.getElementsByTagName("records")[0]
-    for subdomain in subdomains:
-        new_record = ET.Element("record")
+    records = xml_response.getElementsByTagName("records")[0]
+    for subdomain in unique_subdomains:
+        new_record = xml_response.createElement("record")
 
-        new_domain = ET.Element("domain")
-        new_domain.text = subdomain
+        new_subdomain = xml_response.createElement("domain")
+        subdomain_text_node = xml_response.createTextNode(subdomain)
+        new_subdomain.appendChild(subdomain_text_node)
+        
+        first_seen = xml_response.createElement("first_seen")
+        first_seen_text_node = xml_response.createTextNode("0")
+        first_seen.appendChild(first_seen_text_node)
+        
+        last_seen = xml_response.createElement("last_seen")
+        first_seen_text_node = xml_response.createTextNode("0")
+        last_seen.appendChild(first_seen_text_node)
 
-        new_record.append(new_domain)
 
-        records.append(new_record)
+        new_record.appendChild(new_subdomain)
+        new_record.appendChild(first_seen)
+        new_record.appendChild(last_seen)
+
+        records.appendChild(new_record)
         
 
 def updateRawResponse(raw_response: ApiResponse, new_subdomains: list):

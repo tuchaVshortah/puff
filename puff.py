@@ -198,6 +198,10 @@ def puff():
             try:
 
                 response_data = xml.dom.minidom.parseString(response)
+
+                new_subdomains = getSubdomains(domain)
+                updateXmlResponse(response_data, new_subdomains)
+
                 pretty_response = response_data.toprettyxml()
 
                 response = pretty_response
