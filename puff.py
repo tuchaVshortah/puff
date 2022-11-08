@@ -29,6 +29,13 @@ def puff():
         action="store_true"
     )
 
+    parser.add_argument(
+        "-b", "--boost",
+        help="Allow Puff to optimize workload by dividing it into several threads",
+        default=False,
+        action="store_true"
+    )
+
     api_group = parser.add_mutually_exclusive_group()
 
     api_group.add_argument(
@@ -168,11 +175,12 @@ def puff():
             payload = buildPayload(domain, "json")
             response = puff_api_requester.post(payload)
 
+            new_subdomains = getSubdomains(domain)
+
             try:
 
                 response_data = loads(response)
-
-                new_subdomains = getSubdomains(domain)
+ 
                 updateJsonResponse(response_data, new_subdomains)
 
                 pretty_response = dumps(response_data, indent=2)
@@ -199,11 +207,12 @@ def puff():
             payload = buildPayload(domain, "xml")
             response = puff_api_requester.post(payload)
 
+            new_subdomains = getSubdomains(domain)
+
             try:
 
                 response_data = xml.dom.minidom.parseString(response)
 
-                new_subdomains = getSubdomains(domain)
                 updateXmlResponse(response_data, new_subdomains)
 
                 pretty_response = response_data.toprettyxml()
@@ -230,13 +239,14 @@ def puff():
             payload = buildPayload(domain, "json")
             response = puff_api_requester.post(payload)
 
+            new_subdomains = getSubdomains(domain)
+
             try:
 
                 response_data = loads(response)
 
                 response = ApiResponse(response_data)
 
-                new_subdomains = getSubdomains(domain)
                 updateRawResponse(response, new_subdomains)
 
             except Exception as error:
