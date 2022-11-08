@@ -4,10 +4,9 @@ from xml.dom.minidom import Document
 from subdomainslookup.models.response import Result, Record, Response as ApiResponse
 from subdomainslookup.models.response import _list_of_objects
 
-def updateJsonResponse(json_response: str, new_subdomains: list) -> str:
+def updateJsonResponse(json_response: dict, new_subdomains: list):
     
-    response_data = loads(json_response)
-    records = response_data["records"]
+    records = json_response["result"]["records"]
 
     old_subdomains = []
     for record in records:
@@ -20,15 +19,14 @@ def updateJsonResponse(json_response: str, new_subdomains: list) -> str:
     unique_subdomains = list(set(subdomains))
 
     for subdomain in unique_subdomains:
-        response_data["records"].append(
+        json_response["result"]["records"].append(
             {
-                "domain": subdomain
+                "domain": subdomain,
+                "first_seen": "0",
+                "last_seen": "0"
             }
         )
 
-    json_response = dumps(response_data)
-
-    return json_response
 
 def updateXmlResponse(xml_response: Document, new_subdomains: list) -> str:
     

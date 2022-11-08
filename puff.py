@@ -171,6 +171,10 @@ def puff():
             try:
 
                 response_data = loads(response)
+
+                new_subdomains = getSubdomains(domain)
+                updateJsonResponse(response_data, new_subdomains)
+
                 pretty_response = dumps(response_data, indent=2)
 
                 response = pretty_response
