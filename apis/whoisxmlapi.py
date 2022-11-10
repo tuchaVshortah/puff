@@ -2,17 +2,28 @@ from subdomainslookup import ApiRequester
 from subdomainslookup.models.response import Response as ApiResponse
 from requests import request, Session
 from bs4 import BeautifulSoup
+from threading import Thread
 
-class PuffApiRequester(ApiRequester):
+class PuffApiRequester(Thread, ApiRequester):
+
+    self.__payload = None
+    self.__response
+    self.__results = None
+
+    def __init__(self, domainName:str, outputFormat:str):
+        Thread.__init__(self)
+
+        self.__buildPayload(domainName, outputFormat)
+        self.__getResponse()
+
+
     def post(self, data: dict) -> str:
 
-        response = self.__getResponse()
-
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(self.__response.text, "lxml")
 
         csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
 
-        cookies = response.cookies.get_dict()
+        cookies = self.__response.cookies.get_dict()
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
@@ -55,16 +66,22 @@ class PuffApiRequester(ApiRequester):
         }
         response = session.get("https://subdomains.whoisxmlapi.com/api/")
         
-        return response
+        self.__response = response
 
-def buildPayload(domainName, outputFormat="json") -> dict:
-    payload = {
-        "domainName": domainName,
-        "g-recaptcha-response": None,
-        "search": domainName,
-        "web-lookup-search": True,
-        "outputFormat": outputFormat
-    }
+    def __buildPayload(self, domainName, outputFormat="json") -> dict:
+        payload = {
+            "domainName": domainName,
+            "g-recaptcha-response": None,
+            "search": domainName,
+            "web-lookup-search": True,
+            "outputFormat": outputFormat
+        }
 
-    return payload
+        self.__payload = payload
 
+    def run(self):
+        self.__results = self.post(self.__payload)
+
+    def join(self):
+        Thread.join(self)
+        return self.__results
