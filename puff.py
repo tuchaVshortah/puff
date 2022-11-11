@@ -4,8 +4,8 @@ import xml.dom.minidom
 from requests import request, Session
 from subdomainslookup import Client
 from subdomainslookup.models.response import Response as ApiResponse
-from apis.whoisxmlapi import *
-from apis.crtsh import *
+from apis.whoisxmlapi import PuffApiRequester
+from apis.crtsh import CrtshApiRequester
 from utils.savers import *
 from utils.updaters import *
 
@@ -171,9 +171,6 @@ def puff():
         puff_api_requester = PuffApiRequester()
 
         if(args.json == True):
-
-            payload = buildPayload(domain, "json")
-            response = puff_api_requester.post(payload)
 
             new_subdomains = getSubdomains(domain)
 
