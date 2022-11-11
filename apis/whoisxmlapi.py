@@ -13,11 +13,11 @@ class PuffApiRequester(Thread, ApiRequester):
     def __init__(self, domainName:str, outputFormat:str):
         Thread.__init__(self)
 
-        self.__buildPayload(domainName, outputFormat)
-        self.__getResponse()
+        self.__payload = self.__buildPayload(domainName, outputFormat)
+        self.__response = self.__getResponse()
 
 
-    def post(self, data: dict) -> str:
+    def post(self) -> str:
 
         soup = BeautifulSoup(self.__response.text, "lxml")
 
@@ -51,7 +51,7 @@ class PuffApiRequester(Thread, ApiRequester):
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
-            json=data,
+            json=self.__payload,
             headers=headers,
             timeout=(10, self.timeout)
         )
@@ -66,7 +66,7 @@ class PuffApiRequester(Thread, ApiRequester):
         }
         response = session.get("https://subdomains.whoisxmlapi.com/api/")
         
-        self.__response = response
+        return response
 
     def __buildPayload(self, domainName, outputFormat="json") -> dict:
         payload = {
@@ -77,7 +77,7 @@ class PuffApiRequester(Thread, ApiRequester):
             "outputFormat": outputFormat
         }
 
-        self.__payload = payload
+        return payload
 
     def run(self):
         self.__results = self.post(self.__payload)
