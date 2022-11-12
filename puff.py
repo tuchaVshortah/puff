@@ -1,13 +1,9 @@
 import argparse
-from json import loads, dumps
-import xml.dom.minidom
-from requests import request, Session
 from subdomainslookup import Client
-from subdomainslookup.models.response import Response as ApiResponse
-from apis.whoisxmlapi import PuffApiRequester
-from apis.crtsh import CrtshApiRequester
+from wrappers.apiwrapper import ApiWrapper
 from utils.savers import *
 from utils.updaters import *
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
 
 def puff():
