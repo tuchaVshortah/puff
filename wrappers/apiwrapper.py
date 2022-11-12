@@ -1,6 +1,6 @@
 from puff.apis.whoisxmlapi import PuffApiRequester
 from puff.apis.crtsh import CrtshApiRequester
-from puff.constants.outputformats import XML_FORMAT, JSON_FORMAT
+from puff.constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
 from json import loads, dumps
 import xml.dom.minidom
@@ -13,15 +13,32 @@ class ApiWrapper():
     self.__target = None
     self.__outputFormat = None
     self.__boost = None
+    self.__results = None
 
-    def __init__(self, target:str = None, outputFormat:str = JSON_FORMAT, boost:bool = False):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False):
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
     
     def run(self):
         if(self.__boost):
-            pass
+            self.__results = self.__fastTasks()
+            return self.__beautify(self.__results)
+
+        else:
+            self.__results = self.__slowTasks()
+            return self.__beautify(self.__results)
+
+    def __beautify(self, response_data):
+
+        beautified_response_data = None
+        if(self.__outputFormat == XML_FORMAT):
+            beautified_response_data = response_data.toprettyxml()
+        
+        elif(self.__outputFormat == JSON_FORMAT):
+            beautified_response_data = dumps(response_data, indent=2)
+
+        return response_data
             
     def __slowTasks(self):
         
@@ -29,14 +46,75 @@ class ApiWrapper():
         crtsh_api_requester = CrtshApiRequester(self.__target)
 
         puff_api_response = puff_api_requester.post()
-        crtsh_api_response = crtsh_api_requester.getSubdomains()
+        crtsh_subdomains = crtsh_api_requester.getSubdomains()
 
+        return self.__updateResponse(puff_api_response, new_subdomains)
+        
     def __fastTasks(self):
-        pass
 
-    def __updateJsonResponse(json_response: dict, new_subdomains: list):
+        puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+        crtsh_api_requester = CrtshApiRequester(self.__target)
+
+        puff_api_requester.run()
+        crtsh_api_requester.run()
+
+        puff_api_response = puff_api_requester.join()
+        crtsh_subdomains = crtsh_api_requester.join()
+
+        return self.__updateResponse(puff_api_response, new_subdomains)
+
+    def __updateResponse(self, response, new_subdomains):
+
+        response_data = self.__loadResponse(response)
+        self.__updateResponseData(response, new_subdomains)
+        
+        return response_data
+
+    def __loadResponse(self, response):
+
+        response_data = None
+        if(self.__outputFormat == XML_FORMAT):
+            response_data = self.__loadXmlResponse(response)
+        
+        elif(self.__outputFormat == JSON_FORMAT):
+            response_data = self.__loadJsonResponse(response)
+        
+        elif(self.__outputFormat == RAW_FORMAT):
+            response_data = self.__loadRawResponse(response)
+
+        return response_data
+
+    def __loadXmlResponse(self, response: str) -> Document:
+        response_data = xml.dom.minidom.parseString(response)
+
+        return response_data
+
+    def __loadJsonResponse(self, response: str) -> dict:
+        response_data = loads(response)
+
+        return response_data
+
+    def __loadRawResponse(self, response: str) -> ApiResponse:
+        response_data = self.__loadJsonResponse(response)
+        response = ApiResponse(response_data)
+
+        return response
+
+    def __updateResponseData(self, response_data, new_subdomains):
+
+        if(self.__outputFormat == XML_FORMAT):
+            self.__updateXmlResponseData(response_data, new_subdomains)
+        
+        elif(self.__outputFormat == JSON_FORMAT):
+            self.__updateJsonResponseData(response_data, new_subdomains)
+        
+        elif(self.__outputFormat == RAW_FORMAT):
+            self.__updateRawResponseData(response_data, new_subdomains)
+
+
+    def __updateJsonResponseData(self, json_response_data: dict, new_subdomains: list):
     
-        records = json_response["result"]["records"]
+        records = json_response_data["result"]["records"]
 
         old_subdomains = []
         for record in records:
@@ -49,7 +127,7 @@ class ApiWrapper():
         unique_subdomains = list(set(subdomains))
 
         for subdomain in unique_subdomains:
-            json_response["result"]["records"].append(
+            json_response_data["result"]["records"].append(
                 {
                     "domain": subdomain,
                     "first_seen": "0",
@@ -58,10 +136,10 @@ class ApiWrapper():
             )
 
 
-    def __updateXmlResponse(xml_response: Document, new_subdomains: list) -> str:
+    def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
         
         old_subdomains = []
-        old_subdomains_xml = xml_response.getElementsByTagName("domain")
+        old_subdomains_xml = xml_response_data.getElementsByTagName("domain")
         for subdomain in old_subdomains_xml:
             old_subdomains.append(subdomain.firstChild.nodeValue)      
         
@@ -73,20 +151,20 @@ class ApiWrapper():
 
         unique_subdomains = list(set(subdomains))
 
-        records = xml_response.getElementsByTagName("records")[0]
+        records = xml_response_data.getElementsByTagName("records")[0]
         for subdomain in unique_subdomains:
-            new_record = xml_response.createElement("record")
+            new_record = xml_response_data.createElement("record")
 
-            new_subdomain = xml_response.createElement("domain")
-            subdomain_text_node = xml_response.createTextNode(subdomain)
+            new_subdomain = xml_response_data.createElement("domain")
+            subdomain_text_node = xml_response_data.createTextNode(subdomain)
             new_subdomain.appendChild(subdomain_text_node)
             
-            first_seen = xml_response.createElement("first_seen")
-            first_seen_text_node = xml_response.createTextNode("0")
+            first_seen = xml_response_data.createElement("first_seen")
+            first_seen_text_node = xml_response_data.createTextNode("0")
             first_seen.appendChild(first_seen_text_node)
             
-            last_seen = xml_response.createElement("last_seen")
-            first_seen_text_node = xml_response.createTextNode("0")
+            last_seen = xml_response_data.createElement("last_seen")
+            first_seen_text_node = xml_response_data.createTextNode("0")
             last_seen.appendChild(first_seen_text_node)
 
 
@@ -97,12 +175,12 @@ class ApiWrapper():
             records.appendChild(new_record)
             
 
-    def __updateRawResponse(raw_response: ApiResponse, new_subdomains: list):
+    def __updateRawResponseData(self, raw_response_data: ApiResponse, new_subdomains: list):
 
         subdomains = []
 
         old_subdomains = []
-        for record in raw_response.result.records:
+        for record in raw_response_data.result.records:
             old_subdomains.append(record["domain"])
 
         subdomains.extend(old_subdomains)
@@ -123,4 +201,4 @@ class ApiWrapper():
 
             new_records["records"].append(new_record)
 
-        raw_response.result.records.extend(_list_of_objects(new_records, "records", "Record"))
+        raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
