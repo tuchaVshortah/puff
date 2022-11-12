@@ -17,7 +17,7 @@ class PuffApiRequester(Thread, ApiRequester):
         self.__response = self.__getResponse()
 
 
-    def post(self) -> ApiResponse:
+    def post(self) -> str:
 
         soup = BeautifulSoup(self.__response.text, "lxml")
 
@@ -58,7 +58,7 @@ class PuffApiRequester(Thread, ApiRequester):
 
         return ApiRequester._handle_response(response)
 
-        
+
     def __getResponse(self) -> ApiResponse:
         session = Session()
         headers = {
