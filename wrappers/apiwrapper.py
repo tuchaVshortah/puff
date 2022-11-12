@@ -23,11 +23,18 @@ class ApiWrapper():
     def run(self):
         if(self.__boost):
             self.__results = self.__fastTasks()
-            return self.__beautify(self.__results)
 
         else:
             self.__results = self.__slowTasks()
+        
+        try:
+        
             return self.__beautify(self.__results)
+        
+        except:
+
+            print("Could not return a beautified API response\n", error)
+            exit()
 
     def __beautify(self, response_data):
 
@@ -64,9 +71,23 @@ class ApiWrapper():
         return self.__updateResponse(puff_api_response, new_subdomains)
 
     def __updateResponse(self, response, new_subdomains):
+        
+        try:
 
-        response_data = self.__loadResponse(response)
-        self.__updateResponseData(response, new_subdomains)
+            response_data = self.__loadResponse(response)
+        
+        except:
+
+            print("Could not parse the API response\n", error)
+            exit()
+
+        try:
+
+            self.__updateResponseData(response, new_subdomains)
+
+        except:
+            print("Could not add new records to the API response\n", error)
+            exit()
         
         return response_data
 
