@@ -45,6 +45,10 @@ class ApiWrapper():
         elif(self.__outputFormat == JSON_FORMAT):
             beautified_response_data = dumps(response_data, indent=2)
 
+        elif(self.__outputFormat == RAW_FORMAT):
+            records = response_data.result.records
+            beautified_response_data = "\n".join(records)
+
         return beautified_response_data
             
     def __slowTasks(self):
