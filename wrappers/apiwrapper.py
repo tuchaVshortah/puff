@@ -45,7 +45,7 @@ class ApiWrapper():
         elif(self.__outputFormat == JSON_FORMAT):
             beautified_response_data = dumps(response_data, indent=2)
 
-        return response_data
+        return beautified_response_data
             
     def __slowTasks(self):
         
