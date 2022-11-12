@@ -1,3 +1,3 @@
 XML_FORMAT = "xml"
 JSON_FORMAT = "json"
-RAW_FORMAT = "raw"
+RAW_FORMAT = "txt"
