@@ -5,7 +5,7 @@ def saveJsonResponse(file, domain, response: str):
         file.write(response)
 
     elif(file is None):
-        with open("subdomains." + domain + ".json", "a+") as file:
+        with open("subdomains." + domain + ".json", "w") as file:
             file.write(response)
 
 def saveXmlResponse(file, domain, response: str):
@@ -13,7 +13,7 @@ def saveXmlResponse(file, domain, response: str):
         file.write(response)
 
     elif(file is None):
-        with open("subdomains." + domain + ".xml", "a+") as file:
+        with open("subdomains." + domain + ".xml", "w") as file:
             file.write(response)
 
 def saveTxtResponse(file, domain, response: ApiResponse or str):
@@ -27,7 +27,7 @@ def saveTxtResponse(file, domain, response: ApiResponse or str):
             file.write(response)
         
     elif(file is None):
-        with open("subdomains." + domain + ".txt", "a+") as file:
+        with open("subdomains." + domain + ".txt", "w") as file:
             if(type(response) is ApiResponse):
                 for record in response.result.records:
                     file.write(record.domain + "\n")
