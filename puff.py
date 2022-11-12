@@ -7,7 +7,7 @@ from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
 
 def puff():
-    parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
+    parser = argparse.ArgumentParser(prog="Puff", description="Yet another subdomain enumeration tool")
 
     parser.add_argument(
         "-d", "--domain",
