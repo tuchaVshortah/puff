@@ -56,23 +56,9 @@ class PuffApiRequester(Thread, ApiRequester):
             timeout=(10, self.timeout)
         )
 
-        #return ApiRequester._handle_response(response)
-        return self.__handle_response(response)
+        return ApiRequester._handle_response(response)
 
-    def __handle_response(self, response: ApiResponse) -> ApiResponse:
-        if 200 <= response.status_code < 300:
-            return response
-
-        if response.status_code in [401, 402, 403]:
-            raise ApiAuthError(response.text)
-
-        if response.status_code in [400, 422]:
-            raise BadRequestError(response.text)
-
-        if response.status_code >= 300:
-            raise HttpApiError(response.text)
-
-
+        
     def __getResponse(self) -> ApiResponse:
         session = Session()
         headers = {
