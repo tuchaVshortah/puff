@@ -164,99 +164,58 @@ def puff():
     
     elif(args.no_api_keys == True):
 
-        puff_api_requester = PuffApiRequester()
-
         if(args.json == True):
 
-            new_subdomains = getSubdomains(domain)
-
-            try:
-
-                response_data = loads(response)
- 
-                updateJsonResponse(response_data, new_subdomains)
-
-                pretty_response = dumps(response_data, indent=2)
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
                 print(response)
 
             if(args.file is not None):
-                saveJsonResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveJsonResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
 
             
         elif(args.xml == True):
 
-            payload = buildPayload(domain, "xml")
-            response = puff_api_requester.post(payload)
-
-            new_subdomains = getSubdomains(domain)
-
-            try:
-
-                response_data = xml.dom.minidom.parseString(response)
-
-                updateXmlResponse(response_data, new_subdomains)
-
-                pretty_response = response_data.toprettyxml()
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
                 print(response)
 
             if(args.file is not None):
-                saveXmlResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveXmlResponse(None, domain, response)
+                
+                saveResponseToDefaultFile(domain, response, XML_FORMAT)
 
 
         elif(args.raw == True):
 
-            payload = buildPayload(domain, "json")
-            response = puff_api_requester.post(payload)
-
-            new_subdomains = getSubdomains(domain)
-
-            try:
-
-                response_data = loads(response)
-
-                response = ApiResponse(response_data)
-
-                updateRawResponse(response, new_subdomains)
-
-            except Exception as error:
-                
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
-                for record in response.result.records:
-                    print(record.domain)
-
+                print(response)
 
             if(args.file is not None):
-                saveTxtResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveTxtResponse(None, domain, response)
+                
+                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
 
 
 puff()
