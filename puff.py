@@ -98,8 +98,6 @@ def puff():
 
     if(whoisxmlapi_key is not None):
 
-        client = Client(whoisxmlapi_key)
-
         if(args.json == True):
 
             api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, whoisxmlapi_key)
