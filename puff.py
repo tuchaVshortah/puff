@@ -1,5 +1,4 @@
 import argparse
-from subdomainslookup import Client
 from wrappers.apiwrapper import ApiWrapper
 from utils.savers import *
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT

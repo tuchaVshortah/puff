@@ -1,4 +1,4 @@
-from subdomainslookup import ApiRequester
+from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Response as ApiResponse
 from requests import request, Session
 from bs4 import BeautifulSoup
@@ -12,6 +12,7 @@ class PuffApiRequester(Thread, ApiRequester):
 
     def __init__(self, domainName:str, outputFormat:str):
         Thread.__init__(self)
+        ApiRequester.__init__(self)
 
         self.__payload = self.__buildPayload(domainName, outputFormat)
         self.__response = self.__getResponse()
@@ -82,6 +83,36 @@ class PuffApiRequester(Thread, ApiRequester):
 
     def run(self):
         self.__results = self.post(self.__payload)
+
+    def join(self):
+        Thread.join(self)
+        return self.__results
+
+class PuffClient(Thread, Client):
+
+    self.__client = None
+    self.__domain = None
+    self.__outputFormat = None
+    self.__results = None
+    
+    def __init__(self, api_key: str, domain: str, outputFormat: str or None = None):
+        Thread.__init__(self)
+        self.__client = Client.__init__(self, api_key)
+
+        self.__domain = domain
+        self.__outputFormat = outputFormat
+
+    def get_raw(self):
+        if(self.__outputFormat == XML_FORMAT):
+
+            return self.__client.get_raw(self, self.__domain, XML_FORMAT)
+
+        elif(self.__outputFormat == JSON_FORMAT or self.__outputFormat == RAW_FORMAT):
+            
+            return self.__client.get_raw(self, self.__domain, JSON_FORMAT)
+
+    def run(self):
+        self.__results = self.get_raw()
 
     def join(self):
         Thread.join(self)
