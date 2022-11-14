@@ -29,7 +29,7 @@ class ApiWrapper():
 
         elif(whoisxmlapi_key is None):
             
-            puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+            self.__puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
         
         crtsh_api_requester = CrtshApiRequester(self.__target)
 
@@ -70,7 +70,7 @@ class ApiWrapper():
 
         if(self.__puff_client is None):
 
-            puff_api_response = puff_api_requester.post()
+            puff_api_response = self.__puff_api_requester.post()
             crtsh_subdomains = crtsh_api_requester.getSubdomains()
 
             return self.__updateResponse(puff_api_response, new_subdomains)
@@ -98,13 +98,13 @@ class ApiWrapper():
 
         if(self.__puff_client is None):
 
-            puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+            self.__puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
             crtsh_api_requester = CrtshApiRequester(self.__target)
 
-            puff_api_requester.run()
+            self.__puff_api_requester.run()
             crtsh_api_requester.run()
 
-            puff_api_response = puff_api_requester.join()
+            puff_api_response = self.__puff_api_requester.join()
             crtsh_subdomains = crtsh_api_requester.join()
 
             return self.__updateResponse(puff_api_response, new_subdomains)
