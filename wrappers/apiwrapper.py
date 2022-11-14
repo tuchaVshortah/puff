@@ -93,8 +93,8 @@ class ApiWrapper():
 
         if(self.__puff_client is None):
 
-            self.__puff_api_requester.run()
-            self.__crtsh_api_requester.run()
+            self.__puff_api_requester.start()
+            self.__crtsh_api_requester.start()
 
             puff_api_response = self.__puff_api_requester.join()
             crtsh_subdomains = self.__crtsh_api_requester.join()
@@ -103,8 +103,8 @@ class ApiWrapper():
 
         elif(self.__puff_client is not None):
 
-            self.__puff_client.run()
-            self.__crtsh_api_requester.run()
+            self.__puff_client.start()
+            self.__crtsh_api_requester.start()
 
             puff_client_response = self.__puff_client.join()
             crtsh_subdomains = self.__crtsh_api_requester.join()
