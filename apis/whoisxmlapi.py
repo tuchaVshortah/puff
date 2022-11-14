@@ -7,7 +7,7 @@ from threading import Thread
 class PuffApiRequester(Thread, ApiRequester):
 
     __payload = None
-    __response
+    __response = None
     __results = None
 
     def __init__(self, domainName:str, outputFormat:str):
