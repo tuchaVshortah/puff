@@ -1,4 +1,4 @@
-from puff.apis.whoisxmlapi import PuffApiRequester
+from puff.apis.whoisxmlapi import PuffClient, PuffApiRequester
 from puff.apis.crtsh import CrtshApiRequester
 from puff.constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
@@ -11,14 +11,29 @@ from subdomainslookup.models.response import _list_of_objects
 class ApiWrapper():
 
     self.__target = None
+    self.__puff_client = None
+    self.__puff_api_requester = None
+    self.__crtsh_api_requester = None
     self.__outputFormat = None
     self.__boost = None
     self.__results = None
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False):
+    def __init__(self, target: str = None, whoisxmlapi_key:str or None = None, outputFormat: str = JSON_FORMAT, boost: bool = False):
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
+
+        if(whoisxmlapi_key is not None):
+
+            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target)
+
+        elif(whoisxmlapi_key is None):
+            
+            puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+        
+        crtsh_api_requester = CrtshApiRequester(self.__target)
+
+        
     
     def run(self):
         if(self.__boost):
@@ -52,27 +67,47 @@ class ApiWrapper():
         return beautified_response_data
             
     def __slowTasks(self):
+
+        if(self.__puff_client is None):
+
+            puff_api_response = puff_api_requester.post()
+            crtsh_subdomains = crtsh_api_requester.getSubdomains()
+
+            return self.__updateResponse(puff_api_response, new_subdomains)
         
-        puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
-        crtsh_api_requester = CrtshApiRequester(self.__target)
+        elif(self.__puff_client is not None):
 
-        puff_api_response = puff_api_requester.post()
-        crtsh_subdomains = crtsh_api_requester.getSubdomains()
+            
+            if(self.__outputFormat == JSON_FORMAT or self.__outputFormat == XML_FORMAT):
 
-        return self.__updateResponse(puff_api_response, new_subdomains)
+                api_response = self.__puff_client.get_raw()
+
+                crtsh_subdomains = crtsh_api_requester.getSubdomains()
+
+                return self.__updateResponse(puff_api_response, new_subdomains)
+
+            elif(self.__outputFormat == RAW_FORMAT):
+                api_response = self.__puff_client.get(self.__target)
+
+                crtsh_subdomains = crtsh_api_requester.getSubdomains()
+
+                return self.__updateResponse(puff_api_response, new_subdomains)
+
         
     def __fastTasks(self):
 
-        puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
-        crtsh_api_requester = CrtshApiRequester(self.__target)
+        if(self.__puff_client is None):
 
-        puff_api_requester.run()
-        crtsh_api_requester.run()
+            puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+            crtsh_api_requester = CrtshApiRequester(self.__target)
 
-        puff_api_response = puff_api_requester.join()
-        crtsh_subdomains = crtsh_api_requester.join()
+            puff_api_requester.run()
+            crtsh_api_requester.run()
 
-        return self.__updateResponse(puff_api_response, new_subdomains)
+            puff_api_response = puff_api_requester.join()
+            crtsh_subdomains = crtsh_api_requester.join()
+
+            return self.__updateResponse(puff_api_response, new_subdomains)
 
     def __updateResponse(self, response, new_subdomains):
         
