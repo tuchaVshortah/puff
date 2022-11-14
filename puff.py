@@ -81,7 +81,7 @@ def puff():
 
     output_file_group.add_argument(
         "-df", "--default-file",
-        help="Save results in the subdomains.<domain>.txt files",
+        help="Save results in the subdomains.<domain>.<format> files",
         default=False,
         action="store_true"
     )
