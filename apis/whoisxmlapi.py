@@ -82,7 +82,7 @@ class PuffApiRequester(Thread, ApiRequester):
         return payload
 
     def run(self):
-        self.__results = self.post(self.__payload)
+        self.__results = self.post()
 
     def join(self):
         Thread.join(self)
