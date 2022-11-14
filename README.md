@@ -1,6 +1,6 @@
 # puff
 
-Works by querying whoisxmlapi.com
+Works by querying whoisxmlapi.com and crt.sh
 
 Works with or without API keys
 
