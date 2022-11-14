@@ -88,7 +88,6 @@ def puff():
 
     args = parser.parse_args()
     
-    client = None
     domain = args.domain[0]
     whoisxmlapi_key = args.whoisxmlapi_key[0]
 
@@ -98,19 +97,8 @@ def puff():
 
         if(args.json == True):
 
-            response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
-
-            try:
-
-                response_data = loads(response)
-                pretty_response = dumps(response_data, indent=2)
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, whoisxmlapi_key)
+            response = api_wrapper.run()
 
             if(not args.quiet):
                 print(response)
@@ -123,19 +111,8 @@ def puff():
 
         elif(args.xml == True):
 
-            response = client.get_raw(domain, output_format=Client.XML_FORMAT)
-
-            try:
-
-                response_data = xml.dom.minidom.parseString(response)
-                pretty_response = response_data.toprettyxml()
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, whoisxmlapi_key)
+            response = api_wrapper.run()
             
             if(not args.quiet):
                 print(response)
@@ -147,12 +124,11 @@ def puff():
 
         elif(args.raw == True):
 
-            response = client.get(domain)
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
-                
-                for record in response.result.records:
-                    print(record.domain)
+                print(response)
             
             if(args.file is not None):
                 saveTxtResponse(args.file, domain, response)
