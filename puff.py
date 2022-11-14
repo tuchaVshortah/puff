@@ -1,43 +1,11 @@
 import argparse
-from json import *
-import xml.dom.minidom
-from requests import request, Session
-from bs4 import BeautifulSoup
-from rich.console import Console
-from subdomainslookup import Client
-from subdomainslookup.models.response import Response as ApiResponse
-from apis.whoisxmlapi import *
-
-def saveJsonResponse(file, domain, response: str):
-    if(file is not None):
-        file.write(response)
-
-    elif(file is None):
-        with open("subdomains." + domain + ".json", "a+") as file:
-            file.write(response)
-
-def saveXmlResponse(file, domain, response: str):
-    if(file is not None):
-        file.write(response)
-
-    elif(file is None):
-        with open("subdomains." + domain + ".xml", "a+") as file:
-            file.write(response)
-
-def saveTxtResponse(file, domain, response: Response):
-    
-    if(file is not None):
-        for record in response.result.records:
-            file.write(record.domain + "\n")
-        
-    elif(file is None):
-        with open("subdomains." + domain + ".txt", "a+") as file:
-            for record in response.result.records:
-                file.write(record.domain + "\n")
+from wrappers.apiwrapper import ApiWrapper
+from utils.savers import *
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
 
 def puff():
-    parser = argparse.ArgumentParser(prog="puff", description="Yet another subdomain enumeration tool")
+    parser = argparse.ArgumentParser(prog="Puff", description="Yet another subdomain enumeration tool")
 
     parser.add_argument(
         "-d", "--domain",
@@ -55,10 +23,17 @@ def puff():
         action="store_true"
     )
 
+    parser.add_argument(
+        "-b", "--boost",
+        help="Allow Puff to optimize workload by dividing it into several threads",
+        default=False,
+        action="store_true"
+    )
+
     api_group = parser.add_mutually_exclusive_group()
 
     api_group.add_argument(
-        "-wak", "--whoisxmlapi-api-key",
+        "-wak", "--whoisxmlapi-key",
         help="Specify your API key for whoisxmlapi.com",
         default=None,
         type=str,
@@ -106,156 +81,128 @@ def puff():
 
     output_file_group.add_argument(
         "-df", "--default-file",
-        help="Save results in the subdomains.<domain>.txt files",
+        help="Save results in the subdomains.<domain>.<format> files",
         default=False,
         action="store_true"
     )
 
     args = parser.parse_args()
     
-    client = None
-    domain = args.domain[0]
+    domain = None
+    if(args.domain is not None):
+        domain = args.domain[0]
+    
+    whoisxmlapi_key = None
+    if(args.whoisxmlapi_key is not None):
+        whoisxmlapi_key = args.whoisxmlapi_key[0]
 
-    if(args.whoisxmlapi_api_key is not None):
-
-        client = Client(args.whoisxmlapi_api_key[0])
+    if(whoisxmlapi_key is not None):
 
         if(args.json == True):
 
-            response = client.get_raw(domain, output_format=Client.JSON_FORMAT)
-            response_data = loads(response)
-            pretty_response = dumps(response_data, indent=2)
-            
-            response = pretty_response
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, whoisxmlapi_key)
+            response = api_wrapper.run()
 
             if(not args.quiet):
                 print(response)
 
             if(args.file is not None):
-                saveJsonResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveJsonResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
 
 
         elif(args.xml == True):
 
-            response = client.get_raw(domain, output_format=Client.XML_FORMAT)
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, whoisxmlapi_key)
+            response = api_wrapper.run()
             
             if(not args.quiet):
                 print(response)
 
             if(args.file is not None):
-                saveXmlResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveXmlResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, XML_FORMAT)
 
         elif(args.raw == True):
 
-            response = client.get(domain)
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
-                
-                for record in response.result.records:
-                    print(record.domain)
+                print(response)
             
             if(args.file is not None):
-                saveTxtResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveTxtResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
 
 
     
     elif(args.no_api_keys == True):
 
-        puff_api_requester = PuffApiRequester()
-
         if(args.json == True):
 
-            payload = buildPayload(domain, "json")
-            response = puff_api_requester.post(payload)
-
-            try:
-
-                response_data = loads(response)
-                pretty_response = dumps(response_data, indent=2)
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
                 print(response)
 
             if(args.file is not None):
-                saveJsonResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveJsonResponse(None, domain, response)
 
-
-            """
-            if 'result' in parsed:
-                print(Response(parsed))
-            raise UnparsableApiResponseError(
-                "Could not find the correct root element.", None)
-            """
+                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
 
             
         elif(args.xml == True):
 
-            payload = buildPayload(domain, "xml")
-            response = puff_api_requester.post(payload)
-
-            try:
-
-                response_data = xml.dom.minidom.parseString(response)
-                pretty_response = response_data.toprettyxml()
-
-                response = pretty_response
-
-            except Exception as error:
-
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
                 print(response)
 
             if(args.file is not None):
-                saveXmlResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveXmlResponse(None, domain, response)
+                
+                saveResponseToDefaultFile(domain, response, XML_FORMAT)
 
 
         elif(args.raw == True):
 
-            payload = buildPayload(domain, "json")
-            response = puff_api_requester.post(payload)
-
-            try:
-
-                response_data = loads(response)
-
-                response = ApiResponse(response_data)
-
-            except Exception as error:
-                
-                print("Could not parse API response\n", error)
-                exit()
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            response = api_wrapper.run()
 
             if(not args.quiet):
 
-                for record in response.result.records:
-                    print(record.domain)
+                print(response)
 
             if(args.file is not None):
-                saveTxtResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveTxtResponse(None, domain, response)
+                
+                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
 
 
 puff()

@@ -1,17 +1,30 @@
-from subdomainslookup import *
-from requests import request, Response, Session
+from subdomainslookup import ApiRequester, Client
+from subdomainslookup.models.response import Response as ApiResponse
+from requests import request, Session
 from bs4 import BeautifulSoup
+from threading import Thread
 
-class PuffApiRequester(ApiRequester):
-    def post(self, data: dict) -> str:
+class PuffApiRequester(Thread, ApiRequester):
 
-        response = self.__getResponse()
+    __payload = None
+    __response = None
+    __results = None
 
-        soup = BeautifulSoup(response.text, "lxml")
+    def __init__(self, domainName:str, outputFormat:str):
+        Thread.__init__(self)
+        ApiRequester.__init__(self)
+
+        self.__payload = self.__buildPayload(domainName, outputFormat)
+        self.__response = self.__getResponse()
+
+
+    def post(self) -> str:
+
+        soup = BeautifulSoup(self.__response.text, "lxml")
 
         csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
 
-        cookies = response.cookies.get_dict()
+        cookies = self.__response.cookies.get_dict()
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
@@ -39,14 +52,15 @@ class PuffApiRequester(ApiRequester):
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
-            json=data,
+            json=self.__payload,
             headers=headers,
             timeout=(10, self.timeout)
         )
 
         return ApiRequester._handle_response(response)
 
-    def __getResponse(self) -> Response:
+
+    def __getResponse(self) -> ApiResponse:
         session = Session()
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
@@ -56,13 +70,50 @@ class PuffApiRequester(ApiRequester):
         
         return response
 
-def buildPayload(domainName, outputFormat="json") -> dict:
-    payload = {
-        "domainName": domainName,
-        "g-recaptcha-response": None,
-        "search": domainName,
-        "web-lookup-search": True,
-        "outputFormat": outputFormat
-    }
+    def __buildPayload(self, domainName, outputFormat="json") -> dict:
+        payload = {
+            "domainName": domainName,
+            "g-recaptcha-response": None,
+            "search": domainName,
+            "web-lookup-search": True,
+            "outputFormat": outputFormat
+        }
 
-    return payload
+        return payload
+
+    def run(self):
+        self.__results = self.post()
+
+    def join(self):
+        Thread.join(self)
+        return self.__results
+
+class PuffClient(Thread, Client):
+
+    __client = None
+    __domain = None
+    __outputFormat = None
+    __results = None
+    
+    def __init__(self, api_key: str, domain: str, outputFormat: str or None = None):
+        Thread.__init__(self)
+        self.__client = Client.__init__(self, api_key)
+
+        self.__domain = domain
+        self.__outputFormat = outputFormat
+
+    def get_raw(self):
+        if(self.__outputFormat == XML_FORMAT):
+
+            return self.__client.get_raw(self, self.__domain, XML_FORMAT)
+
+        elif(self.__outputFormat == JSON_FORMAT or self.__outputFormat == RAW_FORMAT):
+            
+            return self.__client.get_raw(self, self.__domain, JSON_FORMAT)
+
+    def run(self):
+        self.__results = self.get_raw()
+
+    def join(self):
+        Thread.join(self)
+        return self.__results
