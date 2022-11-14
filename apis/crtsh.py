@@ -4,8 +4,8 @@ from threading import Thread
 
 class CrtshApiRequester(Thread):
 
-    self.__domain = None 
-    self.__results = None
+    __domain = None 
+    __results = None
 
     def __init__(self, domain:str = None):
         Thread.__init__(self)

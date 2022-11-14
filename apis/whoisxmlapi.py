@@ -6,9 +6,9 @@ from threading import Thread
 
 class PuffApiRequester(Thread, ApiRequester):
 
-    self.__payload = None
-    self.__response
-    self.__results = None
+    __payload = None
+    __response
+    __results = None
 
     def __init__(self, domainName:str, outputFormat:str):
         Thread.__init__(self)
@@ -90,10 +90,10 @@ class PuffApiRequester(Thread, ApiRequester):
 
 class PuffClient(Thread, Client):
 
-    self.__client = None
-    self.__domain = None
-    self.__outputFormat = None
-    self.__results = None
+    __client = None
+    __domain = None
+    __outputFormat = None
+    __results = None
     
     def __init__(self, api_key: str, domain: str, outputFormat: str or None = None):
         Thread.__init__(self)

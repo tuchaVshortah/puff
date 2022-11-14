@@ -10,13 +10,13 @@ from subdomainslookup.models.response import _list_of_objects
 
 class ApiWrapper():
 
-    self.__target = None
-    self.__puff_client = None
-    self.__puff_api_requester = None
-    self.__crtsh_api_requester = None
-    self.__outputFormat = None
-    self.__boost = None
-    self.__results = None
+    __target = None
+    __puff_client = None
+    __puff_api_requester = None
+    __crtsh_api_requester = None
+    __outputFormat = None
+    __boost = None
+    __results = None
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, whoisxmlapi_key:str or None = None,):
         self.__target = target
