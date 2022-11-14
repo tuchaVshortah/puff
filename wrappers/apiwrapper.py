@@ -73,7 +73,7 @@ class ApiWrapper():
             puff_api_response = self.__puff_api_requester.post()
             crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
-            return self.__updateResponse(puff_api_response, new_subdomains)
+            return self.__updateResponse(puff_api_response, crtsh_subdomains)
         
         elif(self.__puff_client is not None):
 
@@ -84,14 +84,14 @@ class ApiWrapper():
 
                 crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
-                return self.__updateResponse(puff_api_response, new_subdomains)
+                return self.__updateResponse(puff_api_response, crtsh_subdomains)
 
             elif(self.__outputFormat == RAW_FORMAT):
                 api_response = self.__puff_client.get(self.__target)
 
                 crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
-                return self.__updateResponse(puff_api_response, new_subdomains)
+                return self.__updateResponse(puff_api_response, crtsh_subdomains)
 
         
     def __fastTasks(self):
@@ -107,7 +107,7 @@ class ApiWrapper():
             puff_api_response = self.__puff_api_requester.join()
             crtsh_subdomains = self.__crtsh_api_requester.join()
 
-            return self.__updateResponse(puff_api_response, new_subdomains)
+            return self.__updateResponse(puff_api_response, crtsh_subdomains)
 
     def __updateResponse(self, response, new_subdomains):
         
