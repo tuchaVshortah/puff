@@ -31,7 +31,7 @@ class ApiWrapper():
             
             self.__puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
         
-        crtsh_api_requester = CrtshApiRequester(self.__target)
+        self.__crtsh_api_requester = CrtshApiRequester(self.__target)
 
         
     
@@ -71,7 +71,7 @@ class ApiWrapper():
         if(self.__puff_client is None):
 
             puff_api_response = self.__puff_api_requester.post()
-            crtsh_subdomains = crtsh_api_requester.getSubdomains()
+            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
             return self.__updateResponse(puff_api_response, new_subdomains)
         
@@ -82,14 +82,14 @@ class ApiWrapper():
 
                 api_response = self.__puff_client.get_raw()
 
-                crtsh_subdomains = crtsh_api_requester.getSubdomains()
+                crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
                 return self.__updateResponse(puff_api_response, new_subdomains)
 
             elif(self.__outputFormat == RAW_FORMAT):
                 api_response = self.__puff_client.get(self.__target)
 
-                crtsh_subdomains = crtsh_api_requester.getSubdomains()
+                crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
 
                 return self.__updateResponse(puff_api_response, new_subdomains)
 
@@ -99,13 +99,13 @@ class ApiWrapper():
         if(self.__puff_client is None):
 
             self.__puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
-            crtsh_api_requester = CrtshApiRequester(self.__target)
+            self.__crtsh_api_requester = CrtshApiRequester(self.__target)
 
             self.__puff_api_requester.run()
-            crtsh_api_requester.run()
+            self.__crtsh_api_requester.run()
 
             puff_api_response = self.__puff_api_requester.join()
-            crtsh_subdomains = crtsh_api_requester.join()
+            crtsh_subdomains = self.__crtsh_api_requester.join()
 
             return self.__updateResponse(puff_api_response, new_subdomains)
 
