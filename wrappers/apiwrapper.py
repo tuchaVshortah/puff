@@ -1,6 +1,6 @@
-from puff.apis.whoisxmlapi import PuffClient, PuffApiRequester
-from puff.apis.crtsh import CrtshApiRequester
-from puff.constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
+from apis.whoisxmlapi import PuffClient, PuffApiRequester
+from apis.crtsh import CrtshApiRequester
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
 from json import loads, dumps
 import xml.dom.minidom
