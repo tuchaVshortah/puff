@@ -88,8 +88,11 @@ def puff():
 
     args = parser.parse_args()
     
-    domain = args.domain[0]
-    whoisxmlapi_key = args.whoisxmlapi_key[0]
+    if(args.domain is not None):
+        domain = args.domain[0]
+    
+    if(args.whoisxmlapi_key is not None):
+        whoisxmlapi_key = args.whoisxmlapi_key[0]
 
     if(whoisxmlapi_key is not None):
 
