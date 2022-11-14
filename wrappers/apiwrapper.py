@@ -62,7 +62,13 @@ class ApiWrapper():
 
         elif(self.__outputFormat == RAW_FORMAT):
             records = response_data.result.records
-            beautified_response_data = "\n".join(records)
+
+            subdomains = []
+
+            for record in records:
+                subdomains.append(record.domain)
+
+            beautified_response_data = "\n".join(subdomains)
 
         return beautified_response_data
             
