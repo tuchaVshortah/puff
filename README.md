@@ -1,5 +1,4 @@
-
-# puff
+# Puff
 
 Yet another subdomain enumeration tool written in Python from scratch.
 
