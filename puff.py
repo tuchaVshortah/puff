@@ -104,9 +104,12 @@ def puff():
                 print(response)
 
             if(args.file is not None):
-                saveJsonResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveJsonResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
 
 
         elif(args.xml == True):
@@ -118,9 +121,12 @@ def puff():
                 print(response)
 
             if(args.file is not None):
-                saveXmlResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveXmlResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, XML_FORMAT)
 
         elif(args.raw == True):
 
@@ -131,9 +137,12 @@ def puff():
                 print(response)
             
             if(args.file is not None):
-                saveTxtResponse(args.file, domain, response)
+
+                saveResponseToFile(args.file, domain, response)
+
             elif(args.default_file == True):
-                saveTxtResponse(None, domain, response)
+
+                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
 
 
     
