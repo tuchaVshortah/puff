@@ -18,7 +18,7 @@ class ApiWrapper():
     self.__boost = None
     self.__results = None
 
-    def __init__(self, target: str = None, whoisxmlapi_key:str or None = None, outputFormat: str = JSON_FORMAT, boost: bool = False):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, whoisxmlapi_key:str or None = None,):
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
