@@ -90,10 +90,11 @@ def puff():
     
     client = None
     domain = args.domain[0]
+    whoisxmlapi_key = args.whoisxmlapi_key[0]
 
-    if(args.whoisxmlapi_api_key is not None):
+    if(whoisxmlapi_key is not None):
 
-        client = Client(args.whoisxmlapi_api_key[0])
+        client = Client(whoisxmlapi_key)
 
         if(args.json == True):
 
