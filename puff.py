@@ -33,7 +33,7 @@ def puff():
     api_group = parser.add_mutually_exclusive_group()
 
     api_group.add_argument(
-        "-wak", "--whoisxmlapi-api-key",
+        "-wak", "--whoisxmlapi-key",
         help="Specify your API key for whoisxmlapi.com",
         default=None,
         type=str,
