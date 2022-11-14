@@ -166,7 +166,7 @@ class ApiWrapper():
             self.__updateJsonResponseData(response_data, new_subdomains)
         
         elif(self.__outputFormat == RAW_FORMAT):
-            self.__updateRawResponseData(response_data, new_subdomains)
+            self.__updateRawResponseData(ApiResponse(loads(response_data)), new_subdomains)
 
 
     def __updateJsonResponseData(self, json_response_data: dict, new_subdomains: list):
