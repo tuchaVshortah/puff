@@ -49,9 +49,9 @@ class ApiWrapper():
         
             return self.__beautify(self.__results)
         
-        except:
+        except Exception as e:
 
-            print("Could not return a beautified API response\n", error)
+            print("Could not return a beautified API response\n", e)
             exit()
 
     def __beautify(self, response_data: dict or Document or ApiResponse):
@@ -138,17 +138,17 @@ class ApiWrapper():
 
             response_data = self.__loadResponse(response)
         
-        except:
+        except Exception as e:
 
-            print("Could not parse the API response\n", error)
+            print("Could not parse the API response\n", e)
             exit()
 
         try:
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except:
-            print("Could not add new records to the API response\n", error)
+        except Exception as e:
+            print("Could not add new records to the API response\n", e)
             exit()
         
         return response_data
@@ -160,8 +160,8 @@ class ApiWrapper():
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except:
-            print("Could not add new records to the API response\n", error)
+        except Exception as e:
+            print("Could not add new records to the API response\n", e)
             exit()
 
 
