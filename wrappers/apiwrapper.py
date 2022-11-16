@@ -111,22 +111,17 @@ class ApiWrapper():
 
             return self.__updateResponse(puff_client_response, crtsh_subdomains)
 
-
-    def __updateResponse(self, response: str or dict or Document or ApiResponse, new_subdomains) -> dict or Document or ApiResponse:
+    
+    def __updateResponse(self, response: str, new_subdomains) -> dict or Document or ApiResponse:
         
-        response_data = None
-        if(type(response) == str):
-            try:
+        try:
 
-                response_data = self.__loadResponse(response)
-            
-            except:
+            response_data = self.__loadResponse(response)
+        
+        except:
 
-                print("Could not parse the API response\n", error)
-                exit()
-
-        elif(type(response) != str):
-            response_data = response
+            print("Could not parse the API response\n", error)
+            exit()
 
         try:
 
@@ -137,6 +132,18 @@ class ApiWrapper():
             exit()
         
         return response_data
+
+
+    def __updateResponseObject(self, response_data: dict or Document or ApiResponse, new_subdomains):
+
+        try:
+
+            self.__updateResponseData(response_data, new_subdomains)
+
+        except:
+            print("Could not add new records to the API response\n", error)
+            exit()
+
 
     def __loadResponse(self, response):
 
