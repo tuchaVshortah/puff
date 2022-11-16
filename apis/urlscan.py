@@ -29,14 +29,22 @@ class UrlscanApiRequester(Thread):
                 records = response_data["results"]
 
                 for record in records:
-                    domain = record["task"]["domain"]
-                    apexDomain = record["task"]["apexDomain"]
+                    try:
+                        domain = record["task"]["domain"]
+                        
+                        if(domain.endswith(self.__domain)):
+                            subdomains.append(domain)
+                    except:
+                        pass
+                        
 
-                    if(domain.endswith(self.__domain)):
-                        subdomains.append(domain)
+                    try:
+                        apexDomain = record["task"]["apexDomain"]
 
-                    if(apexDomain.endswith(self.__domain)):   
-                        subdomains.append(apexDomain)
+                        if(apexDomain.endswith(self.__domain)):   
+                            subdomains.append(apexDomain)
+                    except:
+                        pass
 
             except Exception as e:
                 print(e)
