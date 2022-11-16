@@ -51,7 +51,7 @@ class ApiWrapper():
             print("Could not return a beautified API response\n", error)
             exit()
 
-    def __beautify(self, response_data):
+    def __beautify(self, response_data: dict or Document or ApiResponse):
 
         beautified_response_data = None
         if(self.__outputFormat == XML_FORMAT):
@@ -112,16 +112,21 @@ class ApiWrapper():
             return self.__updateResponse(puff_client_response, crtsh_subdomains)
 
 
-    def __updateResponse(self, response, new_subdomains):
+    def __updateResponse(self, response: str or dict or Document or ApiResponse, new_subdomains) -> dict or Document or ApiResponse:
         
-        try:
+        response_data = None
+        if(type(response) == str):
+            try:
 
-            response_data = self.__loadResponse(response)
-        
-        except:
+                response_data = self.__loadResponse(response)
+            
+            except:
 
-            print("Could not parse the API response\n", error)
-            exit()
+                print("Could not parse the API response\n", error)
+                exit()
+
+        elif(type(response) != str):
+            response_data = response
 
         try:
 
