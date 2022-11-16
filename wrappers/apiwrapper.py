@@ -125,7 +125,7 @@ class ApiWrapper():
 
         try:
 
-            self.__updateResponseData(response, new_subdomains)
+            self.__updateResponseData(response_data, new_subdomains)
 
         except:
             print("Could not add new records to the API response\n", error)
@@ -172,7 +172,7 @@ class ApiWrapper():
             self.__updateJsonResponseData(response_data, new_subdomains)
         
         elif(self.__outputFormat == RAW_FORMAT):
-            self.__updateRawResponseData(ApiResponse(loads(response_data)), new_subdomains)
+            self.__updateRawResponseData(response_data, new_subdomains)
 
 
     def __updateJsonResponseData(self, json_response_data: dict, new_subdomains: list):
