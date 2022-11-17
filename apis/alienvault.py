@@ -53,6 +53,3 @@ class AlienVaultApiRequester(Thread):
     def join(self):
         Thread.join(self)
         return self.__results
-
-test = AlienVaultApiRequester("mechta.kz")
-print(test.getSubdomains())
