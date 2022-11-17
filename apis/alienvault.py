@@ -2,7 +2,7 @@ import requests
 from json import loads
 from threading import Thread
 
-class CrtshApiRequester(Thread):
+class AlienVaultApiRequester(Thread):
 
     __domain = None 
     __results = None
@@ -14,7 +14,7 @@ class CrtshApiRequester(Thread):
 
     def getSubdomains(self) -> list:
 
-        url = "https://crt.sh/?q={}&output=json".format(self.__domain)
+        url = "https://otx.alienvault.com/api/v1/indicators/domain/{}/passive_dns".format(self.__domain)
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36"
@@ -31,17 +31,14 @@ class CrtshApiRequester(Thread):
 
                 response_data = loads(response)
 
-                for data in response_data:
+                records = response_data["passive_dns"]
+
+                for record in records:
                     try:
-                        
-                        parsed = data["name_value"].split("\n")
-
+                        subdomain = record["hostname"]
+                        subdomains.append(subdomain)
                     except:
-
-                        continue
-
-                    for subdomain in parsed:
-                        subdomains.append(subdomain.replace("*.", "", 1))
+                        pass
 
             except Exception as e:
                 print(e)
