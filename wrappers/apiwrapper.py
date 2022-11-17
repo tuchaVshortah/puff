@@ -80,71 +80,58 @@ class ApiWrapper():
             
     def __slowTasks(self):
 
+        puff_response = None
+
         if(self.__puff_client is None):
 
-            puff_api_response = self.__puff_api_requester.post()
-            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
-            urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
-            alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
-
-            data = self.__updateResponse(puff_api_response, crtsh_subdomains)
-            self.__updateDataObject(data, urlscan_subdomains)
-            self.__updateDataObject(data, alienvault_subdomains)
-
-            return data
+            puff_response = self.__puff_api_requester.post()
         
         elif(self.__puff_client is not None):
 
-            puff_client_response = self.__puff_client.get_raw()
-            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
-            urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
-            alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
+            puff_response = self.__puff_client.get_raw()
 
-            data = self.__updateResponse(puff_client_response, crtsh_subdomains)
-            self.__updateDataObject(data, urlscan_subdomains)
-            self.__updateDataObject(data, alienvault_subdomains)
+        crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
+        urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
+        alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
 
-            return data
+        data = self.__updateResponse(puff_response, crtsh_subdomains)
+        self.__updateDataObject(data, urlscan_subdomains)
+        self.__updateDataObject(data, alienvault_subdomains)
+
+        return data
 
         
     def __fastTasks(self):
 
+        self.__crtsh_api_requester.start()
+        self.__urlscan_api_requester.start()
+        self.__alienvault_api_requester.start()
+
+        puff_response = None
+
         if(self.__puff_client is None):
 
             self.__puff_api_requester.start()
-            self.__crtsh_api_requester.start()
-            self.__urlscan_api_requester.start()
-            self.__alienvault_api_requester.start()
-
-            puff_api_response = self.__puff_api_requester.join()
-            crtsh_subdomains = self.__crtsh_api_requester.join()
-            urlscan_subdomains = self.__urlscan_api_requester.join()
-            alienvault_subdomains = self.__alienvault_api_requester.join()
-
-            data = self.__updateResponse(puff_api_response, crtsh_subdomains)
-            self.__updateDataObject(data, urlscan_subdomains)
-            self.__updateDataObject(data, alienvault_subdomains)
-
-            return data
-
+            
+        
+            puff_response = self.__puff_api_requester.join()
+            
         elif(self.__puff_client is not None):
 
             self.__puff_client.start()
-            self.__crtsh_api_requester.start()
-            self.__urlscan_api_requester.start()
-            self.__alienvault_api_requester.start()
 
-            puff_client_response = self.__puff_client.join()
-            crtsh_subdomains = self.__crtsh_api_requester.join()
-            urlscan_subdomains = self.__urlscan_api_requester.join()
-            alienvault_subdomains = self.__alienvault_api_requester.join()
+            puff_response = self.__puff_client.join()
 
-            data = self.__updateResponse(puff_client_response, crtsh_subdomains)
-            self.__updateDataObject(data, urlscan_subdomains)
-            self.__updateDataObject(data, alienvault_subdomains)
+        crtsh_subdomains = self.__crtsh_api_requester.join()
+        urlscan_subdomains = self.__urlscan_api_requester.join()
+        alienvault_subdomains = self.__alienvault_api_requester.join()
 
-            return data
-    
+        data = self.__updateResponse(puff_response, crtsh_subdomains)
+        self.__updateDataObject(data, urlscan_subdomains)
+        self.__updateDataObject(data, alienvault_subdomains)
+
+        return data
+
     def __updateResponse(self, response: str, new_subdomains) -> dict or Document or ApiResponse:
         
         try:
