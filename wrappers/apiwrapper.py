@@ -87,11 +87,11 @@ class ApiWrapper():
             urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
             alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
 
-            new_data = self.__updateResponse(puff_api_response, crtsh_subdomains)
-            self.__updateDataObject(new_data, urlscan_subdomains)
-            self.__updateDataObject(new_data, alienvault_subdomains)
+            data = self.__updateResponse(puff_api_response, crtsh_subdomains)
+            self.__updateDataObject(data, urlscan_subdomains)
+            self.__updateDataObject(data, alienvault_subdomains)
 
-            return new_data
+            return data
         
         elif(self.__puff_client is not None):
 
@@ -100,11 +100,11 @@ class ApiWrapper():
             urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
             alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
 
-            new_data = self.__updateResponse(puff_client_response, crtsh_subdomains)
-            self.__updateDataObject(new_data, urlscan_subdomains)
-            self.__updateDataObject(new_data, alienvault_subdomains)
+            data = self.__updateResponse(puff_client_response, crtsh_subdomains)
+            self.__updateDataObject(data, urlscan_subdomains)
+            self.__updateDataObject(data, alienvault_subdomains)
 
-            return new_data
+            return data
 
         
     def __fastTasks(self):
@@ -121,11 +121,11 @@ class ApiWrapper():
             urlscan_subdomains = self.__urlscan_api_requester.join()
             alienvault_subdomains = self.__alienvault_api_requester.join()
 
-            new_data = self.__updateResponse(puff_api_response, crtsh_subdomains)
-            self.__updateDataObject(new_data, urlscan_subdomains)
-            self.__updateDataObject(new_data, alienvault_subdomains)
+            data = self.__updateResponse(puff_api_response, crtsh_subdomains)
+            self.__updateDataObject(data, urlscan_subdomains)
+            self.__updateDataObject(data, alienvault_subdomains)
 
-            return new_data
+            return data
 
         elif(self.__puff_client is not None):
 
@@ -139,11 +139,11 @@ class ApiWrapper():
             urlscan_subdomains = self.__urlscan_api_requester.join()
             alienvault_subdomains = self.__alienvault_api_requester.join()
 
-            new_data = self.__updateResponse(puff_client_response, crtsh_subdomains)
-            self.__updateDataObject(new_data, urlscan_subdomains)
-            self.__updateDataObject(new_data, alienvault_subdomains)
+            data = self.__updateResponse(puff_client_response, crtsh_subdomains)
+            self.__updateDataObject(data, urlscan_subdomains)
+            self.__updateDataObject(data, alienvault_subdomains)
 
-            return new_data
+            return data
     
     def __updateResponse(self, response: str, new_subdomains) -> dict or Document or ApiResponse:
         
