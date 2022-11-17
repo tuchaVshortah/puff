@@ -22,7 +22,8 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 
  - [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/)
  - [crt.sh](https://crt.sh/)
- - [urlscan.io](https://urlscan.io) 
+ - [urlscan.io](https://urlscan.io)
+ - [otx.alienvault.com](https://otx.alienvault.com/api)
 ## Requirements
 
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
@@ -50,10 +51,10 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Start the server
+Run puff
 
 ```bash
-python puff.py
+python puff.py -d <domain> --boost
 ```
 
 
@@ -167,7 +168,7 @@ python puff.py -d google.com -x
 #### What does Puff do?
 
 Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
-[crt.sh](https://crt.sh/) and [urlscan.io](https://urlscan.io) 
+[crt.sh](https://crt.sh/), [otx.alienvault.com](https://otx.alienvault.com/api) and [urlscan.io](https://urlscan.io) 
 to get information about subdomains of the target domain.
 
 #### How many output formats are supported?
@@ -179,12 +180,10 @@ information to make usage in scripts easier.
 #### How fast it is?
 
 It will run in multiple threads if the -b or --boost flag is set, 
-so the internet connection speed may be the bottleneck
+so the internet connection speed may be the bottleneck.
 
 
 ## Authors
 
 - [@tuchaVshortah](https://github.com/tuchaVshortah)
-
-
 
