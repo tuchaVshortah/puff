@@ -1,6 +1,7 @@
+
 # Puff
 
-Yet another subdomain enumeration tool written in Python from scratch.
+Yet another passive subdomain enumeration tool written in Python from scratch.
 
 
 
@@ -17,6 +18,11 @@ Yet another subdomain enumeration tool written in Python from scratch.
 - Cross platform
 
 
+## Subdomain sources
+
+ - [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/)
+ - [crt.sh](https://crt.sh/)
+ - [urlscan.io](https://urlscan.io) 
 ## Requirements
 
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
@@ -53,7 +59,7 @@ python puff.py
 
 ## Usage/Examples
 
-Parse in multithreading and list all subdomains of the specified domain:
+Parse in multithreading mode and list all subdomains of the specified domain:
 
 ```bash
 python puff.py -d google.com -b
@@ -160,8 +166,9 @@ python puff.py -d google.com -x
 
 #### What does Puff do?
 
-Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/) 
-and [crt.sh](https://crt.sh/) to get information about subdomains of the target domain.
+Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
+[crt.sh](https://crt.sh/) and [urlscan.io](https://urlscan.io) 
+to get information about subdomains of the target domain.
 
 #### How many output formats are supported?
 
@@ -172,10 +179,12 @@ information to make usage in scripts easier.
 #### How fast it is?
 
 It will run in multiple threads if the -b or --boost flag is set, 
-so the internet connection speed may be the bottleneck.
+so the internet connection speed may be the bottleneck
 
 
 ## Authors
 
 - [@tuchaVshortah](https://github.com/tuchaVshortah)
+
+
 
