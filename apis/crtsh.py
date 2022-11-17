@@ -32,7 +32,14 @@ class CrtshApiRequester(Thread):
                 response_data = loads(response)
 
                 for data in response_data:
-                    parsed = data["name_value"].split("\n")
+                    try:
+                        
+                        parsed = data["name_value"].split("\n")
+
+                    except:
+
+                        continue
+
                     for subdomain in parsed:
                         subdomains.append(subdomain.replace("*.", "", 1))
 
