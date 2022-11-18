@@ -25,6 +25,7 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
  - [urlscan.io](https://urlscan.io)
  - [otx.alienvault.com](https://otx.alienvault.com/api)
  - [jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/)
+ - [hackertarget.com](https://hackertarget.com/)
 ## Requirements
 
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
@@ -170,7 +171,8 @@ python puff.py -d google.com -x
 
 Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
 [crt.sh](https://crt.sh/), [urlscan.io](https://urlscan.io), 
-[otx.alienvault.com](https://otx.alienvault.com/api) and [jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/) 
+[otx.alienvault.com](https://otx.alienvault.com/api), 
+[jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/) and [hackertarget.com](https://hackertarget.com/)
 to get information about subdomains of the target domain.
 
 #### How many output formats are supported?
