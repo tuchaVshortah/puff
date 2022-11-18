@@ -24,12 +24,15 @@ class ApiWrapper():
     __hackertarget_api_requester = None
     __outputFormat = None
     __boost = None
+    __verbose = None
     __results = None
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, whoisxmlapi_key:str or None = None,):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, verbose: bool = False, whoisxmlapi_key:str or None = None):
+        
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
+        self.__verbose = verbose
 
         if(whoisxmlapi_key is not None):
 

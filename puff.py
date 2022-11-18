@@ -110,7 +110,7 @@ def puff():
 
         if(args.json == True):
 
-            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, whoisxmlapi_key)
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
             response = api_wrapper.run()
 
             if(not args.quiet):
@@ -127,7 +127,7 @@ def puff():
 
         elif(args.xml == True):
 
-            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, whoisxmlapi_key)
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
             response = api_wrapper.run()
             
             if(not args.quiet):
@@ -143,7 +143,7 @@ def puff():
 
         elif(args.raw == True):
 
-            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose)
             response = api_wrapper.run()
 
             if(not args.quiet):
@@ -163,7 +163,7 @@ def puff():
 
         if(args.json == True):
 
-            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost)
+            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, args.verbose)
             response = api_wrapper.run()
 
             if(not args.quiet):
@@ -181,7 +181,7 @@ def puff():
             
         elif(args.xml == True):
 
-            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost)
+            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, args.verbose)
             response = api_wrapper.run()
 
             if(not args.quiet):
@@ -199,7 +199,7 @@ def puff():
 
         elif(args.raw == True):
 
-            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost)
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose)
             response = api_wrapper.run()
 
             if(not args.quiet):
