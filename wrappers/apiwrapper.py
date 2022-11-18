@@ -3,6 +3,7 @@ from apis.crtsh import CrtshApiRequester
 from apis.urlscan import UrlscanApiRequester
 from apis.alienvault import AlienVaultApiRequester
 from apis.anubis import AnubisApiRequester
+from apis.hackertarget import HackerTargetApiRequester
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
 from json import loads, dumps
@@ -20,6 +21,7 @@ class ApiWrapper():
     __urlscan_api_requester = None
     __alienvault_api_requester = None
     __anubis_api_requester = None
+    __hackertarget_api_requester = None
     __outputFormat = None
     __boost = None
     __results = None
@@ -41,6 +43,7 @@ class ApiWrapper():
         self.__urlscan_api_requester = UrlscanApiRequester(self.__target)
         self.__alienvault_api_requester = AlienVaultApiRequester(self.__target)
         self.__anubis_api_requester = AnubisApiRequester(self.__target)
+        self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
 
         
     
@@ -97,11 +100,13 @@ class ApiWrapper():
         urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
         alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
         anubis_subdomains = self.__anubis_api_requester.getSubdomains()
+        hackertarget_subdomains = self.__hackertarget_api_requester.getSubdomains()
 
         data = self.__updateResponse(puff_response, crtsh_subdomains)
         self.__updateDataObject(data, urlscan_subdomains)
         self.__updateDataObject(data, alienvault_subdomains)
         self.__updateDataObject(data, anubis_subdomains)
+        self.__updateDataObject(data, hackertarget_subdomains)
 
         return data
 
@@ -112,6 +117,7 @@ class ApiWrapper():
         self.__urlscan_api_requester.start()
         self.__alienvault_api_requester.start()
         self.__anubis_api_requester.start()
+        self.__hackertarget_api_requester.start()
 
         puff_response = None
 
@@ -132,11 +138,13 @@ class ApiWrapper():
         urlscan_subdomains = self.__urlscan_api_requester.join()
         alienvault_subdomains = self.__alienvault_api_requester.join()
         anubis_subdomains = self.__anubis_api_requester.join()
+        hackertarget_subdomains = self.__hackertarget_api_requester.join()
 
         data = self.__updateResponse(puff_response, crtsh_subdomains)
         self.__updateDataObject(data, urlscan_subdomains)
         self.__updateDataObject(data, alienvault_subdomains)
         self.__updateDataObject(data, anubis_subdomains)
+        self.__updateDataObject(data, hackertarget_subdomains)
 
         return data
 
