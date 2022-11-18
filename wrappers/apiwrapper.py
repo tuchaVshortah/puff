@@ -86,6 +86,10 @@ class ApiWrapper():
             beautified_response_data = "\n".join(subdomains)
 
         return beautified_response_data
+
+    def __status(self, message: str, end: str = "\n"):
+        if(self.__verbose == True):
+            print("//=> {}".format(message))
             
     def __slowTasks(self):
 
@@ -128,7 +132,6 @@ class ApiWrapper():
 
             self.__puff_api_requester.start()
             
-        
             puff_response = self.__puff_api_requester.join()
             
         elif(self.__puff_client is not None):
