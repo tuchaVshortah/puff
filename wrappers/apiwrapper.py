@@ -28,7 +28,7 @@ class ApiWrapper():
     __results = None
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, verbose: bool = False, whoisxmlapi_key:str or None = None):
-        
+
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
@@ -48,25 +48,32 @@ class ApiWrapper():
         self.__anubis_api_requester = AnubisApiRequester(self.__target)
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
 
-        
     
     def run(self):
+
+        self.__status("Running tasks...")
+
         if(self.__boost):
             self.__results = self.__fastTasks()
 
         else:
             self.__results = self.__slowTasks()
         
+        self.__status("Done!")
+
         try:
         
             return self.__beautify(self.__results)
         
-        except Exception as e:
+        except:
 
-            print("Could not return a beautified API response\n", e)
+            self.__status("Could not return beautified output...")
+            self.__status("Exiting...")
             exit()
 
     def __beautify(self, response_data: dict or Document or ApiResponse):
+
+        self.__status("Trying to beautify data...")
 
         beautified_response_data = None
         if(self.__outputFormat == XML_FORMAT):
@@ -85,9 +92,11 @@ class ApiWrapper():
 
             beautified_response_data = "\n".join(subdomains)
 
+        self.__status("Done!")
+
         return beautified_response_data
 
-    def __status(self, message: str, end: str = "\n"):
+    def __status(self, message: str):
         if(self.__verbose == True):
             print("//=> {}".format(message))
             
@@ -160,17 +169,19 @@ class ApiWrapper():
 
             response_data = self.__loadResponse(response)
         
-        except Exception as e:
+        except:
 
-            print("Could not parse the API response\n", e)
+            self.__status("Could not parse API response...")
+            self.__status("Exiting...")
             exit()
 
         try:
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except Exception as e:
-            print("Could not add new records to the API response\n", e)
+        except:
+            self.__status("Could not update subdomain records...")
+            self.__status("Exiting...")
             exit()
         
         return response_data
@@ -182,8 +193,9 @@ class ApiWrapper():
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except Exception as e:
-            print("Could not add new records to the API response\n", e)
+        except:
+            self.__status("Could not update subdomain records...")
+            self.__status("Exiting...")
             exit()
 
 
