@@ -36,7 +36,7 @@ class ApiWrapper():
 
         if(whoisxmlapi_key is not None):
 
-            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target)
+            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target, self.__outputFormat)
 
         elif(whoisxmlapi_key is None):
             
@@ -148,6 +148,8 @@ class ApiWrapper():
             self.__puff_client.start()
 
             puff_response = self.__puff_client.join()
+
+        print(puff_response)
 
         crtsh_subdomains = self.__crtsh_api_requester.join()
         urlscan_subdomains = self.__urlscan_api_requester.join()
