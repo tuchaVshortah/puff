@@ -20,6 +20,16 @@ class PuffApiRequester(Thread, ApiRequester):
 
     def post(self) -> str:
         
+        try:
+
+            return self.__post()
+
+        except:
+            pass
+
+
+    def __post(self) -> str:
+        
         self.__response = self.__getResponse()
 
         soup = BeautifulSoup(self.__response.text, "lxml")
@@ -76,7 +86,7 @@ class PuffApiRequester(Thread, ApiRequester):
 
         if(outputFormat == RAW_FORMAT):
             outputFormat = JSON_FORMAT
-            
+
         payload = {
             "domainName": domainName,
             "g-recaptcha-response": None,
