@@ -36,8 +36,8 @@ class HackerTargetApiRequester(Thread):
 
                     subdomains.append(subdomain)
 
-            except Exception as e:
-                print(e)
+            except:
+                pass
 
         unique_subdomains = list(set(subdomains))
 

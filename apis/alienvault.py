@@ -40,8 +40,8 @@ class AlienVaultApiRequester(Thread):
                     except:
                         pass
 
-            except Exception as e:
-                print(e)
+            except:
+                pass
 
         unique_subdomains = list(set(subdomains))
 

@@ -43,8 +43,8 @@ class CrtshApiRequester(Thread):
                     for subdomain in parsed:
                         subdomains.append(subdomain.replace("*.", "", 1))
 
-            except Exception as e:
-                print(e)
+            except:
+                pass
 
         unique_subdomains = list(set(subdomains))
 
