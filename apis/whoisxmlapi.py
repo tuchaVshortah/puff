@@ -3,6 +3,7 @@ from subdomainslookup.models.response import Response as ApiResponse
 from requests import request, Session, Response
 from bs4 import BeautifulSoup
 from threading import Thread
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
 class PuffApiRequester(Thread, ApiRequester):
 
@@ -72,6 +73,10 @@ class PuffApiRequester(Thread, ApiRequester):
         return response
 
     def __buildPayload(self, domainName, outputFormat="json") -> dict:
+
+        if(outputFormat == RAW_FORMAT):
+            outputFormat = JSON_FORMAT
+            
         payload = {
             "domainName": domainName,
             "g-recaptcha-response": None,
