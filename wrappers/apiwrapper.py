@@ -149,7 +149,6 @@ class ApiWrapper():
 
             puff_response = self.__puff_client.join()
 
-        print(puff_response)
 
         crtsh_subdomains = self.__crtsh_api_requester.join()
         urlscan_subdomains = self.__urlscan_api_requester.join()

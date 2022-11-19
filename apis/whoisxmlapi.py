@@ -51,8 +51,10 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
         PuffHelper.__init__(self)
 
         self._domainName = domainName
+        self._outputFormat = outputFormat
 
-        if(outputFormat == RAW_FORMAT):
+        if(self._outputFormat == RAW_FORMAT):
+
             self._outputFormat = JSON_FORMAT
 
         self.__payload = self.__buildPayload()
