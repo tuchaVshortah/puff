@@ -1,6 +1,6 @@
 from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Response as ApiResponse
-from requests import request, Session
+from requests import request, Session, Response
 from bs4 import BeautifulSoup
 from threading import Thread
 
@@ -60,7 +60,7 @@ class PuffApiRequester(Thread, ApiRequester):
         return ApiRequester._handle_response(response)
 
 
-    def __getResponse(self) -> ApiResponse:
+    def __getResponse(self) -> Response:
         session = Session()
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
