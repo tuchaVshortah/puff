@@ -25,6 +25,7 @@ class PuffApiRequester(Thread, ApiRequester):
             return self.__post()
 
         except:
+
             pass
 
 
@@ -40,8 +41,7 @@ class PuffApiRequester(Thread, ApiRequester):
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
-            "Cookie": "XSRF-TOKEN=" + cookies["XSRF-TOKEN"] + "; " + \
-                    "emailverification_session=" + cookies["emailverification_session"],
+            "Cookie": f'XSRF-TOKEN={cookies["XSRF-TOKEN"]}; emailverification_session={cookies["emailverification_session"]}',
             "Sec-Ch-Ua": '"Chromium";v="105", "Not)A;Brand";v="8"',
             "X-Csrf-Token": csrf_token,
             "Sec-Ch-Ua-Mobile": "?0",
