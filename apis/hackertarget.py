@@ -13,6 +13,16 @@ class HackerTargetApiRequester(Thread):
         self.__domain = domain
 
     def getSubdomains(self) -> list:
+        
+        try:
+            
+            return self.__getSubdomains()
+
+        except:
+            
+            return []
+
+    def __getSubdomains(self) -> list:
 
         url = "https://api.hackertarget.com/hostsearch/?q={}".format(self.__domain)
 

@@ -13,6 +13,16 @@ class AlienVaultApiRequester(Thread):
         self.__domain = domain
 
     def getSubdomains(self) -> list:
+        
+        try:
+            
+            return self.__getSubdomains()
+
+        except:
+            
+            return []
+
+    def __getSubdomains(self) -> list:
 
         url = "https://otx.alienvault.com/api/v1/indicators/domain/{}/passive_dns".format(self.__domain)
 

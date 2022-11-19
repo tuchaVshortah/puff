@@ -5,8 +5,42 @@ from bs4 import BeautifulSoup
 from threading import Thread
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
-class PuffApiRequester(Thread, ApiRequester):
 
+class PuffHelper():
+
+    def _buildDefaultResponse(self) -> str:
+        response = None
+
+
+        if(self._outputFormat == XML_FORMAT):
+            response = f'''\
+<?xml version="1.0" ?>
+<xml>
+    <search>{self._domainName}</search>
+    <result>
+        <count>10000</count>
+        <records>
+        </records>
+    </result>
+</xml>'''
+    
+        elif(self._outputFormat == JSON_FORMAT):
+            response = f'''\
+{{
+    "search": "{self._domainName}",
+    "result": {{
+        "count": 0,
+        "records": []
+    }}
+}}'''
+
+        return response
+
+
+class PuffApiRequester(Thread, ApiRequester, PuffHelper):
+
+    _domainName = None
+    _outputFormat = None
     __payload = None
     __response = None
     __results = None
@@ -14,19 +48,24 @@ class PuffApiRequester(Thread, ApiRequester):
     def __init__(self, domainName:str, outputFormat:str):
         Thread.__init__(self)
         ApiRequester.__init__(self)
+        PuffHelper.__init__(self)
 
-        self.__payload = self.__buildPayload(domainName, outputFormat)
+        self._domainName = domainName
+
+        if(outputFormat == RAW_FORMAT):
+            self._outputFormat = JSON_FORMAT
+
+        self.__payload = self.__buildPayload()
 
 
     def post(self) -> str:
-        
         try:
 
             return self.__post()
 
         except:
-
-            pass
+            
+            return PuffHelper._buildDefaultResponse(self)
 
 
     def __post(self) -> str:
@@ -60,7 +99,6 @@ class PuffApiRequester(Thread, ApiRequester):
             "Accept-Language": "en-US,en;q=0.9"
         }
 
-
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
@@ -82,17 +120,14 @@ class PuffApiRequester(Thread, ApiRequester):
         
         return response
 
-    def __buildPayload(self, domainName, outputFormat="json") -> dict:
-
-        if(outputFormat == RAW_FORMAT):
-            outputFormat = JSON_FORMAT
+    def __buildPayload(self) -> dict:
 
         payload = {
-            "domainName": domainName,
+            "domainName": self._domainName,
             "g-recaptcha-response": None,
-            "search": domainName,
+            "search": self._domainName,
             "web-lookup-search": True,
-            "outputFormat": outputFormat
+            "outputFormat": self._outputFormat
         }
 
         return payload
@@ -104,28 +139,39 @@ class PuffApiRequester(Thread, ApiRequester):
         Thread.join(self)
         return self.__results
 
-class PuffClient(Thread, Client):
+
+class PuffClient(Thread, Client, PuffHelper):
 
     __client = None
-    __domain = None
-    __outputFormat = None
+    _domainName = None
+    _outputFormat = None
     __results = None
     
-    def __init__(self, api_key: str, domain: str, outputFormat: str or None = None):
+    def __init__(self, api_key: str, domainName: str, outputFormat: str or None = None):
         Thread.__init__(self)
         self.__client = Client.__init__(self, api_key)
 
-        self.__domain = domain
-        self.__outputFormat = outputFormat
+        self._domainName = domainName
+        self._outputFormat = outputFormat
 
     def get_raw(self):
-        if(self.__outputFormat == XML_FORMAT):
+        
+        try:
 
-            return self.__client.get_raw(self, self.__domain, XML_FORMAT)
+            return self.__get_raw()
 
-        elif(self.__outputFormat == JSON_FORMAT or self.__outputFormat == RAW_FORMAT):
+        except:
             
-            return self.__client.get_raw(self, self.__domain, JSON_FORMAT)
+            return PuffHelper._buildDefaultResponse(self)
+
+    def __get_raw(self):
+        if(self._outputFormat == XML_FORMAT):
+
+            return self.__client.get_raw(self, self._domainName, XML_FORMAT)
+
+        elif(self._outputFormat == JSON_FORMAT or self._outputFormat == RAW_FORMAT):
+            
+            return self.__client.get_raw(self, self._domainName, JSON_FORMAT)
 
     def run(self):
         self.__results = self.get_raw()
