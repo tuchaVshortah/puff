@@ -45,7 +45,7 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
     __response = None
     __results = None
 
-    def __init__(self, domainName:str, outputFormat:str):
+    def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
         Thread.__init__(self)
         ApiRequester.__init__(self)
         PuffHelper.__init__(self)
@@ -147,7 +147,7 @@ class PuffClient(Thread, Client, PuffHelper):
     _outputFormat = None
     __results = None
     
-    def __init__(self, api_key: str, domainName: str, outputFormat: str or None = None):
+    def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
         self.__client = Client.__init__(self, api_key)
 
