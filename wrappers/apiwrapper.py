@@ -271,8 +271,6 @@ class ApiWrapper():
         old_subdomains_xml = xml_response_data.getElementsByTagName("domain")
         for subdomain in old_subdomains_xml:
             old_subdomains.append(subdomain.firstChild.nodeValue)      
-        
-        print("Printing an element from parsed old_subdomains_xml: " + old_subdomains[0])
 
         subdomains = []
         subdomains.extend(old_subdomains)
