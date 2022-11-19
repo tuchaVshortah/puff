@@ -15,10 +15,11 @@ class PuffApiRequester(Thread, ApiRequester):
         ApiRequester.__init__(self)
 
         self.__payload = self.__buildPayload(domainName, outputFormat)
-        self.__response = self.__getResponse()
 
 
     def post(self) -> str:
+        
+        self.__response = self.__getResponse()
 
         soup = BeautifulSoup(self.__response.text, "lxml")
 
