@@ -265,6 +265,7 @@ class ApiWrapper():
                         "last_seen": "0"
                     }
                 )
+                json_response_data["result"]["count"] += 1
 
 
     def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
@@ -281,6 +282,7 @@ class ApiWrapper():
         unique_subdomains = list(set(subdomains))
 
         records = xml_response_data.getElementsByTagName("records")[0]
+        count = xml_response_data.getElementsByTagName("count")[0]
         for subdomain in unique_subdomains:
             if(subdomain in old_subdomains):
                 continue
@@ -305,6 +307,8 @@ class ApiWrapper():
             new_record.appendChild(last_seen)
             
             records.appendChild(new_record)
+            
+            count.lastChild.data = str(int(count.lastChild.data) + 1)
             
 
     def __updateRawResponseData(self, raw_response_data: ApiResponse, new_subdomains: list):
@@ -333,5 +337,7 @@ class ApiWrapper():
                 }
 
                 new_records["records"].append(new_record)
+
+                raw_response_data.result.count += 1
 
         raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
