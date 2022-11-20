@@ -4,6 +4,7 @@ from apis.urlscan import UrlscanApiRequester
 from apis.alienvault import AlienVaultApiRequester
 from apis.anubis import AnubisApiRequester
 from apis.hackertarget import HackerTargetApiRequester
+from apis.dnsrepo import DnsRepoApiRequester
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
 from json import loads, dumps
@@ -22,6 +23,7 @@ class ApiWrapper():
     __alienvault_api_requester = None
     __anubis_api_requester = None
     __hackertarget_api_requester = None
+    __dnsrepo_api_requester = None
     __outputFormat = None
     __boost = None
     __verbose = None
@@ -47,6 +49,7 @@ class ApiWrapper():
         self.__alienvault_api_requester = AlienVaultApiRequester(self.__target)
         self.__anubis_api_requester = AnubisApiRequester(self.__target)
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
+        self.__dnsrepo_api_requester = DnsRepoApiRequester(self.__target)
 
     
     def run(self):
@@ -118,12 +121,14 @@ class ApiWrapper():
         alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
         anubis_subdomains = self.__anubis_api_requester.getSubdomains()
         hackertarget_subdomains = self.__hackertarget_api_requester.getSubdomains()
+        dnsrepo_subdomains = self.__dnsrepo_api_requester.getSubdomains()
 
         data = self.__updateResponse(puff_response, crtsh_subdomains)
         self.__updateDataObject(data, urlscan_subdomains)
         self.__updateDataObject(data, alienvault_subdomains)
         self.__updateDataObject(data, anubis_subdomains)
         self.__updateDataObject(data, hackertarget_subdomains)
+        self.__updateDataObject(data, dnsrepo_subdomains)
 
         return data
 
@@ -135,6 +140,7 @@ class ApiWrapper():
         self.__alienvault_api_requester.start()
         self.__anubis_api_requester.start()
         self.__hackertarget_api_requester.start()
+        self.__dnsrepo_api_requester.start()
 
         puff_response = None
 
@@ -156,12 +162,14 @@ class ApiWrapper():
         alienvault_subdomains = self.__alienvault_api_requester.join()
         anubis_subdomains = self.__anubis_api_requester.join()
         hackertarget_subdomains = self.__hackertarget_api_requester.join()
+        dnsrepo_subdomains = self.__dnsrepo_api_requester.join()
 
         data = self.__updateResponse(puff_response, crtsh_subdomains)
         self.__updateDataObject(data, urlscan_subdomains)
         self.__updateDataObject(data, alienvault_subdomains)
         self.__updateDataObject(data, anubis_subdomains)
         self.__updateDataObject(data, hackertarget_subdomains)
+        self.__updateDataObject(data, dnsrepo_subdomains)
 
         return data
 
