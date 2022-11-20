@@ -4,13 +4,13 @@ from threading import Thread
 
 class UrlscanApiRequester(Thread):
 
-    __domain = None 
+    __domainName = None 
     __results = None
 
-    def __init__(self, domain:str = None):
+    def __init__(self, domainName: str = None):
         Thread.__init__(self)
 
-        self.__domain = domain
+        self.__domainName = domainName
 
     def getSubdomains(self) -> list:
         
@@ -24,7 +24,7 @@ class UrlscanApiRequester(Thread):
 
     def __getSubdomains(self) -> list:
 
-        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self.__domain)
+        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self.__domainName)
 
         response = requests.get(url)
 
@@ -42,7 +42,7 @@ class UrlscanApiRequester(Thread):
                     try:
                         domain = record["task"]["domain"]
                         
-                        if(domain.endswith(self.__domain)):
+                        if(domain.endswith(self.__domainName)):
                             subdomains.append(domain)
                     except:
                         pass
@@ -51,7 +51,7 @@ class UrlscanApiRequester(Thread):
                     try:
                         apexDomain = record["task"]["apexDomain"]
 
-                        if(apexDomain.endswith(self.__domain)):   
+                        if(apexDomain.endswith(self.__domainName)):   
                             subdomains.append(apexDomain)
                     except:
                         pass

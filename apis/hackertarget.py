@@ -4,13 +4,13 @@ from threading import Thread
 
 class HackerTargetApiRequester(Thread):
 
-    __domain = None 
+    __domainName = None 
     __results = None
 
-    def __init__(self, domain:str = None):
+    def __init__(self, domainName: str = None):
         Thread.__init__(self)
 
-        self.__domain = domain
+        self.__domainName = domainName
 
     def getSubdomains(self) -> list:
         
@@ -24,7 +24,7 @@ class HackerTargetApiRequester(Thread):
 
     def __getSubdomains(self) -> list:
 
-        url = "https://api.hackertarget.com/hostsearch/?q={}".format(self.__domain)
+        url = "https://api.hackertarget.com/hostsearch/?q={}".format(self.__domainName)
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36"
