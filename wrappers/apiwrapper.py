@@ -27,7 +27,7 @@ class ApiWrapper():
     __verbose = None
     __results = None
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, verbose: bool = False, whoisxmlapi_key:str or None = None):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, verbose: bool = False, whoisxmlapi_key: str or None = None):
 
         self.__target = target
         self.__outputFormat = outputFormat
@@ -257,13 +257,14 @@ class ApiWrapper():
         unique_subdomains = list(set(subdomains))
 
         for subdomain in unique_subdomains:
-            json_response_data["result"]["records"].append(
-                {
-                    "domain": subdomain,
-                    "first_seen": "0",
-                    "last_seen": "0"
-                }
-            )
+            if(subdomain not in old_subdomains):
+                json_response_data["result"]["records"].append(
+                    {
+                        "domain": subdomain,
+                        "first_seen": "0",
+                        "last_seen": "0"
+                    }
+                )
 
 
     def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
@@ -281,6 +282,9 @@ class ApiWrapper():
 
         records = xml_response_data.getElementsByTagName("records")[0]
         for subdomain in unique_subdomains:
+            if(subdomain in old_subdomains):
+                continue
+
             new_record = xml_response_data.createElement("record")
 
             new_subdomain = xml_response_data.createElement("domain")
@@ -299,7 +303,7 @@ class ApiWrapper():
             new_record.appendChild(new_subdomain)
             new_record.appendChild(first_seen)
             new_record.appendChild(last_seen)
-
+            
             records.appendChild(new_record)
             
 
@@ -315,18 +319,19 @@ class ApiWrapper():
         subdomains.extend(new_subdomains)
 
         unique_subdomains = list(set(subdomains))
-        
+
         new_records = {
             "records": []
         }
 
         for subdomain in unique_subdomains:
-            new_record = {
-                "domain": subdomain,
-                "first_seen": None,
-                "last_seen": None
-            }
+            if subdomain not in old_subdomains:
+                new_record = {
+                    "domain": subdomain,
+                    "first_seen": None,
+                    "last_seen": None
+                }
 
-            new_records["records"].append(new_record)
+                new_records["records"].append(new_record)
 
         raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
