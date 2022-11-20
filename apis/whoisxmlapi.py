@@ -1,3 +1,4 @@
+from apis.Base import Base
 from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Response as ApiResponse
 from requests import request, Session, Response
@@ -37,16 +38,13 @@ class PuffHelper():
         return response
 
 
-class PuffApiRequester(Thread, ApiRequester, PuffHelper):
+class PuffApiRequester(Thread, Base, ApiRequester, PuffHelper):
 
-    _domainName = None
-    _outputFormat = None
-    __payload = None
-    __response = None
-    __results = None
+    _payload = None
 
     def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
         Thread.__init__(self)
+        Base.__init__(self)
         ApiRequester.__init__(self)
         PuffHelper.__init__(self)
 
@@ -57,7 +55,7 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
 
             self._outputFormat = JSON_FORMAT
 
-        self.__payload = self.__buildPayload()
+        self._payload = self.__buildPayload()
 
 
     def post(self) -> str:
@@ -72,13 +70,13 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
 
     def __post(self) -> str:
         
-        self.__response = self.__getResponse()
+        self._response = self.__getResponse()
 
-        soup = BeautifulSoup(self.__response.text, "lxml")
+        soup = BeautifulSoup(self._response.text, "lxml")
 
         csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
 
-        cookies = self.__response.cookies.get_dict()
+        cookies = self._response.cookies.get_dict()
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
@@ -104,7 +102,7 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
-            json=self.__payload,
+            json=self._payload,
             headers=headers,
             timeout=(10, self.timeout)
         )
@@ -135,23 +133,19 @@ class PuffApiRequester(Thread, ApiRequester, PuffHelper):
         return payload
 
     def run(self):
-        self.__results = self.post()
+        self._results = self.post()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results
 
 
-class PuffClient(Thread, Client, PuffHelper):
-
-    __client = None
-    _domainName = None
-    _outputFormat = None
-    __results = None
+class PuffClient(Thread, Base, Client, PuffHelper):
     
     def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
-        self.__client = Client.__init__(self, api_key)
+        Base.__init__(self)
+        Client.__init__(self, api_key)
 
         self._domainName = domainName
         self._outputFormat = outputFormat
@@ -169,15 +163,15 @@ class PuffClient(Thread, Client, PuffHelper):
     def __get_raw(self):
         if(self._outputFormat == XML_FORMAT):
 
-            return self.__client.get_raw(self, self._domainName, XML_FORMAT)
+            return Client.get_raw(self, self._domainName, XML_FORMAT)
 
         elif(self._outputFormat == JSON_FORMAT or self._outputFormat == RAW_FORMAT):
             
-            return self.__client.get_raw(self, self._domainName, JSON_FORMAT)
+            return Client.get_raw(self, self._domainName, JSON_FORMAT)
 
     def run(self):
-        self.__results = self.get_raw()
+        self._results = self.get_raw()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results

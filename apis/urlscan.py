@@ -1,16 +1,14 @@
+from apis.Base import Base
 import requests
 from json import loads
 from threading import Thread
 
-class UrlscanApiRequester(Thread):
-
-    __domainName = None 
-    __results = None
+class UrlscanApiRequester(Thread, Base):
 
     def __init__(self, domainName: str = None):
         Thread.__init__(self)
 
-        self.__domainName = domainName
+        self._domainName = domainName
 
     def getSubdomains(self) -> list:
         
@@ -24,7 +22,7 @@ class UrlscanApiRequester(Thread):
 
     def __getSubdomains(self) -> list:
 
-        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self.__domainName)
+        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self._domainName)
 
         response = requests.get(url)
 
@@ -42,7 +40,7 @@ class UrlscanApiRequester(Thread):
                     try:
                         domain = record["task"]["domain"]
                         
-                        if(domain.endswith(self.__domainName)):
+                        if(domain.endswith(self._domainName)):
                             subdomains.append(domain)
                     except:
                         pass
@@ -51,7 +49,7 @@ class UrlscanApiRequester(Thread):
                     try:
                         apexDomain = record["task"]["apexDomain"]
 
-                        if(apexDomain.endswith(self.__domainName)):   
+                        if(apexDomain.endswith(self._domainName)):   
                             subdomains.append(apexDomain)
                     except:
                         pass
@@ -64,8 +62,8 @@ class UrlscanApiRequester(Thread):
         return unique_subdomains
 
     def run(self):
-        self.__results = self.getSubdomains()
+        self._results = self.getSubdomains()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results
