@@ -1,5 +1,5 @@
 
-# Puff
+# puff
 
 Yet another passive subdomain enumeration tool written in Python from scratch.
 
@@ -184,9 +184,9 @@ sys     0m0.079s
 ```
 ## FAQ
 
-#### What does Puff do?
+#### What does puff do?
 
-Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
+puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
 [crt.sh](https://crt.sh/), [urlscan.io](https://urlscan.io), 
 [otx.alienvault.com](https://otx.alienvault.com/api), 
 [jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/), [hackertarget.com](https://hackertarget.com/) 
