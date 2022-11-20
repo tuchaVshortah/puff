@@ -93,6 +93,7 @@ class ApiWrapper():
             beautified_response_data = "\n".join(subdomains)
 
         self.__status("Done!")
+        self.__status("{} subdomains were found!".format(response_data.result.count))
 
         return beautified_response_data
 
