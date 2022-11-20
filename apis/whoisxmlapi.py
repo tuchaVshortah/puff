@@ -1,35 +1,86 @@
+from apis.Base import Base
 from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Response as ApiResponse
-from requests import request, Session
+from requests import request, Session, Response
 from bs4 import BeautifulSoup
 from threading import Thread
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
-class PuffApiRequester(Thread, ApiRequester):
 
-    __payload = None
-    __response = None
-    __results = None
+class PuffHelper():
 
-    def __init__(self, domainName:str, outputFormat:str):
+    def _buildDefaultResponse(self) -> str:
+        response = None
+
+
+        if(self._outputFormat == XML_FORMAT):
+            response = f'''\
+<?xml version="1.0" ?>
+<xml>
+    <search>{self._domainName}</search>
+    <result>
+        <count>10000</count>
+        <records>
+        </records>
+    </result>
+</xml>'''
+    
+        elif(self._outputFormat == JSON_FORMAT):
+            response = f'''\
+{{
+    "search": "{self._domainName}",
+    "result": {{
+        "count": 0,
+        "records": []
+    }}
+}}'''
+
+        return response
+
+
+class PuffApiRequester(Thread, Base, ApiRequester, PuffHelper):
+
+    _payload = None
+
+    def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
         Thread.__init__(self)
+        Base.__init__(self)
         ApiRequester.__init__(self)
+        PuffHelper.__init__(self)
 
-        self.__payload = self.__buildPayload(domainName, outputFormat)
-        self.__response = self.__getResponse()
+        self._domainName = domainName
+        self._outputFormat = outputFormat
+
+        if(self._outputFormat == RAW_FORMAT):
+
+            self._outputFormat = JSON_FORMAT
+
+        self._payload = self.__buildPayload()
 
 
     def post(self) -> str:
+        try:
 
-        soup = BeautifulSoup(self.__response.text, "lxml")
+            return self.__post()
+
+        except:
+            
+            return PuffHelper._buildDefaultResponse(self)
+
+
+    def __post(self) -> str:
+        
+        self._response = self.__getResponse()
+
+        soup = BeautifulSoup(self._response.text, "lxml")
 
         csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
 
-        cookies = self.__response.cookies.get_dict()
+        cookies = self._response.cookies.get_dict()
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
-            "Cookie": "XSRF-TOKEN=" + cookies["XSRF-TOKEN"] + "; " + \
-                    "emailverification_session=" + cookies["emailverification_session"],
+            "Cookie": f'XSRF-TOKEN={cookies["XSRF-TOKEN"]}; emailverification_session={cookies["emailverification_session"]}',
             "Sec-Ch-Ua": '"Chromium";v="105", "Not)A;Brand";v="8"',
             "X-Csrf-Token": csrf_token,
             "Sec-Ch-Ua-Mobile": "?0",
@@ -48,11 +99,10 @@ class PuffApiRequester(Thread, ApiRequester):
             "Accept-Language": "en-US,en;q=0.9"
         }
 
-
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
-            json=self.__payload,
+            json=self._payload,
             headers=headers,
             timeout=(10, self.timeout)
         )
@@ -60,7 +110,7 @@ class PuffApiRequester(Thread, ApiRequester):
         return ApiRequester._handle_response(response)
 
 
-    def __getResponse(self) -> ApiResponse:
+    def __getResponse(self) -> Response:
         session = Session()
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
@@ -70,50 +120,58 @@ class PuffApiRequester(Thread, ApiRequester):
         
         return response
 
-    def __buildPayload(self, domainName, outputFormat="json") -> dict:
+    def __buildPayload(self) -> dict:
+
         payload = {
-            "domainName": domainName,
+            "domainName": self._domainName,
             "g-recaptcha-response": None,
-            "search": domainName,
+            "search": self._domainName,
             "web-lookup-search": True,
-            "outputFormat": outputFormat
+            "outputFormat": self._outputFormat
         }
 
         return payload
 
     def run(self):
-        self.__results = self.post()
+        self._results = self.post()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results
 
-class PuffClient(Thread, Client):
 
-    __client = None
-    __domain = None
-    __outputFormat = None
-    __results = None
+class PuffClient(Thread, Base, Client, PuffHelper):
     
-    def __init__(self, api_key: str, domain: str, outputFormat: str or None = None):
+    def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
-        self.__client = Client.__init__(self, api_key)
+        Base.__init__(self)
+        Client.__init__(self, api_key)
 
-        self.__domain = domain
-        self.__outputFormat = outputFormat
+        self._domainName = domainName
+        self._outputFormat = outputFormat
 
     def get_raw(self):
-        if(self.__outputFormat == XML_FORMAT):
+        
+        try:
 
-            return self.__client.get_raw(self, self.__domain, XML_FORMAT)
+            return self.__get_raw()
 
-        elif(self.__outputFormat == JSON_FORMAT or self.__outputFormat == RAW_FORMAT):
+        except:
             
-            return self.__client.get_raw(self, self.__domain, JSON_FORMAT)
+            return PuffHelper._buildDefaultResponse(self)
+
+    def __get_raw(self):
+        if(self._outputFormat == XML_FORMAT):
+
+            return Client.get_raw(self, self._domainName, XML_FORMAT)
+
+        elif(self._outputFormat == JSON_FORMAT or self._outputFormat == RAW_FORMAT):
+            
+            return Client.get_raw(self, self._domainName, JSON_FORMAT)
 
     def run(self):
-        self.__results = self.get_raw()
+        self._results = self.get_raw()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results

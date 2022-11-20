@@ -160,9 +160,11 @@ python puff.py -d google.com -x
 
 - Configurability
 
-- Add functionality to log events happening while Puff is running
+- ~Add functionality to log events happening while Puff is running~ *Done!*
 
 - ~Convenient usage in scripts~ *Done!*
+
+- Add functionality to check wheter the retrieved subdomains' urls are valid or not
 
 
 ## FAQ

@@ -1,20 +1,28 @@
+from apis.Base import Base
 import requests
 from json import loads
 from threading import Thread
 
-class UrlscanApiRequester(Thread):
+class UrlscanApiRequester(Thread, Base):
 
-    __domain = None 
-    __results = None
-
-    def __init__(self, domain:str = None):
+    def __init__(self, domainName: str = None):
         Thread.__init__(self)
 
-        self.__domain = domain
+        self._domainName = domainName
 
     def getSubdomains(self) -> list:
+        
+        try:
+            
+            return self.__getSubdomains()
 
-        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self.__domain)
+        except:
+            
+            return []
+
+    def __getSubdomains(self) -> list:
+
+        url = "https://urlscan.io/api/v1/search/?q=domain:{}".format(self._domainName)
 
         response = requests.get(url)
 
@@ -32,7 +40,7 @@ class UrlscanApiRequester(Thread):
                     try:
                         domain = record["task"]["domain"]
                         
-                        if(domain.endswith(self.__domain)):
+                        if(domain.endswith(self._domainName)):
                             subdomains.append(domain)
                     except:
                         pass
@@ -41,21 +49,21 @@ class UrlscanApiRequester(Thread):
                     try:
                         apexDomain = record["task"]["apexDomain"]
 
-                        if(apexDomain.endswith(self.__domain)):   
+                        if(apexDomain.endswith(self._domainName)):   
                             subdomains.append(apexDomain)
                     except:
                         pass
 
-            except Exception as e:
-                print(e)
+            except:
+                pass
 
         unique_subdomains = list(set(subdomains))
 
         return unique_subdomains
 
     def run(self):
-        self.__results = self.getSubdomains()
+        self._results = self.getSubdomains()
 
     def join(self):
         Thread.join(self)
-        return self.__results
+        return self._results

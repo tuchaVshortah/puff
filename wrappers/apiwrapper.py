@@ -24,16 +24,19 @@ class ApiWrapper():
     __hackertarget_api_requester = None
     __outputFormat = None
     __boost = None
+    __verbose = None
     __results = None
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, whoisxmlapi_key:str or None = None,):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT, boost: bool = False, verbose: bool = False, whoisxmlapi_key: str or None = None):
+
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
+        self.__verbose = verbose
 
         if(whoisxmlapi_key is not None):
 
-            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target)
+            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target, self.__outputFormat)
 
         elif(whoisxmlapi_key is None):
             
@@ -45,25 +48,32 @@ class ApiWrapper():
         self.__anubis_api_requester = AnubisApiRequester(self.__target)
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
 
-        
     
     def run(self):
+
+        self.__status("Running tasks...")
+
         if(self.__boost):
             self.__results = self.__fastTasks()
 
         else:
             self.__results = self.__slowTasks()
         
+        self.__status("Done!")
+
         try:
         
             return self.__beautify(self.__results)
         
-        except Exception as e:
+        except:
 
-            print("Could not return a beautified API response\n", e)
+            self.__status("Could not return beautified output...")
+            self.__status("Exiting...")
             exit()
 
     def __beautify(self, response_data: dict or Document or ApiResponse):
+
+        self.__status("Trying to beautify data...")
 
         beautified_response_data = None
         if(self.__outputFormat == XML_FORMAT):
@@ -82,7 +92,14 @@ class ApiWrapper():
 
             beautified_response_data = "\n".join(subdomains)
 
+        self.__status("Done!")
+        self.__status("{} subdomains were found!".format(response_data.result.count))
+
         return beautified_response_data
+
+    def __status(self, message: str):
+        if(self.__verbose == True):
+            print("//=> {}".format(message))
             
     def __slowTasks(self):
 
@@ -125,7 +142,6 @@ class ApiWrapper():
 
             self.__puff_api_requester.start()
             
-        
             puff_response = self.__puff_api_requester.join()
             
         elif(self.__puff_client is not None):
@@ -133,6 +149,7 @@ class ApiWrapper():
             self.__puff_client.start()
 
             puff_response = self.__puff_client.join()
+
 
         crtsh_subdomains = self.__crtsh_api_requester.join()
         urlscan_subdomains = self.__urlscan_api_requester.join()
@@ -154,17 +171,19 @@ class ApiWrapper():
 
             response_data = self.__loadResponse(response)
         
-        except Exception as e:
+        except:
 
-            print("Could not parse the API response\n", e)
+            self.__status("Could not parse API response...")
+            self.__status("Exiting...")
             exit()
 
         try:
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except Exception as e:
-            print("Could not add new records to the API response\n", e)
+        except:
+            self.__status("Could not update subdomain records...")
+            self.__status("Exiting...")
             exit()
         
         return response_data
@@ -176,8 +195,9 @@ class ApiWrapper():
 
             self.__updateResponseData(response_data, new_subdomains)
 
-        except Exception as e:
-            print("Could not add new records to the API response\n", e)
+        except:
+            self.__status("Could not update subdomain records...")
+            self.__status("Exiting...")
             exit()
 
 
@@ -238,13 +258,15 @@ class ApiWrapper():
         unique_subdomains = list(set(subdomains))
 
         for subdomain in unique_subdomains:
-            json_response_data["result"]["records"].append(
-                {
-                    "domain": subdomain,
-                    "first_seen": "0",
-                    "last_seen": "0"
-                }
-            )
+            if(subdomain not in old_subdomains):
+                json_response_data["result"]["records"].append(
+                    {
+                        "domain": subdomain,
+                        "first_seen": "0",
+                        "last_seen": "0"
+                    }
+                )
+                json_response_data["result"]["count"] += 1
 
 
     def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
@@ -253,8 +275,6 @@ class ApiWrapper():
         old_subdomains_xml = xml_response_data.getElementsByTagName("domain")
         for subdomain in old_subdomains_xml:
             old_subdomains.append(subdomain.firstChild.nodeValue)      
-        
-        print("Printing an element from parsed old_subdomains_xml: " + old_subdomains[0])
 
         subdomains = []
         subdomains.extend(old_subdomains)
@@ -263,7 +283,11 @@ class ApiWrapper():
         unique_subdomains = list(set(subdomains))
 
         records = xml_response_data.getElementsByTagName("records")[0]
+        count = xml_response_data.getElementsByTagName("count")[0]
         for subdomain in unique_subdomains:
+            if(subdomain in old_subdomains):
+                continue
+
             new_record = xml_response_data.createElement("record")
 
             new_subdomain = xml_response_data.createElement("domain")
@@ -282,8 +306,10 @@ class ApiWrapper():
             new_record.appendChild(new_subdomain)
             new_record.appendChild(first_seen)
             new_record.appendChild(last_seen)
-
+            
             records.appendChild(new_record)
+            
+            count.lastChild.data = str(int(count.lastChild.data) + 1)
             
 
     def __updateRawResponseData(self, raw_response_data: ApiResponse, new_subdomains: list):
@@ -298,18 +324,21 @@ class ApiWrapper():
         subdomains.extend(new_subdomains)
 
         unique_subdomains = list(set(subdomains))
-        
+
         new_records = {
             "records": []
         }
 
         for subdomain in unique_subdomains:
-            new_record = {
-                "domain": subdomain,
-                "first_seen": None,
-                "last_seen": None
-            }
+            if subdomain not in old_subdomains:
+                new_record = {
+                    "domain": subdomain,
+                    "first_seen": None,
+                    "last_seen": None
+                }
 
-            new_records["records"].append(new_record)
+                new_records["records"].append(new_record)
+
+                raw_response_data.result.count += 1
 
         raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
