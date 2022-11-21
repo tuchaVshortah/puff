@@ -115,7 +115,8 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
 
             response = self.__post()
             response_data = self._loadResponse(response)
-            self._checkRecords(self._getRecords(response_data))
+            records = self._getRecords(response_data)
+            self._checkRecords(records)
 
             if(self._outputFormat == RAW_FORMAT):
                 response_data = ApiResponse(response_data)
