@@ -43,8 +43,12 @@ class AlienVaultApiRequester(Thread, Base):
 
                 for record in records:
                     try:
+
                         subdomain = record["hostname"]
-                        subdomains.append(subdomain)
+                        
+                        if(self._checkSubdomain(subdomain)):
+                            subdomains.append(subdomain)
+
                     except:
                         pass
 

@@ -1,8 +1,20 @@
-
-# Puff
+# puff
 
 Yet another passive subdomain enumeration tool written in Python from scratch.
 
+
+# Table of Contents
+
+1. [Badges](#badges)
+2. [Features](#features)
+3. [Subdomain sources](#subdomain-sources)
+4. [Requirements](#requirements)
+5. [Run Locally](#run-locally)
+6. [Usage examples](#usage-examples)
+7. [Demos](#demos)
+8. [FAQ](#faq)
+9. [Roadmap](#roadmap)
+10. [Authors](#authors)
 
 
 ## Badges
@@ -22,10 +34,13 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 
  - [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/)
  - [crt.sh](https://crt.sh/)
- - [urlscan.io](https://urlscan.io)
- - [otx.alienvault.com](https://otx.alienvault.com/api)
+ - [urlscan.io](https://urlscan.io/)
+ - [otx.alienvault.com](https://otx.alienvault.com/api/)
  - [jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/)
  - [hackertarget.com](https://hackertarget.com/)
+ - [dnsrepo.noc.org](https://dnsrepo.noc.org/)
+
+
 ## Requirements
 
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
@@ -59,8 +74,7 @@ Start puff
 python puff.py -d <domain> --boost
 ```
 
-
-## Usage/Examples
+## Usage examples
 
 Parse in multithreading mode and list all subdomains of the specified domain:
 
@@ -136,46 +150,63 @@ python puff.py -d google.com -x
         </records>
 	</result>
 </xml>
-
 ```
-## Roadmap
 
-- Add an option to check for alive domains
 
-- ~Multithreading~ *Done!*
+## Demos
 
-- Beautiful README
+Number of found subdomains for [google.com](https://google.com/):
 
-- Beautiful code
+```bash
+python puff.py -d google.com -b | wc -l
+15527
+```
 
-- ~Divide the code base into several files/modules~ *Done!*
+Multithreaded execution time:
 
-- Beautiful --help page 
+```bash
+time python puff.py -d google.com -b
+<subdomain>.google.com
+<subdomain>.google.com
+<subdomain>.google.com
+...
 
-- Comprehensive documentation
+real    0m12.750s
+user    0m4.570s
+sys     0m0.060s
+```
 
-- Add functionality to parse another resources *In progress*
+Number of found subdomains for [yahoo.com](https://yahoo.com/):
 
-- ~Create requirements.txt~ *Done!*
+```bash
+python puff.py -d yahoo.com -b | wc -l
+19942
+```
 
-- Configurability
+Multithreaded execution time:
 
-- ~Add functionality to log events happening while Puff is running~ *Done!*
+```bash
+time python puff.py -d yahoo.com -b
+<subdomain>.yahoo.com
+<subdomain>.yahoo.com
+<subdomain>.yahoo.com
+...
 
-- ~Convenient usage in scripts~ *Done!*
-
-- Add functionality to check wheter the retrieved subdomains' urls are valid or not
+real    0m17.784s
+user    0m6.303s
+sys     0m0.095s
+```
 
 
 ## FAQ
 
-#### What does Puff do?
+#### What does puff do?
 
-Puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
+puff parses [subdomains.whoisxmlapi.com](https://subdomains.whoisxmlapi.com/api/),
 [crt.sh](https://crt.sh/), [urlscan.io](https://urlscan.io), 
 [otx.alienvault.com](https://otx.alienvault.com/api), 
-[jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/) and [hackertarget.com](https://hackertarget.com/)
-to get information about subdomains of the target domain.
+[jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/), [hackertarget.com](https://hackertarget.com/) 
+and [dnsrepo.noc.org](https://dnsrepo.noc.org/) to get information about subdomains of the target domain.
 
 #### How many output formats are supported?
 
@@ -189,7 +220,35 @@ It will run in multiple threads if the -b or --boost flag is set,
 so the internet connection speed may be the bottleneck.
 
 
+## Roadmap
+
+- Add an option to check for alive domains
+
+- [x] Multithreading
+
+- Beautiful README
+
+- Beautiful code
+
+- [x] Divide the code base into several files/modules
+
+- Beautiful --help page 
+
+- Comprehensive documentation
+
+- [x] Add functionality to parse another resources
+
+- [x] Create requirements.txt
+
+- Configurability
+
+- [x] Add functionality to log events happening while Puff is running
+
+- [x] Convenient usage in scripts
+
+- [x] Add functionality to check whether the retrieved subdomains' are valid or not
+
+
 ## Authors
 
 - [@tuchaVshortah](https://github.com/tuchaVshortah)
-

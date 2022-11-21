@@ -42,7 +42,8 @@ class HackerTargetApiRequester(Thread, Base):
                 for record in records:
                     subdomain = record.split(",")[0]
 
-                    subdomains.append(subdomain)
+                    if(self._checkSubdomain(subdomain)):
+                        subdomains.append(subdomain)
 
             except:
                 pass

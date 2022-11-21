@@ -40,7 +40,7 @@ class UrlscanApiRequester(Thread, Base):
                     try:
                         domain = record["task"]["domain"]
                         
-                        if(domain.endswith(self._domainName)):
+                        if(self._checkSubdomain(domain)):
                             subdomains.append(domain)
                     except:
                         pass
@@ -49,7 +49,7 @@ class UrlscanApiRequester(Thread, Base):
                     try:
                         apexDomain = record["task"]["apexDomain"]
 
-                        if(apexDomain.endswith(self._domainName)):   
+                        if(self._checkSubdomain(apexDomain)):   
                             subdomains.append(apexDomain)
                     except:
                         pass

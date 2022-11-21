@@ -4,6 +4,7 @@ from apis.urlscan import UrlscanApiRequester
 from apis.alienvault import AlienVaultApiRequester
 from apis.anubis import AnubisApiRequester
 from apis.hackertarget import HackerTargetApiRequester
+from apis.dnsrepo import DnsRepoApiRequester
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from threading import Thread
 from json import loads, dumps
@@ -22,7 +23,9 @@ class ApiWrapper():
     __alienvault_api_requester = None
     __anubis_api_requester = None
     __hackertarget_api_requester = None
+    __dnsrepo_api_requester = None
     __outputFormat = None
+    __count = 0
     __boost = None
     __verbose = None
     __results = None
@@ -47,6 +50,7 @@ class ApiWrapper():
         self.__alienvault_api_requester = AlienVaultApiRequester(self.__target)
         self.__anubis_api_requester = AnubisApiRequester(self.__target)
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
+        self.__dnsrepo_api_requester = DnsRepoApiRequester(self.__target)
 
     
     def run(self):
@@ -60,7 +64,7 @@ class ApiWrapper():
             self.__results = self.__slowTasks()
         
         self.__status("Done!")
-
+        self.__status("{} subdomains were found!".format(self.__count))
         try:
         
             return self.__beautify(self.__results)
@@ -93,7 +97,6 @@ class ApiWrapper():
             beautified_response_data = "\n".join(subdomains)
 
         self.__status("Done!")
-        self.__status("{} subdomains were found!".format(response_data.result.count))
 
         return beautified_response_data
 
@@ -103,29 +106,32 @@ class ApiWrapper():
             
     def __slowTasks(self):
 
-        puff_response = None
+        data_object = None
 
         if(self.__puff_client is None):
 
-            puff_response = self.__puff_api_requester.post()
+            data_object = self.__puff_api_requester.post()
         
         elif(self.__puff_client is not None):
 
-            puff_response = self.__puff_client.get_raw()
+            data_object = self.__puff_client.get_raw()
 
         crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
         urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
         alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
         anubis_subdomains = self.__anubis_api_requester.getSubdomains()
         hackertarget_subdomains = self.__hackertarget_api_requester.getSubdomains()
+        dnsrepo_subdomains = self.__dnsrepo_api_requester.getSubdomains()
 
-        data = self.__updateResponse(puff_response, crtsh_subdomains)
-        self.__updateDataObject(data, urlscan_subdomains)
-        self.__updateDataObject(data, alienvault_subdomains)
-        self.__updateDataObject(data, anubis_subdomains)
-        self.__updateDataObject(data, hackertarget_subdomains)
 
-        return data
+        self.__updateDataObject(data_object, crtsh_subdomains)
+        self.__updateDataObject(data_object, urlscan_subdomains)
+        self.__updateDataObject(data_object, alienvault_subdomains)
+        self.__updateDataObject(data_object, anubis_subdomains)
+        self.__updateDataObject(data_object, hackertarget_subdomains)
+        self.__updateDataObject(data_object, dnsrepo_subdomains)
+
+        return data_object
 
         
     def __fastTasks(self):
@@ -135,20 +141,21 @@ class ApiWrapper():
         self.__alienvault_api_requester.start()
         self.__anubis_api_requester.start()
         self.__hackertarget_api_requester.start()
+        self.__dnsrepo_api_requester.start()
 
-        puff_response = None
+        data_object = None
 
         if(self.__puff_client is None):
 
             self.__puff_api_requester.start()
             
-            puff_response = self.__puff_api_requester.join()
+            data_object = self.__puff_api_requester.join()
             
         elif(self.__puff_client is not None):
 
             self.__puff_client.start()
 
-            puff_response = self.__puff_client.join()
+            data_object = self.__puff_client.join()
 
 
         crtsh_subdomains = self.__crtsh_api_requester.join()
@@ -156,37 +163,17 @@ class ApiWrapper():
         alienvault_subdomains = self.__alienvault_api_requester.join()
         anubis_subdomains = self.__anubis_api_requester.join()
         hackertarget_subdomains = self.__hackertarget_api_requester.join()
+        dnsrepo_subdomains = self.__dnsrepo_api_requester.join()
 
-        data = self.__updateResponse(puff_response, crtsh_subdomains)
-        self.__updateDataObject(data, urlscan_subdomains)
-        self.__updateDataObject(data, alienvault_subdomains)
-        self.__updateDataObject(data, anubis_subdomains)
-        self.__updateDataObject(data, hackertarget_subdomains)
 
-        return data
+        self.__updateDataObject(data_object, crtsh_subdomains)
+        self.__updateDataObject(data_object, urlscan_subdomains)
+        self.__updateDataObject(data_object, alienvault_subdomains)
+        self.__updateDataObject(data_object, anubis_subdomains)
+        self.__updateDataObject(data_object, hackertarget_subdomains)
+        self.__updateDataObject(data_object, dnsrepo_subdomains)
 
-    def __updateResponse(self, response: str, new_subdomains) -> dict or Document or ApiResponse:
-        
-        try:
-
-            response_data = self.__loadResponse(response)
-        
-        except:
-
-            self.__status("Could not parse API response...")
-            self.__status("Exiting...")
-            exit()
-
-        try:
-
-            self.__updateResponseData(response_data, new_subdomains)
-
-        except:
-            self.__status("Could not update subdomain records...")
-            self.__status("Exiting...")
-            exit()
-        
-        return response_data
+        return data_object
 
 
     def __updateDataObject(self, response_data: dict or Document or ApiResponse, new_subdomains):
@@ -200,36 +187,6 @@ class ApiWrapper():
             self.__status("Exiting...")
             exit()
 
-
-    def __loadResponse(self, response):
-
-        response_data = None
-        if(self.__outputFormat == XML_FORMAT):
-            response_data = self.__loadXmlResponse(response)
-        
-        elif(self.__outputFormat == JSON_FORMAT):
-            response_data = self.__loadJsonResponse(response)
-        
-        elif(self.__outputFormat == RAW_FORMAT):
-            response_data = self.__loadRawResponse(response)
-
-        return response_data
-
-    def __loadXmlResponse(self, response: str) -> Document:
-        response_data = xml.dom.minidom.parseString(response)
-
-        return response_data
-
-    def __loadJsonResponse(self, response: str) -> dict:
-        response_data = loads(response)
-
-        return response_data
-
-    def __loadRawResponse(self, response: str) -> ApiResponse:
-        response_data = self.__loadJsonResponse(response)
-        response = ApiResponse(response_data)
-
-        return response
 
     def __updateResponseData(self, response_data, new_subdomains):
 
@@ -267,6 +224,8 @@ class ApiWrapper():
                     }
                 )
                 json_response_data["result"]["count"] += 1
+        
+        self.__count = json_response_data["result"]["count"]
 
 
     def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
@@ -310,6 +269,8 @@ class ApiWrapper():
             records.appendChild(new_record)
             
             count.lastChild.data = str(int(count.lastChild.data) + 1)
+        
+        self.__count = count.lastChild.data
             
 
     def __updateRawResponseData(self, raw_response_data: ApiResponse, new_subdomains: list):
@@ -342,3 +303,5 @@ class ApiWrapper():
                 raw_response_data.result.count += 1
 
         raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
+
+        self.__count = raw_response_data.result.count
