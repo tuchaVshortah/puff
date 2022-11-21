@@ -143,7 +143,7 @@ def puff():
 
         elif(args.raw == True):
 
-            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose)
+            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
             response = api_wrapper.run()
 
             if(not args.quiet):
