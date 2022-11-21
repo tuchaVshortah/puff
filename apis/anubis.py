@@ -3,7 +3,7 @@ import requests
 from json import loads
 from threading import Thread
 
-class AnubisApiRequester(Thread):
+class AnubisApiRequester(Thread, Base):
 
     def __init__(self, domainName: str = None):
         Thread.__init__(self)
@@ -39,7 +39,9 @@ class AnubisApiRequester(Thread):
 
                 response_data = loads(response)
 
-                subdomains = response_data
+                for subdomain in response_data:
+                    if(self._checkSubdomain(subdomain)):
+                        subdomains.append(subdomain)
 
             except:
                 pass
