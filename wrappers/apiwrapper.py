@@ -25,6 +25,7 @@ class ApiWrapper():
     __hackertarget_api_requester = None
     __dnsrepo_api_requester = None
     __outputFormat = None
+    __count = 0
     __boost = None
     __verbose = None
     __results = None
@@ -223,6 +224,8 @@ class ApiWrapper():
                     }
                 )
                 json_response_data["result"]["count"] += 1
+        
+        self.__count = json_response_data["result"]["count"]
 
 
     def __updateXmlResponseData(self, xml_response_data: Document, new_subdomains: list) -> str:
@@ -266,6 +269,8 @@ class ApiWrapper():
             records.appendChild(new_record)
             
             count.lastChild.data = str(int(count.lastChild.data) + 1)
+        
+        self.__count = count.lastChild.data
             
 
     def __updateRawResponseData(self, raw_response_data: ApiResponse, new_subdomains: list):
@@ -298,3 +303,5 @@ class ApiWrapper():
                 raw_response_data.result.count += 1
 
         raw_response_data.result.records.extend(_list_of_objects(new_records, "records", "Record"))
+
+        self.__count = raw_response_data.result.count
