@@ -106,113 +106,60 @@ def puff():
     if(args.whoisxmlapi_key is not None):
         whoisxmlapi_key = args.whoisxmlapi_key[0]
 
+    api_wrapper = None
+    outputFormat = None
+
     if(whoisxmlapi_key is not None):
 
         if(args.json == True):
+            outputFormat = JSON_FORMAT
 
-            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
-            response = api_wrapper.run()
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
 
-            if(not args.quiet):
-                print(response)
-
-            if(args.file is not None):
-
-                saveResponseToFile(args.file, domain, response)
-
-            elif(args.default_file == True):
-
-                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
-
-
-        elif(args.xml == True):
-
-            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
-            response = api_wrapper.run()
             
-            if(not args.quiet):
-                print(response)
+        elif(args.xml == True):
+            outputFormat = XML_FORMAT
 
-            if(args.file is not None):
-
-                saveResponseToFile(args.file, domain, response)
-
-            elif(args.default_file == True):
-
-                saveResponseToDefaultFile(domain, response, XML_FORMAT)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
+            
 
         elif(args.raw == True):
+            outputFormat = RAW_FORMAT
 
-            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose, whoisxmlapi_key)
-            response = api_wrapper.run()
-
-            if(not args.quiet):
-                print(response)
-            
-            if(args.file is not None):
-
-                saveResponseToFile(args.file, domain, response)
-
-            elif(args.default_file == True):
-
-                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
-
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
 
     
     elif(args.no_api_keys == True):
 
         if(args.json == True):
+            outputFormat = JSON_FORMAT
 
-            api_wrapper = ApiWrapper(domain, JSON_FORMAT, args.boost, args.verbose)
-            response = api_wrapper.run()
-
-            if(not args.quiet):
-
-                print(response)
-
-            if(args.file is not None):
-
-                saveResponseToFile(args.file, domain, response)
-
-            elif(args.default_file == True):
-
-                saveResponseToDefaultFile(domain, response, JSON_FORMAT)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
 
             
         elif(args.xml == True):
+            outputFormat = XML_FORMAT
 
-            api_wrapper = ApiWrapper(domain, XML_FORMAT, args.boost, args.verbose)
-            response = api_wrapper.run()
-
-            if(not args.quiet):
-
-                print(response)
-
-            if(args.file is not None):
-
-                saveResponseToFile(args.file, domain, response)
-
-            elif(args.default_file == True):
-                
-                saveResponseToDefaultFile(domain, response, XML_FORMAT)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
 
 
         elif(args.raw == True):
+            outputFormat = RAW_FORMAT
 
-            api_wrapper = ApiWrapper(domain, RAW_FORMAT, args.boost, args.verbose)
-            response = api_wrapper.run()
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
+            
 
-            if(not args.quiet):
+    response = api_wrapper.run()
 
-                print(response)
+    if(not args.quiet):
+        print(response)
 
-            if(args.file is not None):
+    if(args.file is not None):
 
-                saveResponseToFile(args.file, domain, response)
+        saveResponseToFile(args.file, domain, response)
 
-            elif(args.default_file == True):
-                
-                saveResponseToDefaultFile(domain, response, RAW_FORMAT)
+    elif(args.default_file == True):
 
+        saveResponseToDefaultFile(domain, response, outputFormat)
 
 puff()
