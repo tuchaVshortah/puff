@@ -1,8 +1,20 @@
-
 # puff
 
 Yet another passive subdomain enumeration tool written in Python from scratch.
 
+
+# Table of Contents
+
+1. [Badges](#badges)
+2. [Features](#features)
+3. [Subdomain sources](#subdomain-sources)
+4. [Requirements](#requirements)
+5. [Run Locally](#run-locally)
+6. [Usage examples](#usage-examples)
+7. [Demos](#demos)
+8. [FAQ](#faq)
+9. [Roadmap](#roadmap)
+10. [Authors](#authors)
 
 
 ## Badges
@@ -27,6 +39,8 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
  - [jonlu.ca (Anubis-DB)](https://jonlu.ca/anubis/)
  - [hackertarget.com](https://hackertarget.com/)
  - [dnsrepo.noc.org](https://dnsrepo.noc.org/)
+
+
 ## Requirements
 
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
@@ -60,8 +74,7 @@ Start puff
 python puff.py -d <domain> --boost
 ```
 
-
-## Usage/Examples
+## Usage examples
 
 Parse in multithreading mode and list all subdomains of the specified domain:
 
@@ -137,15 +150,16 @@ python puff.py -d google.com -x
         </records>
 	</result>
 </xml>
-
 ```
-## Demo/Speed test
+
+
+## Demos
 
 Number of found subdomains for [google.com](https://google.com/):
 
 ```bash
 python puff.py -d google.com -b | wc -l
-16124
+15527
 ```
 
 Multithreaded execution time:
@@ -157,16 +171,16 @@ time python puff.py -d google.com -b
 <subdomain>.google.com
 ...
 
-real    0m14.134s
-user    0m4.919s
-sys     0m0.085s
+real    0m12.750s
+user    0m4.570s
+sys     0m0.060s
 ```
 
 Number of found subdomains for [yahoo.com](https://yahoo.com/):
 
 ```bash
 python puff.py -d yahoo.com -b | wc -l
-20986
+19942
 ```
 
 Multithreaded execution time:
@@ -178,10 +192,12 @@ time python puff.py -d yahoo.com -b
 <subdomain>.yahoo.com
 ...
 
-real    0m13.522s
-user    0m7.334s
-sys     0m0.079s
+real    0m17.784s
+user    0m6.303s
+sys     0m0.095s
 ```
+
+
 ## FAQ
 
 #### What does puff do?
@@ -208,32 +224,31 @@ so the internet connection speed may be the bottleneck.
 
 - Add an option to check for alive domains
 
-- ~Multithreading~ *Done!*
+- [x] Multithreading
 
 - Beautiful README
 
 - Beautiful code
 
-- ~Divide the code base into several files/modules~ *Done!*
+- [x] Divide the code base into several files/modules
 
 - Beautiful --help page 
 
 - Comprehensive documentation
 
-- Add functionality to parse another resources *In progress*
+- [x] Add functionality to parse another resources
 
-- ~Create requirements.txt~ *Done!*
+- [x] Create requirements.txt
 
 - Configurability
 
-- ~Add functionality to log events happening while Puff is running~ *Done!*
+- [x] Add functionality to log events happening while Puff is running
 
-- ~Convenient usage in scripts~ *Done!*
+- [x] Convenient usage in scripts
 
-- Add functionality to check wheter the retrieved subdomains' urls are valid or not
+- [x] Add functionality to check whether the retrieved subdomains' are valid or not
 
 
 ## Authors
 
 - [@tuchaVshortah](https://github.com/tuchaVshortah)
-
