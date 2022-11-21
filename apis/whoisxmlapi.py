@@ -15,7 +15,9 @@ class PuffBase(Base):
     def __init__(self):
         Base.__init__(self)
 
-    def _checkRecords(self, records: dict or Document):
+    def _checkRecords(self, response_data: dict or Document):
+
+        records = self._getRecords(response_data)
         if(self._outputFormat == XML_FORMAT):
 
             for record in records.getElementsByTagName("record"):
@@ -115,8 +117,7 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
 
             response = self.__post()
             response_data = self._loadResponse(response)
-            records = self._getRecords(response_data)
-            self._checkRecords(records)
+            self._checkRecords(response_data)
 
             if(self._outputFormat == RAW_FORMAT):
                 response_data = ApiResponse(response_data)
