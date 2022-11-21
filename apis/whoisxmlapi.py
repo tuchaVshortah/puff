@@ -20,21 +20,29 @@ class PuffBase(Base):
         records = self._getRecords(response_data)
         if(self._outputFormat == XML_FORMAT):
 
+            count = response_data.getElementsByTagName("count")[0]
+
             for record in records.getElementsByTagName("record"):
                 
                 subdomain = record.firstChild.lastChild.data
 
                 if(not self._checkSubdomain(subdomain)):
+
                     record.removeChild(record)
+                    count -= 1
 
         else:
+
+            count = response_data["result"]["count"]
 
             for i in range(len(records)):
 
                 subdomain = records[i]["domain"]
 
                 if(not self._checkSubdomain(subdomain)):
+                    
                     records.pop(i)
+                    count -= 1
 
     def _getRecords(self, response_data: dict or Document) -> Document or list:
 
