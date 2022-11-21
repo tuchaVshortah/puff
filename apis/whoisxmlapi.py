@@ -45,7 +45,7 @@ class PuffBase(Base):
 
         return records
 
-    def _loadResponse(self, response: str):
+    def _loadResponse(self, response: str) -> Document or dict:
 
         response_data = None
         if(self._outputFormat == XML_FORMAT):
