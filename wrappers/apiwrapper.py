@@ -64,7 +64,7 @@ class ApiWrapper():
             self.__results = self.__slowTasks()
         
         self.__status("Done!")
-
+        self.__status("{} subdomains were found!".format(self.__count))
         try:
         
             return self.__beautify(self.__results)
