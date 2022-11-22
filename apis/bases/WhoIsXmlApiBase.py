@@ -1,3 +1,4 @@
+from apis.bases.Base import Base
 from json import loads, dumps
 import xml.dom.minidom
 from xml.dom.minidom import Document
