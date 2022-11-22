@@ -235,14 +235,23 @@ class PuffClient(Thread, Client, PuffBase):
         self._outputFormat = outputFormat
 
     def get_raw(self):
-        
+
         try:
 
-            return self.__get_raw()
+            response = self.__get_raw()
+            response_data = self._loadResponse(response)
+            self._checkRecords(response_data)
 
+            if(self._outputFormat == RAW_FORMAT):
+                response_data = ApiResponse(response_data)
+            
         except:
             
-            return PuffBase._buildDefaultResponse(self)
+            default_response = PuffBase._buildDefaultResponse(self)
+            response_data = default_response
+
+        return response_data
+        
 
     def __get_raw(self):
         if(self._outputFormat == XML_FORMAT):
