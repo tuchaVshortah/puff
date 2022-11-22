@@ -51,7 +51,7 @@ class CrtshApiRequester(Thread, Base):
                     for data in parsed:
                         subdomain = data.replace("*.", "", 1)
                         
-                        if(self._checkSubdomain(subdomain)):
+                        if(Base._checkSubdomain(self, subdomain)):
                             subdomains.append(subdomain)
 
             except:

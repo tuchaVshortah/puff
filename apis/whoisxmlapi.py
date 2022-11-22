@@ -26,7 +26,7 @@ class PuffBase(Base):
                 
                 subdomain = record.firstChild.lastChild.data
 
-                if(not self._checkSubdomain(subdomain)):
+                if(not Base._checkSubdomain(self, subdomain)):
 
                     record.removeChild(record)
                     count -= 1
@@ -39,7 +39,7 @@ class PuffBase(Base):
 
                 subdomain = records[i]["domain"]
 
-                if(not self._checkSubdomain(subdomain)):
+                if(not Base._checkSubdomain(self, subdomain)):
                     
                     records.pop(i)
                     count -= 1
@@ -59,19 +59,19 @@ class PuffBase(Base):
 
         response_data = None
         if(self._outputFormat == XML_FORMAT):
-            response_data = self._loadXmlResponse(response)
+            response_data = self.__loadXmlResponse(response)
         
         else:
-            response_data = self._loadJsonResponse(response)
+            response_data = self.__loadJsonResponse(response)
 
         return response_data
 
-    def _loadXmlResponse(self, response: str) -> Document:
+    def __loadXmlResponse(self, response: str) -> Document:
         response_data = xml.dom.minidom.parseString(response)
 
         return response_data
 
-    def _loadJsonResponse(self, response: str) -> dict:
+    def __loadJsonResponse(self, response: str) -> dict:
         response_data = loads(response)
 
         return response_data
@@ -124,8 +124,8 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
         try:
 
             response = self.__post()
-            response_data = self._loadResponse(response)
-            self._checkRecords(response_data)
+            response_data = PuffBase._loadResponse(self, response)
+            PuffBase._checkRecords(self, response_data)
 
             if(self._outputFormat == RAW_FORMAT):
                 response_data = ApiResponse(response_data)
@@ -193,26 +193,20 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
 
 
     def __buildPayload(self) -> dict:
+        payload = {
+            "domainName": self._domainName,
+            "g-recaptcha-response": None,
+            "search": self._domainName,
+            "web-lookup-search": True
+        }
 
         if(self._outputFormat == XML_FORMAT):
 
-            payload = {
-                "domainName": self._domainName,
-                "g-recaptcha-response": None,
-                "search": self._domainName,
-                "web-lookup-search": True,
-                "outputFormat": XML_FORMAT
-            }
+                payload["outputFormat"] = XML_FORMAT
 
         else:
 
-            payload = {
-                "domainName": self._domainName,
-                "g-recaptcha-response": None,
-                "search": self._domainName,
-                "web-lookup-search": True,
-                "outputFormat": JSON_FORMAT
-            }
+            payload["outputFormat"] = JSON_FORMAT
 
         return payload
 
@@ -234,15 +228,24 @@ class PuffClient(Thread, Client, PuffBase):
         self._domainName = domainName
         self._outputFormat = outputFormat
 
-    def get_raw(self):
-        
+    def get_raw(self) -> dict or Document or ApiResponse:
+
         try:
 
-            return self.__get_raw()
+            response = self.__get_raw()
+            response_data = PuffBase._loadResponse(self, response)
+            PuffBase._checkRecords(self, response_data)
 
+            if(self._outputFormat == RAW_FORMAT):
+                response_data = ApiResponse(response_data)
+            
         except:
             
-            return PuffBase._buildDefaultResponse(self)
+            default_response = PuffBase._buildDefaultResponse(self)
+            response_data = default_response
+
+        return response_data
+        
 
     def __get_raw(self):
         if(self._outputFormat == XML_FORMAT):

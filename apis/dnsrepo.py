@@ -48,7 +48,7 @@ class DnsRepoApiRequester(Thread, Base):
                             link = row_element.find("a")
                             if(link):
                                 subdomain = link.string.rstrip(".")
-                                if(self._checkSubdomain(subdomain)):
+                                if(Base._checkSubdomain(self, subdomain)):
                                     subdomains.append(subdomain)
 
             except:
