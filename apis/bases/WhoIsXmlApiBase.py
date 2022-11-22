@@ -6,8 +6,8 @@ from xml.dom.minidom import Document
 
 class WhoIsXmlApiBase(Base):
 
-    def __init__(self):
-        Base.__init__(self)
+    def __init__(self, domainName: str, outputFormat: str):
+        Base.__init__(self, domainName, outputFormat)
 
     def _checkRecords(self, response_data: dict or Document):
 

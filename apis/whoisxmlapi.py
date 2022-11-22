@@ -16,10 +16,7 @@ class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
     def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
         Thread.__init__(self)
         ApiRequester.__init__(self)
-        WhoIsXmlApiBase.__init__(self)
-
-        self._domainName = domainName
-        self._outputFormat = outputFormat
+        WhoIsXmlApiBase.__init__(self, domainName, outputFormat)
 
         self._payload = self.__buildPayload()
 
@@ -40,7 +37,6 @@ class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
             response_data = default_response
 
         return response_data
-        
 
 
     def __post(self) -> str:
@@ -115,8 +111,10 @@ class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
 
         return payload
 
+
     def run(self):
         self._results = self.post()
+
 
     def join(self):
         Thread.join(self)
@@ -128,10 +126,8 @@ class WhoIsXmlClientApiRequester(Thread, Client, WhoIsXmlApiBase):
     def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
         Client.__init__(self, api_key)
-        WhoIsXmlApiBase.__init__(self)
+        WhoIsXmlApiBase.__init__(self, domainName, outputFormat)
 
-        self._domainName = domainName
-        self._outputFormat = outputFormat
 
     def get_raw(self) -> dict or Document or ApiResponse:
 
@@ -161,8 +157,10 @@ class WhoIsXmlClientApiRequester(Thread, Client, WhoIsXmlApiBase):
             
             return Client.get_raw(self, self._domainName, JSON_FORMAT)
 
+
     def run(self):
         self._results = self.get_raw()
+
 
     def join(self):
         Thread.join(self)
