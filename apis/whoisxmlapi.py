@@ -59,19 +59,19 @@ class PuffBase(Base):
 
         response_data = None
         if(self._outputFormat == XML_FORMAT):
-            response_data = self._loadXmlResponse(response)
+            response_data = self.__loadXmlResponse(response)
         
         else:
-            response_data = self._loadJsonResponse(response)
+            response_data = self.__loadJsonResponse(response)
 
         return response_data
 
-    def _loadXmlResponse(self, response: str) -> Document:
+    def __loadXmlResponse(self, response: str) -> Document:
         response_data = xml.dom.minidom.parseString(response)
 
         return response_data
 
-    def _loadJsonResponse(self, response: str) -> dict:
+    def __loadJsonResponse(self, response: str) -> dict:
         response_data = loads(response)
 
         return response_data
