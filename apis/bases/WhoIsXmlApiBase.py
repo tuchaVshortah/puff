@@ -1,4 +1,5 @@
 from apis.bases.Base import Base
+from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 from json import loads, dumps
 import xml.dom.minidom
 from xml.dom.minidom import Document
