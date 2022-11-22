@@ -37,17 +37,33 @@ class UrlscanApiRequester(Thread, Base):
                 records = response_data["results"]
 
                 for record in records:
+
                     try:
                         domain = record["task"]["domain"]
                         
                         if(Base._checkSubdomain(self, domain)):
                             subdomains.append(domain)
                     except:
-                        pass
-                        
+                        pass    
 
                     try:
                         apexDomain = record["task"]["apexDomain"]
+
+                        if(Base._checkSubdomain(self, apexDomain)):   
+                            subdomains.append(apexDomain)
+                    except:
+                        pass
+
+                    try:
+                        domain = record["page"]["domain"]
+                        
+                        if(Base._checkSubdomain(self, domain)):
+                            subdomains.append(domain)
+                    except:
+                        pass
+
+                    try:
+                        apexDomain = record["page"]["apexDomain"]
 
                         if(Base._checkSubdomain(self, apexDomain)):   
                             subdomains.append(apexDomain)
@@ -67,3 +83,6 @@ class UrlscanApiRequester(Thread, Base):
     def join(self):
         Thread.join(self)
         return self._results
+
+test = UrlscanApiRequester("google.com")
+print(test.getSubdomains())
