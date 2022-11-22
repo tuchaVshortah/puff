@@ -1,4 +1,4 @@
-from apis.whoisxmlapi import PuffClient, PuffApiRequester
+from apis.whoisxmlapi import WhoIsXmlClientApiRequester, WhoisXmlApiRequester
 from apis.crtsh import CrtshApiRequester
 from apis.urlscan import UrlscanApiRequester
 from apis.alienvault import AlienVaultApiRequester
@@ -16,8 +16,8 @@ from subdomainslookup.models.response import _list_of_objects
 class ApiWrapper():
 
     __target = None
-    __puff_client = None
-    __puff_api_requester = None
+    __whois_xml_client_api_requester = None
+    __whois_xml_api_requester = None
     __crtsh_api_requester = None
     __urlscan_api_requester = None
     __alienvault_api_requester = None
@@ -39,11 +39,11 @@ class ApiWrapper():
 
         if(whoisxmlapi_key is not None):
 
-            self.__puff_client = PuffClient(whoisxmlapi_key, self.__target, self.__outputFormat)
+            self.__whois_xml_client_api_requester = WhoIsXmlClientApiRequester(whoisxmlapi_key, self.__target, self.__outputFormat)
 
         elif(whoisxmlapi_key is None):
             
-            self.__puff_api_requester = PuffApiRequester(self.__target, self.__outputFormat)
+            self.__whois_xml_api_requester = WhoisXmlApiRequester(self.__target, self.__outputFormat)
         
         self.__crtsh_api_requester = CrtshApiRequester(self.__target)
         self.__urlscan_api_requester = UrlscanApiRequester(self.__target)
@@ -108,13 +108,13 @@ class ApiWrapper():
 
         data_object = None
 
-        if(self.__puff_client is None):
+        if(self.__whois_xml_client_api_requester is None):
 
-            data_object = self.__puff_api_requester.post()
+            data_object = self.__whois_xml_api_requester.post()
         
-        elif(self.__puff_client is not None):
+        elif(self.__whois_xml_client_api_requester is not None):
 
-            data_object = self.__puff_client.get_raw()
+            data_object = self.__whois_xml_client_api_requester.get_raw()
 
         crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
         urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
@@ -145,17 +145,17 @@ class ApiWrapper():
 
         data_object = None
 
-        if(self.__puff_client is None):
+        if(self.__whois_xml_client_api_requester is None):
 
-            self.__puff_api_requester.start()
+            self.__whois_xml_api_requester.start()
             
-            data_object = self.__puff_api_requester.join()
+            data_object = self.__whois_xml_api_requester.join()
             
-        elif(self.__puff_client is not None):
+        elif(self.__whois_xml_client_api_requester is not None):
 
-            self.__puff_client.start()
+            self.__whois_xml_client_api_requester.start()
 
-            data_object = self.__puff_client.join()
+            data_object = self.__whois_xml_client_api_requester.join()
 
 
         crtsh_subdomains = self.__crtsh_api_requester.join()
