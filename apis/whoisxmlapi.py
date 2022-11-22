@@ -91,6 +91,7 @@ class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
             "Connection": "keep-alive"
         }
+        session.headers.update(headers)
         response = session.get("https://subdomains.whoisxmlapi.com/api/")
         
         return response
