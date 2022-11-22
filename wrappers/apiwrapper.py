@@ -188,7 +188,7 @@ class ApiWrapper():
             exit()
 
 
-    def __updateResponseData(self, response_data, new_subdomains):
+    def __updateResponseData(self, response_data: dict or Document or ApiResponse, new_subdomains: list):
 
         if(self.__outputFormat == XML_FORMAT):
             self.__updateXmlResponseData(response_data, new_subdomains)
