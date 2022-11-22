@@ -7,8 +7,7 @@ class AlienVaultApiRequester(Thread, Base):
 
     def __init__(self, domainName: str = None):
         Thread.__init__(self)
-
-        self._domainName = domainName
+        Base.__init__(self, domainName)
 
     def getSubdomains(self) -> list:
         
