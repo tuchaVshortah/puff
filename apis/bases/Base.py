@@ -15,27 +15,3 @@ class Base():
     def _checkSubdomain(self, subdomain: str) -> bool:
         return subdomain.endswith(".{}".format(self._domainName))
 
-    def _getSubdomainStatusCode(self, subdomain: str, timeout = 10) -> int:
-
-        headers = {
-            "Host": subdomain,
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.63 Safari/537.36"
-        }
-
-        try:
-
-            response = requests.get("http://{}".format(subdomain), headers, timeout=timeout)
-        
-        except ConnectTimeout:
-
-            return -1
-
-        except ConnectionError:
-
-            return -2
-
-        except:
-
-            return -100
-
-        return response.status_code
