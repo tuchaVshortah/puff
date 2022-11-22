@@ -193,26 +193,20 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
 
 
     def __buildPayload(self) -> dict:
+        payload = {
+            "domainName": self._domainName,
+            "g-recaptcha-response": None,
+            "search": self._domainName,
+            "web-lookup-search": True
+        }
 
         if(self._outputFormat == XML_FORMAT):
 
-            payload = {
-                "domainName": self._domainName,
-                "g-recaptcha-response": None,
-                "search": self._domainName,
-                "web-lookup-search": True,
-                "outputFormat": XML_FORMAT
-            }
+                payload["outputFormat"] = XML_FORMAT
 
         else:
 
-            payload = {
-                "domainName": self._domainName,
-                "g-recaptcha-response": None,
-                "search": self._domainName,
-                "web-lookup-search": True,
-                "outputFormat": JSON_FORMAT
-            }
+            payload["outputFormat"] = JSON_FORMAT
 
         return payload
 
