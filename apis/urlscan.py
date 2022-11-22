@@ -1,4 +1,4 @@
-from apis.Base import Base
+from apis.base.Base import Base
 import requests
 from json import loads
 from threading import Thread

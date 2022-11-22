@@ -1,4 +1,4 @@
-from apis.Base import Base
+from apis.bases.WhoIsXmlApiBase import WhoIsXmlApiBase
 from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Result, Record, Response as ApiResponse
 from requests import request, Session, Response
