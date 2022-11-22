@@ -83,6 +83,3 @@ class UrlscanApiRequester(Thread, Base):
     def join(self):
         Thread.join(self)
         return self._results
-
-test = UrlscanApiRequester("google.com")
-print(test.getSubdomains())
