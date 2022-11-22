@@ -234,7 +234,7 @@ class PuffClient(Thread, Client, PuffBase):
         self._domainName = domainName
         self._outputFormat = outputFormat
 
-    def get_raw(self):
+    def get_raw(self) -> dict or Document or ApiResponse:
 
         try:
 
