@@ -40,7 +40,7 @@ class AnubisApiRequester(Thread, Base):
                 response_data = loads(response)
 
                 for subdomain in response_data:
-                    if(self._checkSubdomain(subdomain)):
+                    if(Base._checkSubdomain(self, subdomain)):
                         subdomains.append(subdomain)
 
             except:

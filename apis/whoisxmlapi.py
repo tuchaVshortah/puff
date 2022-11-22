@@ -26,7 +26,7 @@ class PuffBase(Base):
                 
                 subdomain = record.firstChild.lastChild.data
 
-                if(not self._checkSubdomain(subdomain)):
+                if(not Base._checkSubdomain(self, subdomain)):
 
                     record.removeChild(record)
                     count -= 1
@@ -39,7 +39,7 @@ class PuffBase(Base):
 
                 subdomain = records[i]["domain"]
 
-                if(not self._checkSubdomain(subdomain)):
+                if(not Base._checkSubdomain(self, subdomain)):
                     
                     records.pop(i)
                     count -= 1
