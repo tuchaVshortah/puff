@@ -10,7 +10,7 @@ from threading import Thread
 from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
 
 
-class PuffBase(Base):
+class WhoIsXmlApiBase(Base):
 
     def __init__(self):
         Base.__init__(self)
@@ -105,14 +105,14 @@ class PuffBase(Base):
         return response
 
 
-class PuffApiRequester(Thread, ApiRequester, PuffBase):
+class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
 
     _payload = None
 
     def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
         Thread.__init__(self)
         ApiRequester.__init__(self)
-        PuffBase.__init__(self)
+        WhoIsXmlApiBase.__init__(self)
 
         self._domainName = domainName
         self._outputFormat = outputFormat
@@ -124,15 +124,15 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
         try:
 
             response = self.__post()
-            response_data = PuffBase._loadResponse(self, response)
-            PuffBase._checkRecords(self, response_data)
+            response_data = WhoIsXmlApiBase._loadResponse(self, response)
+            WhoIsXmlApiBase._checkRecords(self, response_data)
 
             if(self._outputFormat == RAW_FORMAT):
                 response_data = ApiResponse(response_data)
             
         except:
             
-            default_response = PuffBase._buildDefaultResponse(self)
+            default_response = WhoIsXmlApiBase._buildDefaultResponse(self)
             response_data = default_response
 
         return response_data
@@ -218,12 +218,12 @@ class PuffApiRequester(Thread, ApiRequester, PuffBase):
         return self._results
 
 
-class PuffClient(Thread, Client, PuffBase):
+class WhoIsXmlClientApiRequester(Thread, Client, WhoIsXmlApiBase):
     
     def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
         Client.__init__(self, api_key)
-        PuffBase.__init__(self)
+        WhoIsXmlApiBase.__init__(self)
 
         self._domainName = domainName
         self._outputFormat = outputFormat
@@ -233,15 +233,15 @@ class PuffClient(Thread, Client, PuffBase):
         try:
 
             response = self.__get_raw()
-            response_data = PuffBase._loadResponse(self, response)
-            PuffBase._checkRecords(self, response_data)
+            response_data = WhoIsXmlApiBase._loadResponse(self, response)
+            WhoIsXmlApiBase._checkRecords(self, response_data)
 
             if(self._outputFormat == RAW_FORMAT):
                 response_data = ApiResponse(response_data)
             
         except:
             
-            default_response = PuffBase._buildDefaultResponse(self)
+            default_response = WhoIsXmlApiBase._buildDefaultResponse(self)
             response_data = default_response
 
         return response_data
