@@ -1,6 +1,8 @@
 import requests
-from requests.exceptions import RequestException
+import sys
+import queue
 from concurrent.futures import ThreadPoolExecutor
+from requests.exceptions import RequestException
 from errors.SubdomainLookupError import SubdomainLookupError
 from errors.BadError import BadError
 
@@ -57,3 +59,25 @@ class LookupWrapper():
 
         except:
             raise BadError()
+
+    def killThreads(self):
+        py_version = sys.version_info
+        if ( py_version.major == 3 ) and ( py_version.minor < 9 ):
+            # py versions less than 3.9
+            # Executor#shutdown does not accept
+            # cancel_futures keyword
+            # manually shutdown
+            # code taken from https://github.com/python/cpython/blob/3.9/Lib/concurrent/futures/thread.py#L210
+            while True:
+                # cancel all waiting tasks
+                try:
+                    work_item = self.__executor._work_queue.get_nowait()
+                                    
+                except queue.Empty:
+                    break
+                                    
+                if work_item is not None:
+                    work_item.future.cancel()
+
+        else:
+            self.__executor.shutdown(cancel_futures = True)

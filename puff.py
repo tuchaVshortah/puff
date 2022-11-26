@@ -40,6 +40,14 @@ def puff():
     )
 
 
+    parser.add_argument(
+        "-c", "--colorize",
+        help="Colorize output",
+        default=False,
+        action="store_true"
+    )
+
+
     api_group = parser.add_mutually_exclusive_group()
 
     api_group.add_argument(
@@ -114,13 +122,13 @@ def puff():
         if(args.json == True):
             outputFormat = JSON_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
             
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
 
     
     elif(args.no_api_keys == True):
@@ -128,13 +136,13 @@ def puff():
         if(args.json == True):
             outputFormat = JSON_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, args.alive, args.file, args.default_file)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
 
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, args.alive, args.file, args.default_file)
+            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
             
 
     api_wrapper.run()

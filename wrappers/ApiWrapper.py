@@ -13,11 +13,14 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
 from threading import Thread
 
+from errors.RateLimitError import RateLimitError
+
 class ApiWrapper():
 
     __target = None
     __outputFormat = None
     __boost = None
+    __colorize = None
     __verbose = None
     __alive = None
     __file = None
@@ -37,12 +40,13 @@ class ApiWrapper():
 
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
-        boost: bool = False, verbose: bool = False, alive: bool = False, file = None,\
-        defaultFile: bool = False, whoisxmlapi_key: str or None = None):
+        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False,\
+        file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
 
         self.__target = target
         self.__outputFormat = outputFormat
         self.__boost = boost
+        self.__colorize = colorize
         self.__verbose = verbose
         self.__alive = alive
         self.__file = file
@@ -63,7 +67,7 @@ class ApiWrapper():
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
         self.__dnsrepo_api_requester = DnsRepoApiRequester(self.__target)
 
-        self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__file, self.__defaultFile)
+        self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
 
     
     def run(self):
@@ -118,7 +122,12 @@ class ApiWrapper():
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
-            self.__output_wrapper.outputFutures(futures)
+            try:
+
+                self.__output_wrapper.outputFutures(futures)
+
+            except RateLimitError:
+                self.__lookup_wrapper.killThreads()
         
         else:
             self.__output_wrapper.outputSubdomains(subdomains)
@@ -170,7 +179,12 @@ class ApiWrapper():
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
-            self.__output_wrapper.outputFutures(futures)
+            try:
+
+                self.__output_wrapper.outputFutures(futures)
+
+            except RateLimitError:
+                self.__lookup_wrapper.killThreads()
 
         else:
             self.__output_wrapper.outputSubdomains(subdomains)
