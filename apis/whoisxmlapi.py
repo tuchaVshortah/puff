@@ -1,59 +1,56 @@
-from apis.bases.WhoIsXmlApiBase import WhoIsXmlApiBase
+from apis.bases.WhoIsXmlApiBase import Base, WhoIsXmlApiBase
 from subdomainslookup import ApiRequester, Client
 from subdomainslookup.models.response import Result, Record, Response as ApiResponse
-from requests import request, Session, Response
+import requests
+from requests import request
+from json import loads, dumps
 import xml.dom.minidom
 from xml.dom.minidom import Document
 from bs4 import BeautifulSoup
 from threading import Thread
-from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
+from constants.outputformats import JSON_FORMAT
 
 
 class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
 
-    _payload = None
+    __payload = None
+    __csrfToken = None
+    __xsrfToken = None
+    __emailVerification_session = None
+    
 
-    def __init__(self, domainName:str, outputFormat:str = JSON_FORMAT):
+    def __init__(self, domainName:str):
         Thread.__init__(self)
         ApiRequester.__init__(self)
-        WhoIsXmlApiBase.__init__(self, domainName, outputFormat)
+        WhoIsXmlApiBase.__init__(self, domainName)
 
-        self._payload = self.__buildPayload()
+        self.__payload = {
+            "domainName": self._domainName,
+            "g-recaptcha-response": None,
+            "search": self._domainName,
+            "web-lookup-search": True,
+            "outputFormat": JSON_FORMAT
+        }
 
 
-    def post(self) -> dict or Document or ApiResponse:
+    def getSubdomains(self) -> list:
         try:
 
-            response = self.__post()
-            response_data = WhoIsXmlApiBase._loadResponse(self, response)
-            WhoIsXmlApiBase._checkRecords(self, response_data)
-
-            if(self._outputFormat == RAW_FORMAT):
-                response_data = ApiResponse(response_data)
+            return self.__getSubdomains()
             
         except:
-            
-            default_response = WhoIsXmlApiBase._buildDefaultResponse(self)
-            response_data = default_response
 
-        return response_data
+            return []
 
 
-    def __post(self) -> str:
-        
-        self._response = self.__getResponse()
-
-        soup = BeautifulSoup(self._response.text, "lxml")
-
-        csrf_token = soup.find("meta", {"name":"csrf-token"})["content"]
-
-        cookies = self._response.cookies.get_dict()
+    def __getSubdomains(self) -> list:
+        self.__setSessionTokens()
 
         headers = {
             "Host": "subdomains.whoisxmlapi.com",
-            "Cookie": f'XSRF-TOKEN={cookies["XSRF-TOKEN"]}; emailverification_session={cookies["emailverification_session"]}',
+            "Cookie": f'XSRF-TOKEN={self.__xsrfToken}; emailverification_session={self.__emailVerification_session}',
             "Sec-Ch-Ua": '"Chromium";v="105", "Not)A;Brand";v="8"',
-            "X-Csrf-Token": csrf_token,
+            "X-Csrf-Token": self.__csrfToken,
             "Sec-Ch-Ua-Mobile": "?0",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36",
             "Connection": "close",
@@ -73,47 +70,38 @@ class WhoisXmlApiRequester(Thread, ApiRequester, WhoIsXmlApiBase):
         response = request(
             "POST",
             "https://subdomains.whoisxmlapi.com/api/web",
-            json=self._payload,
+            json=self.__payload,
             headers=headers,
             timeout=(10, self.timeout)
         )
 
-        return ApiRequester._handle_response(response)
+        response_data = loads(ApiRequester._handle_response(response))
+
+        subdomains = WhoIsXmlApiBase._parseSubdomains(self, response_data)
+        
+        return subdomains
 
 
-    def __getResponse(self) -> Response:
-        session = Session()
+    def __setSessionTokens(self):
+
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
             "Connection": "keep-alive"
         }
-        session.headers.update(headers)
-        response = session.get("https://subdomains.whoisxmlapi.com/api/")
-        
-        return response
 
+        response = requests.get("https://subdomains.whoisxmlapi.com/api/", headers)
 
-    def __buildPayload(self) -> dict:
-        payload = {
-            "domainName": self._domainName,
-            "g-recaptcha-response": None,
-            "search": self._domainName,
-            "web-lookup-search": True
-        }
+        soup = BeautifulSoup(response.text, "lxml")
+        self.__csrfToken = soup.find("meta", {"name":"csrf-token"})["content"]
 
-        if(self._outputFormat == XML_FORMAT):
+        cookies = response.cookies.get_dict()
 
-                payload["outputFormat"] = XML_FORMAT
-
-        else:
-
-            payload["outputFormat"] = JSON_FORMAT
-
-        return payload
+        self.__xsrfToken = cookies["XSRF-TOKEN"]
+        self.__emailVerification_session = cookies["emailverification_session"]
 
 
     def run(self):
-        self._results = self.post()
+        self._results = self.getSubdomains()
 
 
     def join(self):
@@ -126,40 +114,31 @@ class WhoIsXmlClientApiRequester(Thread, Client, WhoIsXmlApiBase):
     def __init__(self, api_key: str, domainName: str, outputFormat: str or None = JSON_FORMAT):
         Thread.__init__(self)
         Client.__init__(self, api_key)
-        WhoIsXmlApiBase.__init__(self, domainName, outputFormat)
+        WhoIsXmlApiBase.__init__(self, domainName)
 
 
-    def get_raw(self) -> dict or Document or ApiResponse:
+    def getSubdomains(self) -> list:
 
         try:
 
-            response = self.__get_raw()
-            response_data = WhoIsXmlApiBase._loadResponse(self, response)
-            WhoIsXmlApiBase._checkRecords(self, response_data)
-
-            if(self._outputFormat == RAW_FORMAT):
-                response_data = ApiResponse(response_data)
+            return self.__getSubdomains()
             
         except:
             
-            default_response = WhoIsXmlApiBase._buildDefaultResponse(self)
-            response_data = default_response
-
-        return response_data
+            return []
         
 
-    def __get_raw(self):
-        if(self._outputFormat == XML_FORMAT):
-
-            return Client.get_raw(self, self._domainName, XML_FORMAT)
-
-        else:
+    def __getSubdomains(self) -> list:
             
-            return Client.get_raw(self, self._domainName, JSON_FORMAT)
+        response = Client.get_raw(self, self._domainName, JSON_FORMAT)
+        response_data = loads(response)
 
+        subdomains = WhoIsXmlApiBase._parseSubdomains(self, response_data)
+
+        return subdomains
 
     def run(self):
-        self._results = self.get_raw()
+        self._results = self.getSubdomains()
 
 
     def join(self):
