@@ -49,11 +49,11 @@ class OutputWrapper():
 
         print(output)
 
-        #if(self.__file is not None):
-        #    self.__saveOutputToFile(output)
+        if(self.__file is not None):
+            self.__saveOutputToFile(output)
         
-        #elif(self.__defaultFile):
-        #    self.__saveOutputToDefaultFile(output)
+        elif(self.__defaultFile):
+            self.__saveOutputToDefaultFile(output)
 
 
     def outputFutures(self, futures):
