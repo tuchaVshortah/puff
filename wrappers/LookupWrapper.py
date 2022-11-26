@@ -80,4 +80,4 @@ class LookupWrapper():
                     work_item.future.cancel()
 
         else:
-            self.__executor.shutdown(cancel_futures = True)
+            self.__executor.shutdown(cancel_futures=True)
