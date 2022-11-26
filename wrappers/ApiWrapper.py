@@ -128,6 +128,9 @@ class ApiWrapper():
 
             except RateLimitError:
                 self.__lookup_wrapper.killThreads()
+                
+            except SomeError:
+                self.__lookup_wrapper.killThreads()
         
         else:
             self.__output_wrapper.outputSubdomains(subdomains)
@@ -184,6 +187,9 @@ class ApiWrapper():
                 self.__output_wrapper.outputFutures(futures)
 
             except RateLimitError:
+                self.__lookup_wrapper.killThreads()
+
+            except SomeError:
                 self.__lookup_wrapper.killThreads()
 
         else:

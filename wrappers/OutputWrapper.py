@@ -76,6 +76,7 @@ class OutputWrapper(Console):
                 
                 if(subdomainLookupErrorCounter >= 10):
                     Console.print(self, "You might have been rate limited, try again later")
+                    Console.print(self, "Shutting down...")
                     raise RateLimitError()
 
                 if(badErrorCounter >= 10):
