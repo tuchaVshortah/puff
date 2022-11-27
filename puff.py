@@ -1,6 +1,6 @@
 import argparse
 from wrappers.ApiWrapper import ApiWrapper
-from constants.outputformats import JSON_FORMAT, TXT_FORMAT
+from constants.outputformats import JSON_FORMAT, TXT_FORMAT, TABLE_FORMAT
 
 
 def puff():
@@ -85,6 +85,14 @@ def puff():
     )
 
 
+    format_group.add_argument(
+        "-T", "--table",
+        help="Output data in the tabular format",
+        default=False,
+        action="store_true"
+    )
+
+
     output_file_group = parser.add_mutually_exclusive_group()
 
     output_file_group.add_argument(
@@ -125,7 +133,11 @@ def puff():
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
-            
+
+        
+        elif(args.table == True):
+            outputFormat = TABLE_FORMAT
+
 
         api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
 
@@ -138,6 +150,9 @@ def puff():
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
+
+        elif(args.table == True):
+            outputFormat = TABLE_FORMAT
 
 
         api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
