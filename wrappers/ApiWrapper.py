@@ -70,20 +70,12 @@ class ApiWrapper():
     
     def run(self):
 
-        self.__status("Running tasks...")
-
         if(self.__boost):
             self.__fastTasks()
 
         else:
             self.__slowTasks()
-        
-        self.__status("Done!")
 
-
-    def __status(self, message: str):
-        if(self.__verbose == True):
-            print("//=> {}".format(message))
 
 
     def killLookupWrapperThreads(self):
