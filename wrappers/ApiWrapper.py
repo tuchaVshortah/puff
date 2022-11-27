@@ -13,7 +13,6 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
 from threading import Thread
 
-from errors.RateLimitError import RateLimitError
 from errors.SomeError import SomeError
 
 class ApiWrapper():
@@ -68,8 +67,6 @@ class ApiWrapper():
         self.__hackertarget_api_requester = HackerTargetApiRequester(self.__target)
         self.__dnsrepo_api_requester = DnsRepoApiRequester(self.__target)
 
-        self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
-
     
     def run(self):
 
@@ -87,6 +84,10 @@ class ApiWrapper():
     def __status(self, message: str):
         if(self.__verbose == True):
             print("//=> {}".format(message))
+
+
+    def killLookupWrapperThreads(self):
+        self.__lookup_wrapper.killThreads()
 
             
     def __slowTasks(self):
@@ -121,19 +122,19 @@ class ApiWrapper():
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
 
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
             try:
 
                 self.__output_wrapper.outputFutures(futures)
 
-            except RateLimitError:
-                self.__lookup_wrapper.killThreads()
-
             except SomeError:
                 self.__lookup_wrapper.killThreads()
         
         else:
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)
 
         
@@ -181,17 +182,17 @@ class ApiWrapper():
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
 
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
             try:
 
                 self.__output_wrapper.outputFutures(futures)
 
-            except RateLimitError:
-                self.__lookup_wrapper.killThreads()
-
             except SomeError:
                 self.__lookup_wrapper.killThreads()
 
         else:
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)

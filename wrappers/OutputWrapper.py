@@ -17,8 +17,9 @@ class OutputWrapper(Console):
     __file = None
     __defaultFile = None
     __alive_subdomains = None
+    __killLookupThreadsCallBack = None
 
-    def __init__(self, domain: str, outputFormat: str = TXT_FORMAT, colorize: bool = False,  file = None, defaultFile: bool = False):
+    def __init__(self, domain: str, outputFormat: str = TXT_FORMAT, colorize: bool = False,  file = None, defaultFile: bool = False, killLookupThreadsCallBack = None):
         Console.__init__(self)
 
         self.__domain = domain
@@ -26,6 +27,7 @@ class OutputWrapper(Console):
         self.__colorize = colorize
         self.__file = file
         self.__defaultFile = defaultFile
+        self.__killLookupThreadsCallBack = killLookupThreadsCallBack
 
     def __listToJsonString(self, someList: list) -> str:
         return dumps(someList, indent=2)
@@ -47,6 +49,9 @@ class OutputWrapper(Console):
         elif(type(output) is Table):
             with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
                 rprint(output, file)
+
+    def __killLookupThreadsSignal(self):
+        self.__killLookupThreadsCallBack()
 
     def outputSubdomains(self, subdomains):
 
@@ -112,7 +117,8 @@ class OutputWrapper(Console):
                 
                 if(subdomainLookupErrorCounter >= 10):
                     Console.print(self, "[bright_red]You might have been rate limited")
-                    raise RateLimitError()
+                    self.__killLookupThreadsSignal()
+                    break
 
                 if(badErrorCounter >= 10):
                     Console.print(self, "[bright_red]Something went wrong...")
