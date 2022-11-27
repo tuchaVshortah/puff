@@ -120,15 +120,14 @@ def puff():
     if(whoisxmlapi_key is not None):
 
         if(args.json == True):
-            outputFormat = JSON_FORMAT
+            outputFormat = JSON_FORMAT     
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
-            
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
+            
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
+        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
 
     
     elif(args.no_api_keys == True):
@@ -136,13 +135,12 @@ def puff():
         if(args.json == True):
             outputFormat = JSON_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
-
 
         elif(args.txt == True):
             outputFormat = TXT_FORMAT
 
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
+
+        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
             
 
     api_wrapper.run()
