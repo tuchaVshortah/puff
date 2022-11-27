@@ -114,7 +114,7 @@ class ApiWrapper():
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
 
-            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
@@ -126,7 +126,7 @@ class ApiWrapper():
                 self.__lookup_wrapper.killThreads()
         
         else:
-            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)
 
         
@@ -174,7 +174,7 @@ class ApiWrapper():
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
 
-            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
@@ -186,5 +186,5 @@ class ApiWrapper():
                 self.__lookup_wrapper.killThreads()
 
         else:
-            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__file, self.__defaultFile)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)
