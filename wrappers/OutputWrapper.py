@@ -111,13 +111,12 @@ class OutputWrapper(Console):
             for index, future in enumerate(as_completed(futures), start=1):
                 
                 if(subdomainLookupErrorCounter >= 10):
-                    Console.print(self, "You might have been rate limited, try again later")
-                    Console.print(self, "Shutting down...")
+                    Console.print(self, "[bright_red]You might have been rate limited")
                     raise RateLimitError()
 
                 if(badErrorCounter >= 10):
-                    Console.print(self, "Something went wrong...")
-                    Console.print(self, "Shutting down...")
+                    Console.print(self, "[bright_red]Something went wrong...")
+                    Console.print(self, "[bright_red]Shutting down...")
                     raise SomeError()
 
                 try:
