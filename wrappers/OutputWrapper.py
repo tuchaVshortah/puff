@@ -117,6 +117,7 @@ class OutputWrapper(Console):
                 
                 if(subdomainLookupErrorCounter >= 10):
                     Console.print(self, "[bright_red]You might have been rate limited")
+                    Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
                     self.__killLookupThreadsSignal()
                     break
 
