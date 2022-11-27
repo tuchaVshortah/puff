@@ -47,7 +47,7 @@ class OutputWrapper(Console):
 
         elif(type(output) is Table):
             with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
-                rprint(output, file)
+                rprint(output, file=file)
 
     def __killLookupThreadsSignal(self):
         self.__killLookupThreadsCallBack()
