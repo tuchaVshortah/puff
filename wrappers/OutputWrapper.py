@@ -60,7 +60,7 @@ class OutputWrapper(Console):
                 Console.print_json(self, output)
 
             else:
-                Console.print(self, output)
+                Console.print_json(self, output, highlight=False)
         
         elif(self.__outputFormat == TXT_FORMAT):
             
@@ -150,7 +150,7 @@ class OutputWrapper(Console):
                 Console.print_json(self, output)
                 
             else:
-                Console.print(self, output)
+                Console.print_json(self, output, highlight=False)
 
         elif(self.__outputFormat == TXT_FORMAT):
             output = table
