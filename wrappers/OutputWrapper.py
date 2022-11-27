@@ -6,7 +6,6 @@ from concurrent.futures import as_completed
 from json import dumps
 from errors.BadError import BadError
 from errors.SubdomainLookupError import SubdomainLookupError
-from errors.RateLimitError import RateLimitError
 from errors.SomeError import SomeError
 
 class OutputWrapper(Console):
