@@ -1,4 +1,6 @@
 from rich.console import Console
+from rich.table import Table
+from rich import print as rprint
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from concurrent.futures import as_completed
 from json import dumps
@@ -25,37 +27,55 @@ class OutputWrapper(Console):
         self.__file = file
         self.__defaultFile = defaultFile
 
-    def __subdomainsToPrettyJson(self, subdomains: list) -> str:
-        return dumps(subdomains, indent=2)
+    def __listToJsonString(self, someList: list) -> str:
+        return dumps(someList, indent=2)
 
-    def __subdomainsToPrettyTxt(self, subdomains: list) -> str:
-        return "\n".join(subdomains)
+    def __saveOutputToFile(self, output: str or Table):
 
-    def __futureResultToPrettyJson(self, result) -> str:
-        return dumps(result, indent=2)
+        if(type(output) is str):
+            self.__file.write(output)
 
-    def __futureResultToPrettyTxt(self, result) -> str:
+        elif(type(output) is Table):
+            rprint(output, file=self.__file)
 
-        string = f'\\[{result["subdomain"]}]\t[{result["statusCode"]}]\t[{result["title"]}]\t[{result["backend"]}]'
-        
-        return string
+    def __saveOutputToDefaultFile(self, output: str or Table):
 
-    def __saveOutputToFile(self, output: str):
-        self.__file.write(output)
+        if(type(output) is str):
+            with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
+                    file.write(output)
 
-    def __saveOutputToDefaultFile(self, output: str):
-        with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
-                file.write(output)
+        elif(type(output) is Table):
+            with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
+                rprint(output, file)
 
     def outputSubdomains(self, subdomains):
+
         output = None
         
         if(self.__outputFormat == JSON_FORMAT):
-            output = self.__subdomainsToPrettyJson(subdomains)
-            Console.print_json(self, output)
+
+            output = self.__listToJsonString(subdomains)
+
+            if(self.__colorize):
+                Console.print_json(self, output)
+
+            else:
+                Console.print(self, output)
         
         elif(self.__outputFormat == TXT_FORMAT):
-            output = self.__subdomainsToPrettyTxt(subdomains)
+            
+            table = Table(title="Subdomains")
+
+            if(self.__colorize):
+                table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
+
+            else:
+                table.add_column("Subdomain", justify="left", no_wrap=True)
+
+            for subdomain in subdomains:
+                table.add_row(subdomain)
+
+            output = table
             Console.print(self, output)
 
         if(self.__file is not None):
@@ -66,7 +86,23 @@ class OutputWrapper(Console):
 
 
     def outputFutures(self, futures):
-        output = None
+        table = None
+        if(self.__outputFormat == TXT_FORMAT):
+            table = Table(title="Alive subdomains")
+
+            if(self.__colorize):
+                table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
+                table.add_column("Status code", justify="center", style="magenta")
+                table.add_column("Title", justify="center", style="green")
+                table.add_column("Backend", justify="right", style="red")
+
+            else:
+                table.add_column("Subdomain", justify="left", no_wrap=True)
+                table.add_column("Status code", justify="center")
+                table.add_column("Title", justify="center")
+                table.add_column("Backend", justify="right")
+
+        output = []
         subdomainLookupErrorCounter = 0
         badErrorCounter = 0
 
@@ -102,9 +138,28 @@ class OutputWrapper(Console):
                     continue
 
                 if(self.__outputFormat == JSON_FORMAT):
-                    output = self.__futureResultToPrettyJson(result)
-                    Console.print_json(self, output)
+                    output.append(result)
                 
                 elif(self.__outputFormat == TXT_FORMAT):
-                    output = self.__futureResultToPrettyTxt(result)
-                    Console.print(self, output)
+                    table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                    
+        if(self.__outputFormat == JSON_FORMAT):
+            output = self.__listToJsonString(output)
+            
+            if(self.__colorize):
+                Console.print_json(self, output)
+                
+            else:
+                Console.print(self, output)
+
+        elif(self.__outputFormat == TXT_FORMAT):
+            output = table
+            Console.print(self, output)
+
+        if(self.__file is not None):
+            self.__saveOutputToFile(output)
+        
+        elif(self.__defaultFile):
+            self.__saveOutputToDefaultFile(output)
+
+    

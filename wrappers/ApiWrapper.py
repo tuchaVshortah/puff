@@ -14,6 +14,7 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from threading import Thread
 
 from errors.RateLimitError import RateLimitError
+from errors.SomeError import SomeError
 
 class ApiWrapper():
 
@@ -128,7 +129,7 @@ class ApiWrapper():
 
             except RateLimitError:
                 self.__lookup_wrapper.killThreads()
-                
+
             except SomeError:
                 self.__lookup_wrapper.killThreads()
         

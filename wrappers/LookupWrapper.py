@@ -35,9 +35,9 @@ class LookupWrapper():
     def __lookupSubdomain(self, subdomain: str) -> dict:
         output = {
             "subdomain": subdomain,
-            "statusCode": None,
-            "title": None,
-            "backend": None
+            "statusCode": "N/A",
+            "title": "N/A",
+            "backend": "N/A"
         }
 
         try:
@@ -50,7 +50,7 @@ class LookupWrapper():
 
             response = requests.get(url, headers=headers, timeout=10)
 
-            output["statusCode"] = response.status_code
+            output["statusCode"] = str(response.status_code)
 
             return output
         
