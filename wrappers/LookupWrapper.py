@@ -1,6 +1,7 @@
 import requests
 import sys
 import queue
+from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 from requests.exceptions import RequestException
 from errors.SubdomainLookupError import SubdomainLookupError
@@ -43,6 +44,7 @@ class LookupWrapper():
         try:
 
             url = "http://{}".format(subdomain)
+
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
                 "Connection": "keep-alive"
@@ -51,6 +53,25 @@ class LookupWrapper():
             response = requests.get(url, headers=headers, timeout=10)
 
             output["statusCode"] = str(response.status_code)
+
+            soup = BeautifulSoup(response.text, "lxml")
+
+            title = None
+            title = soup.find("title")
+            
+            backend = None
+            try:
+
+                backend = response.headers["Server"]
+
+            except:
+                pass
+            
+            if(title is not None):
+                output["title"] = str(title)
+
+            if(backend is not None):
+                output["backend"] = str(backend)
 
             return output
         
