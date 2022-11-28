@@ -154,6 +154,8 @@ class ApiWrapper():
         subdomains.extend(hackertarget_subdomains)
         subdomains.extend(dnsrepo_subdomains)
 
+        subdomains = list(set(subdomains))
+
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
             self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
@@ -250,6 +252,8 @@ class ApiWrapper():
         subdomains.extend(anubis_subdomains)
         subdomains.extend(hackertarget_subdomains)
         subdomains.extend(dnsrepo_subdomains)
+
+        subdomains = list(set(subdomains))
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
