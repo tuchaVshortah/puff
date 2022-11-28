@@ -58,7 +58,14 @@ class LookupWrapper():
 
             title = None
             title = soup.find("title")
-            
+
+            try:
+
+                title = title.getText()
+                
+            except:
+                pass
+
             backend = None
             try:
 
