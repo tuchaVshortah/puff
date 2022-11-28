@@ -61,6 +61,12 @@ class OutputWrapper(Console):
                 rprint(output, file=file)
 
     def __killLookupThreadsSignal(self):
+        if(self.__verbose):
+            if(self.__colorize):
+                Console.print(self, "[dark_red]Killing unfinished lookup jobs...")
+
+            else:
+                Console.print(self, "Killing unfinished lookup jobs...")
         self.__killLookupThreadsCallBack()
 
     def outputSubdomains(self, subdomains):
