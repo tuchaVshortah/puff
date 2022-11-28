@@ -11,7 +11,9 @@ from wrappers.OutputWrapper import OutputWrapper
 
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
+import time
 from threading import Thread
+from rich.progress import Progress
 
 from errors.SomeError import SomeError
 
@@ -94,12 +96,33 @@ class ApiWrapper():
 
             whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.getSubdomains()
 
-        crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
-        urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
-        alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
-        anubis_subdomains = self.__anubis_api_requester.getSubdomains()
-        hackertarget_subdomains = self.__hackertarget_api_requester.getSubdomains()
-        dnsrepo_subdomains = self.__dnsrepo_api_requester.getSubdomains()
+        with Progress() as progress:
+
+            task = None
+            if(self.__colorize):
+                task = progress.add_task("[red]Working...", total=600)
+            
+            else:
+                task = progress.add_task("Working...", total=600)
+
+            progress.update(task, advance=20)
+            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
+            progress.update(task, advance=80)
+
+            urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
+            progress.update(task, advance=100)
+
+            alienvault_subdomains = self.__alienvault_api_requester.getSubdomains()
+            progress.update(task, advance=100)
+
+            anubis_subdomains = self.__anubis_api_requester.getSubdomains()
+            progress.update(task, advance=100)
+
+            hackertarget_subdomains = self.__hackertarget_api_requester.getSubdomains()
+            progress.update(task, advance=100)
+
+            dnsrepo_subdomains = self.__dnsrepo_api_requester.getSubdomains()
+            progress.update(task, advance=100)
 
         subdomains = []
 
@@ -153,13 +176,33 @@ class ApiWrapper():
 
             whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.join()
 
+        with Progress() as progress:
 
-        crtsh_subdomains = self.__crtsh_api_requester.join()
-        urlscan_subdomains = self.__urlscan_api_requester.join()
-        alienvault_subdomains = self.__alienvault_api_requester.join()
-        anubis_subdomains = self.__anubis_api_requester.join()
-        hackertarget_subdomains = self.__hackertarget_api_requester.join()
-        dnsrepo_subdomains = self.__dnsrepo_api_requester.join()
+            task = None
+            if(self.__colorize):
+                task = progress.add_task("[red]Working...", total=600)
+            
+            else:
+                task = progress.add_task("Working...", total=600)
+            
+            progress.update(task, advance=20)
+            crtsh_subdomains = self.__crtsh_api_requester.join()
+            progress.update(task, advance=80)
+
+            urlscan_subdomains = self.__urlscan_api_requester.join()
+            progress.update(task, advance=100)
+
+            alienvault_subdomains = self.__alienvault_api_requester.join()
+            progress.update(task, advance=100)
+
+            anubis_subdomains = self.__anubis_api_requester.join()
+            progress.update(task, advance=100)
+
+            hackertarget_subdomains = self.__hackertarget_api_requester.join()
+            progress.update(task, advance=100)
+
+            dnsrepo_subdomains = self.__dnsrepo_api_requester.join()
+            progress.update(task, advance=100)
 
         subdomains = []
 
