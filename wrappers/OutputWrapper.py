@@ -123,7 +123,7 @@ class OutputWrapper(Console):
 
         if(futures):
 
-            status = Status("Preparing alive subdomains...", spinner=random.choice(SPINNERS))
+            status = Console.status(self, "Preparing alive subdomains...", spinner=random.choice(SPINNERS))
                 
             if(self.__colorize):
                 status.update(status="[yellow]Preparing alive subdomains...")
