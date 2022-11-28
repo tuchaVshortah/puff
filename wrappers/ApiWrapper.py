@@ -156,6 +156,13 @@ class ApiWrapper():
 
         subdomains = list(set(subdomains))
 
+        if(self.__verbose):
+            if(self.__colorize):
+                rprint(f"\t[dark_magenta]Total:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
+
+            else:
+                rprint(f"\t Total: {len(subdomains)}")
+
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
             self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
@@ -254,6 +261,13 @@ class ApiWrapper():
         subdomains.extend(dnsrepo_subdomains)
 
         subdomains = list(set(subdomains))
+
+        if(self.__verbose):
+            if(self.__colorize):
+                rprint(f"\t[dark_magenta]Total:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
+
+            else:
+                rprint(f"\t Total: {len(subdomains)}")
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
