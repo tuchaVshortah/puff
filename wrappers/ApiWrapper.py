@@ -158,10 +158,10 @@ class ApiWrapper():
 
         if(self.__verbose):
             if(self.__colorize):
-                rprint(f"\t[dark_magenta]Total:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
+                rprint(f"\t[dark_magenta]Total unique subdomains:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
 
             else:
-                rprint(f"\t Total: {len(subdomains)}")
+                rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
@@ -264,10 +264,10 @@ class ApiWrapper():
 
         if(self.__verbose):
             if(self.__colorize):
-                rprint(f"\t[dark_magenta]Total:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
+                rprint(f"\t[dark_magenta]Total unique subdomains:[/dark_magenta] [dark_red underline]{len(subdomains)}[/dark_red underline]")
 
             else:
-                rprint(f"\t Total: {len(subdomains)}")
+                rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
