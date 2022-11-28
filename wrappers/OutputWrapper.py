@@ -117,14 +117,29 @@ class OutputWrapper(Console):
             for index, future in enumerate(as_completed(futures), start=1):
                 
                 if(subdomainLookupErrorCounter >= 10):
-                    Console.print(self, "[bright_red]You might have been rate limited")
-                    Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
+                    if(self.__colorize):
+
+                        Console.print(self, "[bright_red]You might have been rate limited")
+                        Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
+
+                    else:
+
+                        Console.print(self, "You might have been rate limited")
+                        Console.print(self, "Outputing probed subdomains")
+
                     self.__killLookupThreadsSignal()
                     break
 
                 if(badErrorCounter >= 10):
-                    Console.print(self, "[bright_red]Something went wrong...")
-                    Console.print(self, "[bright_red]Shutting down...")
+                    if(self.__colorize):
+
+                        Console.print(self, "[bright_red]Something went wrong...")
+                        Console.print(self, "[bright_red]Shutting down...")
+                    else:
+                        
+                        Console.print(self, "Something went wrong...")
+                        Console.print(self, "Shutting down...")
+
                     raise SomeError()
 
                 try:
