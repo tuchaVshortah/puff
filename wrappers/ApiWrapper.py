@@ -11,11 +11,12 @@ from wrappers.OutputWrapper import OutputWrapper
 
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
-import time
+
 from threading import Thread
 from rich.progress import Progress
 
 from errors.SomeError import SomeError
+
 
 class ApiWrapper():
 
@@ -136,9 +137,8 @@ class ApiWrapper():
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper(1)
-
             self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
-
+                    
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
 
             try:
@@ -216,7 +216,6 @@ class ApiWrapper():
 
         if(self.__alive):
             self.__lookup_wrapper = LookupWrapper()
-
             self.__output_wrapper = OutputWrapper(self.__target, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)

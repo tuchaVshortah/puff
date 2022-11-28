@@ -1,12 +1,21 @@
 from rich.console import Console
 from rich.table import Table
+from rich.status import Status
 from rich import print as rprint
-from constants.outputformats import JSON_FORMAT, TXT_FORMAT
+
+import random
+
 from concurrent.futures import as_completed
 from json import dumps
+
+from constants.outputformats import JSON_FORMAT, TXT_FORMAT
+from constants.spinners import SPINNERS
+
+
 from errors.BadError import BadError
 from errors.SubdomainLookupError import SubdomainLookupError
 from errors.SomeError import SomeError
+
 
 class OutputWrapper(Console):
 
@@ -114,9 +123,17 @@ class OutputWrapper(Console):
 
         if(futures):
 
+            status = Status("Preparing alive subdomains...", spinner=random.choice(SPINNERS))
+                
+            if(self.__colorize):
+                status.update(status="[yellow]Preparing alive subdomains...")
+                    
+            status.start()
             for index, future in enumerate(as_completed(futures), start=1):
                 
                 if(subdomainLookupErrorCounter >= 10):
+                    status.stop()
+
                     if(self.__colorize):
 
                         Console.print(self, "[bright_red]You might have been rate limited")
@@ -131,6 +148,8 @@ class OutputWrapper(Console):
                     break
 
                 if(badErrorCounter >= 10):
+                    status.stop()
+
                     if(self.__colorize):
 
                         Console.print(self, "[bright_red]Something went wrong...")
@@ -164,6 +183,8 @@ class OutputWrapper(Console):
                 
                 elif(self.__outputFormat == TXT_FORMAT):
                     table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
+
+        status.stop()
                     
         if(self.__outputFormat == JSON_FORMAT):
             output = self.__listToJsonString(output)
