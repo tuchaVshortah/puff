@@ -11,9 +11,10 @@ from wrappers.OutputWrapper import OutputWrapper
 
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
-
 from threading import Thread
+
 from rich.progress import Progress
+from rich import print as rprint
 
 from errors.SomeError import SomeError
 
@@ -127,6 +128,24 @@ class ApiWrapper():
 
         subdomains = []
 
+        if(self.__verbose):
+            if(self.__colorize):
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(whoisxmlapi_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [red]whoisxmlapi.com[/red]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(crtsh_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [green]crt.sh[/green]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(urlscan_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [yellow]urlscan.io[/yellow]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(alienvault_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [blue]otx.alienvault.com[/blue]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(anubis_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [magenta]jonlu.ca[/magenta]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(dnsrepo_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [cyan]dnsrepo.noc.org[/cyan]")
+
+            else:
+                rprint(f"{len(whoisxmlapi_subdomains)} subdomains from whoisxmlapi.com")
+                rprint(f"{len(crtsh_subdomains)} subdomains from crt.sh")
+                rprint(f"{len(urlscan_subdomains)} subdomains from] urlscan.io")
+                rprint(f"{len(alienvault_subdomains)} subdomains from otx.alienvault.com")
+                rprint(f"{len(anubis_subdomains)} subdomains from jonlu.ca")
+                rprint(f"{len(dnsrepo_subdomains)} subdomains from dnsrepo.noc.org")
+
+
         subdomains.extend(whoisxmlapi_subdomains)
         subdomains.extend(crtsh_subdomains)
         subdomains.extend(urlscan_subdomains)
@@ -205,6 +224,24 @@ class ApiWrapper():
             progress.update(task, advance=100)
 
         subdomains = []
+
+        if(self.__verbose):
+            if(self.__colorize):
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(whoisxmlapi_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [red]whoisxmlapi.com[/red]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(crtsh_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [green]crt.sh[/green]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(urlscan_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [yellow]urlscan.io[/yellow]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(alienvault_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [blue]otx.alienvault.com[/blue]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(anubis_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [magenta]jonlu.ca[/magenta]")
+                rprint(f"\t[deep_sky_blue1]Got[/deep_sky_blue1] [dark_red underline]{len(dnsrepo_subdomains)}[/dark_red underline] [deep_sky_blue1]subdomains from[/deep_sky_blue1] [cyan]dnsrepo.noc.org[/cyan]")
+
+            else:
+                rprint(f"{len(whoisxmlapi_subdomains)} subdomains from whoisxmlapi.com")
+                rprint(f"{len(crtsh_subdomains)} subdomains from crt.sh")
+                rprint(f"{len(urlscan_subdomains)} subdomains from] urlscan.io")
+                rprint(f"{len(alienvault_subdomains)} subdomains from otx.alienvault.com")
+                rprint(f"{len(anubis_subdomains)} subdomains from jonlu.ca")
+                rprint(f"{len(dnsrepo_subdomains)} subdomains from dnsrepo.noc.org")
+
 
         subdomains.extend(whoisxmlapi_subdomains)
         subdomains.extend(crtsh_subdomains)
