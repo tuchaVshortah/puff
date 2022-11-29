@@ -168,7 +168,7 @@ class ApiWrapper():
                 rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
-            self.__lookup_wrapper = LookupWrapper(1)
+            self.__lookup_wrapper = LookupWrapper(1, self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
                     
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
@@ -274,7 +274,7 @@ class ApiWrapper():
                 rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
-            self.__lookup_wrapper = LookupWrapper()
+            self.__lookup_wrapper = LookupWrapper(probingSleepTime=self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
