@@ -20,6 +20,7 @@ from errors.SomeError import SomeError
 class OutputWrapper(Console):
 
     __domain = None
+    __matchCode = None
     __outputFormat = None
     __colorize = None
     __verbose = None
@@ -28,10 +29,11 @@ class OutputWrapper(Console):
     __alive_subdomains = None
     __killLookupThreadsCallBack = None
 
-    def __init__(self, domain: str, outputFormat: str = TXT_FORMAT, colorize: bool = False, verbose: bool = False,  file = None, defaultFile: bool = False, killLookupThreadsCallBack = None):
+    def __init__(self, domain: str, matchCode: list or None = None, outputFormat: str = TXT_FORMAT, colorize: bool = False, verbose: bool = False,  file = None, defaultFile: bool = False, killLookupThreadsCallBack = None):
         Console.__init__(self)
 
         self.__domain = domain
+        self.__matchCode = matchCode
         self.__outputFormat = outputFormat
         self.__colorize = colorize
         self.__verbose = verbose
