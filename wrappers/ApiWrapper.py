@@ -27,6 +27,7 @@ class ApiWrapper():
     __colorize = None
     __verbose = None
     __alive = None
+    __probingSleepTime = None
     __matchCode = None
     __file = None
     __default_file = None
@@ -45,7 +46,7 @@ class ApiWrapper():
 
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
-        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False,\
+        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: int or None = None,\
         matchCode: list or None = None, file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
 
         self.__target = target
@@ -54,6 +55,7 @@ class ApiWrapper():
         self.__colorize = colorize
         self.__verbose = verbose
         self.__alive = alive
+        self.__probingSleepTime = probingSleepTime
         self.__matchCode = matchCode
         self.__file = file
         self.__defaultFile = defaultFile
