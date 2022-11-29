@@ -42,8 +42,8 @@ def puff():
 
 
     parser.add_argument(
-        "-rsp", "--randomized-subdomain-probing",
-        help="Randomize the order of subdomains to lookup",
+        "-Ss", "--shuffle-subdomains",
+        help="Randomize the order of subdomains",
         default=False,
         action="store_true"
     )
