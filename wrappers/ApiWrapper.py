@@ -13,6 +13,8 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
 from threading import Thread
 
+import random
+
 from rich.progress import Progress
 from rich import print as rprint
 
@@ -169,6 +171,10 @@ class ApiWrapper():
                 rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
+
+            if(self.__randomizedSubdomainProbing):
+                subdomains = random.shuffle(subdomains)
+
             self.__lookup_wrapper = LookupWrapper(1, self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
                     
@@ -275,6 +281,10 @@ class ApiWrapper():
                 rprint(f"\t Total unique subdomains: {len(subdomains)}")
 
         if(self.__alive):
+
+            if(self.__randomizedSubdomainProbing):
+                subdomains = random.shuffle(subdomains)
+
             self.__lookup_wrapper = LookupWrapper(probingSleepTime=self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
