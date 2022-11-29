@@ -40,6 +40,14 @@ def puff():
         nargs="?"
     )
 
+
+    parser.add_argument(
+        "-rsp", "--randomized-subdomain-probing",
+        help="Randomize the order of subdomains to lookup",
+        default=False,
+        action="store_true"
+    )
+
     
     parser.add_argument(
         "-b", "--boost",
