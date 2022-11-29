@@ -29,6 +29,7 @@ class ApiWrapper():
     __alive = None
     __probingSleepTime = None
     __matchCode = None
+    __randomizedSubdomainProbing = None
     __file = None
     __default_file = None
 
@@ -47,7 +48,7 @@ class ApiWrapper():
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
         boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: float or None = None,\
-        matchCode: list or None = None, file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
+        matchCode: list or None = None, randomizedSubdomainProbing: bool = False, file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
 
         self.__target = target
         self.__outputFormat = outputFormat
