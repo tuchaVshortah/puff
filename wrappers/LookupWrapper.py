@@ -39,7 +39,9 @@ class LookupWrapper():
         
 
     def __lookupSubdomain(self, subdomain: str) -> dict:
-        time.sleep(self.__probingSleepTime)
+        
+        if(self.__probingSleepTime is not None):
+            time.sleep(self.__probingSleepTime)
 
         output = {
             "subdomain": subdomain,
