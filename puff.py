@@ -135,7 +135,7 @@ def puff():
             outputFormat = TXT_FORMAT
 
 
-        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file, whoisxmlapi_key)
+        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.match_code, args.file, args.default_file, whoisxmlapi_key)
 
     
     elif(args.no_api_keys == True):
@@ -148,7 +148,7 @@ def puff():
             outputFormat = TXT_FORMAT
 
 
-        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.file, args.default_file)
+        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.match_code, args.file, args.default_file)
             
 
     api_wrapper.run()
