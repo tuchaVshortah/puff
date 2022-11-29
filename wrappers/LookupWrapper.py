@@ -1,8 +1,10 @@
 import requests
 import sys
 import queue
+import time
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+
 from requests.exceptions import RequestException
 from errors.SubdomainLookupError import SubdomainLookupError
 from errors.BadError import BadError
@@ -10,8 +12,9 @@ from errors.BadError import BadError
 class LookupWrapper():
 
     __executor = None
+    __probingSleepTime = None
 
-    def __init__(self, maxWorkers: int or None = None):
+    def __init__(self, maxWorkers: int or None = None, probingSleepTime: int or None = None):
 
         if(maxWorkers is None):
 
@@ -20,6 +23,8 @@ class LookupWrapper():
         else:
 
             self.__executor = ThreadPoolExecutor(maxWorkers)
+
+        self.__probingSleepTime = probingSleepTime
 
     def lookupSubdomains(self, subdomains: list) -> list:
 
@@ -34,6 +39,8 @@ class LookupWrapper():
         
 
     def __lookupSubdomain(self, subdomain: str) -> dict:
+        time.sleep(self.__probingSleepTime)
+
         output = {
             "subdomain": subdomain,
             "statusCode": "N/A",
