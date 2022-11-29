@@ -23,6 +23,14 @@ def puff():
         action="store_true"
     )
 
+    parser.add_argument(
+        "-mc", "--match-code",
+        help="Match the specified status code/codes when testing for alive subdomains",
+        default=None,
+        type=int,
+        nargs="+"
+    )
+
     
     parser.add_argument(
         "-b", "--boost",
