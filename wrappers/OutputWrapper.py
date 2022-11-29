@@ -188,12 +188,14 @@ class OutputWrapper(Console):
 
                     badErrorCounter += 1
                     continue
-
-                if(self.__outputFormat == JSON_FORMAT):
-                    output.append(result)
                 
-                elif(self.__outputFormat == TXT_FORMAT):
-                    table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                if(self.__matchCode is not None):
+                    if(result["statusCode"] in self.__matchCode):
+                        if(self.__outputFormat == JSON_FORMAT):
+                            output.append(result)
+                        
+                        elif(self.__outputFormat == TXT_FORMAT):
+                            table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
 
         status.stop()
                     
