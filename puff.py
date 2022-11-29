@@ -31,6 +31,15 @@ def puff():
         nargs="+"
     )
 
+
+    parser.add_argument(
+        "-pst", "--probing-sleep-time",
+        help="Pass the time in seconds to stay in the sleep mode. May help in avoiding rate limiting",
+        default=None,
+        type=int,
+        nargs="1"
+    )
+
     
     parser.add_argument(
         "-b", "--boost",
