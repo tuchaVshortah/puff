@@ -65,22 +65,12 @@ def puff():
     )
 
 
-    api_group = parser.add_mutually_exclusive_group()
-
-    api_group.add_argument(
+    parser.add_argument(
         "-wak", "--whoisxmlapi-key",
         help="Specify your API key for whoisxmlapi.com",
         default=None,
         type=str,
         nargs=1
-    )
-
-
-    api_group.add_argument(
-        "-X", "--no-api-keys",
-        help="Pass this argument if you don't have API keys",
-        default=True,
-        action="store_true",
     )
 
 
@@ -137,31 +127,15 @@ def puff():
     api_wrapper = None
     outputFormat = None
 
-    if(whoisxmlapi_key is not None):
-
-        if(args.json == True):
-            outputFormat = JSON_FORMAT     
+    if(args.json == True):
+        outputFormat = JSON_FORMAT     
 
 
-        elif(args.txt == True):
-            outputFormat = TXT_FORMAT
+    elif(args.txt == True):
+        outputFormat = TXT_FORMAT
 
 
-        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.match_code, args.file, args.default_file, whoisxmlapi_key)
-
-    
-    elif(args.no_api_keys == True):
-
-        if(args.json == True):
-            outputFormat = JSON_FORMAT
-
-
-        elif(args.txt == True):
-            outputFormat = TXT_FORMAT
-
-
-        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.match_code, args.file, args.default_file)
-            
+    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.match_code, args.file, args.default_file, whoisxmlapi_key)
 
     api_wrapper.run()
 
