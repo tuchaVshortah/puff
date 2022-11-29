@@ -14,7 +14,7 @@ class LookupWrapper():
     __executor = None
     __probingSleepTime = None
 
-    def __init__(self, maxWorkers: int or None = None, probingSleepTime: int or None = None):
+    def __init__(self, maxWorkers: int or None = None, probingSleepTime: float or None = None):
 
         if(maxWorkers is None):
 

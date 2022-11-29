@@ -46,7 +46,7 @@ class ApiWrapper():
 
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
-        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: int or None = None,\
+        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: float or None = None,\
         matchCode: list or None = None, file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
 
         self.__target = target
