@@ -121,8 +121,9 @@ def puff():
 
     args = parser.parse_args()
 
-    if(not args.alive and (args.match_code is not None or args.probing_sleep_time is not None)):
-        parser.error("the -a/--alive flag has to be set in order to check for matching status codes or to set a probing sleep time")
+    if(not args.alive):
+        if(args.match_code is not None or args.probing_sleep_time is not None or args.randomized_subdomain_probing):
+            parser.error("the -a/--alive flag has to be set")
     
     domain = None
     if(args.domain is not None):
