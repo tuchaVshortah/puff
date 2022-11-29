@@ -33,7 +33,10 @@ class OutputWrapper(Console):
         Console.__init__(self)
 
         self.__domain = domain
-        self.__matchCode = matchCode
+        
+        if(matchCode is not None):
+            self.__matchCode = [str(code) for code in matchCode]
+
         self.__outputFormat = outputFormat
         self.__colorize = colorize
         self.__verbose = verbose
