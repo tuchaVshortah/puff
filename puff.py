@@ -37,7 +37,7 @@ def puff():
         help="Pass the time in seconds to stay in the sleep mode. May help in avoiding rate limiting",
         default=None,
         type=int,
-        nargs="1"
+        nargs="?"
     )
 
     
