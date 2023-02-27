@@ -13,6 +13,7 @@ class LookupWrapper():
 
     __executor = None
     __probingSleepTime = None
+    __offsetSleepTime = None
 
     def __init__(self, maxWorkers: int or None = None, probingSleepTime: float = 0.0):
 
@@ -25,6 +26,7 @@ class LookupWrapper():
             self.__executor = ThreadPoolExecutor(maxWorkers)
 
         self.__probingSleepTime = probingSleepTime
+        self.__offsetSleepTime = self.__probingSleepTime
 
     def lookupSubdomains(self, subdomains: list) -> list:
 
@@ -36,8 +38,8 @@ class LookupWrapper():
 
         futures = []
         for subdomain in subdomains:
-            self.__executor.submit(self.__lookupSubdomain, subdomain, self.__probingSleepTime)
-            self.__probingSleepTime += self.__probingSleepTime
+            self.__executor.submit(self.__lookupSubdomain, subdomain, self.__offsetSleepTime)
+            self.__offsetSleepTime += self.__probingSleepTime
 
         self.__executor.shutdown(wait=False)
 
