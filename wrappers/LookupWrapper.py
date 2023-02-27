@@ -28,9 +28,16 @@ class LookupWrapper():
 
     def lookupSubdomains(self, subdomains: list) -> list:
 
+        '''
         futures = [
             self.__executor.submit(self.__lookupSubdomain, subdomain) for subdomain in subdomains
         ]
+        '''
+
+        futures = []
+        for subdomain in subdomains:
+            self.__executor.submit(self.__lookupSubdomain, subdomain, self.__probingSleepTime)
+            self.__probingSleepTime += self.__probingSleepTime
 
         self.__executor.shutdown(wait=False)
 
