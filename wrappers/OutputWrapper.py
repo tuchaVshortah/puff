@@ -171,6 +171,8 @@ class OutputWrapper(Console):
                         Console.print(self, "Shutting down...")
 
                     raise SomeError()
+                
+                result = None
 
                 try:
 
@@ -189,15 +191,22 @@ class OutputWrapper(Console):
                     badErrorCounter += 1
                     continue
                 
-                if(self.__matchCode is not None):
-                    if(result["statusCode"] in self.__matchCode):
-                        if(self.__outputFormat == JSON_FORMAT):
+                
+                if(self.__outputFormat == JSON_FORMAT):
+                    if(self.__matchCode is not None):
+                        if(result["statusCode"] in self.__matchCode):
                             output.append(result)
-                        
-                        elif(self.__outputFormat == TXT_FORMAT):
+                    else:
+                        output.append(result)
+                    
+                elif(self.__outputFormat == TXT_FORMAT):
+                    if(self.__matchCode is not None):
+                        if(result["statusCode"] in self.__matchCode):
                             table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                    else:
+                        table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
 
-        status.stop()
+            status.stop()
                     
         if(self.__outputFormat == JSON_FORMAT):
             output = self.__listToJsonString(output)
