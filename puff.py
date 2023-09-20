@@ -36,7 +36,7 @@ def puff():
         "-pst", "--probing-sleep-time",
         help="Pass the time in seconds to stay in the sleep mode. May help in avoiding rate limiting",
         default=None,
-        type=float,
+        type=int,
         nargs="?"
     )
 

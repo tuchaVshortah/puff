@@ -17,9 +17,6 @@ class LookupWrapper():
 
     def __init__(self, maxWorkers: int or None = None, probingSleepTime: float = 0.0):
 
-        self.__probingSleepTime = probingSleepTime
-        self.__offsetSleepTime = 0.0
-
         if(maxWorkers is None):
 
             self.__executor = ThreadPoolExecutor()
@@ -27,6 +24,13 @@ class LookupWrapper():
         else:
 
             self.__executor = ThreadPoolExecutor(maxWorkers)
+
+        if(probingSleepTime is None):
+            self.__probingSleepTime = 0.0
+        else:
+            self.__probingSleepTime = probingSleepTime
+
+        self.__offsetSleepTime = 0.0
 
     def lookupSubdomains(self, subdomains: list) -> list:
 
