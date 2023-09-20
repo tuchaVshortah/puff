@@ -26,7 +26,6 @@ class OutputWrapper(Console):
     __verbose = None
     __file = None
     __defaultFile = None
-    __alive_subdomains = None
     __killLookupThreadsCallBack = None
 
     def __init__(self, domain: str, matchCode: list or None = None, outputFormat: str = TXT_FORMAT, colorize: bool = False, verbose: bool = False,  file = None, defaultFile: bool = False, killLookupThreadsCallBack = None):

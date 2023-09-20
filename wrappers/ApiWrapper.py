@@ -33,7 +33,7 @@ class ApiWrapper():
     __matchCode = None
     __randomizedSubdomainProbing = None
     __file = None
-    __default_file = None
+    __defaultFile = None
 
     __whois_xml_client_api_requester = None
     __whois_xml_api_requester = None
