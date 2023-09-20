@@ -86,12 +86,7 @@ class ApiWrapper():
 
         else:
             self.__slowTasks()
-
-
-
-    def killLookupWrapperThreads(self):
-        self.__lookup_wrapper.killThreads()
-
+            
             
     def __slowTasks(self):
 
