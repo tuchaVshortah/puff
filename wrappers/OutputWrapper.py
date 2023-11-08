@@ -11,10 +11,7 @@ from json import dumps
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from constants.spinners import SPINNERS
 
-
-from errors.BadError import BadError
 from errors.SubdomainLookupError import SubdomainLookupError
-from errors.SomeError import SomeError
 
 
 class OutputWrapper(Console):
@@ -129,7 +126,6 @@ class OutputWrapper(Console):
 
         output = []
         subdomainLookupErrorCounter = 0
-        badErrorCounter = 0
 
         if(futures):
 
@@ -153,23 +149,6 @@ class OutputWrapper(Console):
 
                         Console.print(self, "You might have been rate limited")
                         Console.print(self, "Outputing probed subdomains")
-
-                    self.__killLookupThreadsSignal()
-                    break
-
-                if(badErrorCounter >= 10):
-                    status.stop()
-
-                    if(self.__colorize):
-
-                        Console.print(self, "[bright_red]Something went wrong...")
-                        Console.print(self, "[bright_red]Shutting down...")
-                    else:
-                        
-                        Console.print(self, "Something went wrong...")
-                        Console.print(self, "Shutting down...")
-
-                    raise SomeError()
                 
                 result = None
 
@@ -178,18 +157,11 @@ class OutputWrapper(Console):
                     result = future.result()
                         
                     subdomainLookupErrorCounter = 0
-                    badErrorCounter = 0
 
                 except SubdomainLookupError:
 
                     subdomainLookupErrorCounter += 1
                     continue
-
-                except BadError:
-
-                    badErrorCounter += 1
-                    continue
-                
                 
                 if(self.__outputFormat == JSON_FORMAT):
                     if(self.__matchCode is not None):

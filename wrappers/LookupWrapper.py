@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 from requests.exceptions import RequestException
 from errors.SubdomainLookupError import SubdomainLookupError
-from errors.BadError import BadError
 
 class LookupWrapper():
 
@@ -108,9 +107,6 @@ class LookupWrapper():
         
         except RequestException:
             raise SubdomainLookupError()
-
-        except:
-            raise BadError()
 
     def killThreads(self):
         py_version = sys.version_info

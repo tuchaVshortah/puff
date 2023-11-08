@@ -11,14 +11,10 @@ from wrappers.OutputWrapper import OutputWrapper
 
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
-from threading import Thread
-
 import random
 
 from rich.progress import Progress
 from rich import print as rprint
-
-from errors.SomeError import SomeError
 
 
 class ApiWrapper():
@@ -89,8 +85,6 @@ class ApiWrapper():
             
             
     def __slowTasks(self):
-
-        whoisxmlapi_subdomains = None
 
         if(self.__whois_xml_client_api_requester is None):
 
@@ -174,13 +168,7 @@ class ApiWrapper():
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
                     
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
-
-            try:
-
-                self.__output_wrapper.outputFutures(futures)
-
-            except SomeError:
-                self.__lookup_wrapper.killThreads()
+            self.__output_wrapper.outputFutures(futures)
         
         else:
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
@@ -284,13 +272,7 @@ class ApiWrapper():
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
-
-            try:
-
-                self.__output_wrapper.outputFutures(futures)
-
-            except SomeError:
-                self.__lookup_wrapper.killThreads()
+            self.__output_wrapper.outputFutures(futures)
 
         else:
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
