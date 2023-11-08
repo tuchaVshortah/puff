@@ -1,5 +1,7 @@
 from rich.console import Console
 from rich.table import Table
+from rich.progress import Progress
+from rich.status import Status
 from rich import print as rprint
 
 import random
@@ -127,17 +129,20 @@ class OutputWrapper(Console):
         subdomainLookupErrorCounter = 0
 
         if(futures):
+            completed_futures = []
+            with Progress() as progress: 
 
-            status = Console.status(self, "Preparing alive subdomains...", spinner=random.choice(SPINNERS))
-                
-            if(self.__colorize):
-                status.update(status="[yellow]Preparing alive subdomains...")
+                if(self.__colorize):
+                    task = progress.add_task("[red]Completing concurrent.futures...", total=len(futures))
+                else:
+                    task = progress.add_task("Completing concurrent.futures...", total=len(futures))
+
+                for index, future in enumerate(as_completed(futures), start=1):
+                    progress.update(task, advance=1)
+                    completed_futures.append(future)
                     
-            status.start()
-            for index, future in enumerate(as_completed(futures), start=1):
-                
+            for future in completed_futures:
                 if(subdomainLookupErrorCounter >= 10):
-                    status.stop()
 
                     if(self.__colorize):
 
@@ -175,8 +180,6 @@ class OutputWrapper(Console):
                             table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
                     else:
                         table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
-
-            status.stop()
                     
         if(self.__outputFormat == JSON_FORMAT):
             output = self.__listToJsonString(output)

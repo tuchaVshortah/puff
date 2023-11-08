@@ -98,10 +98,10 @@ class ApiWrapper():
 
             task = None
             if(self.__colorize):
-                task = progress.add_task("[red]Working...", total=600)
+                task = progress.add_task("[red]Paring sites...                ", total=600)
             
             else:
-                task = progress.add_task("Working...", total=600)
+                task = progress.add_task("Parsing sites...                ", total=600)
 
             progress.update(task, advance=20)
             crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
@@ -202,10 +202,10 @@ class ApiWrapper():
 
             task = None
             if(self.__colorize):
-                task = progress.add_task("[red]Working...", total=600)
+                task = progress.add_task("[red]Parsing sites...                ", total=600)
             
             else:
-                task = progress.add_task("Working...", total=600)
+                task = progress.add_task("Parsing sites...                ", total=600)
             
             progress.update(task, advance=20)
             crtsh_subdomains = self.__crtsh_api_requester.join()
