@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress
-from rich.status import Status
 from rich import print as rprint
 
 import random
