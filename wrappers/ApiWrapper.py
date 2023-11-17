@@ -43,9 +43,12 @@ class ApiWrapper():
     __output_wrapper = None
 
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
-        boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: float or None = None,\
-        matchCode: list or None = None, randomizedSubdomainProbing: bool = False, file = None, defaultFile: bool = False, number: int or None = None, whoisxmlapi_key: str or None = None):
+    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,
+        boost: bool = False, colorize: bool = False, verbose: bool = False,
+        alive: bool = False, probingSleepTime: float or None = None,
+        matchCode: list or None = None, randomizedSubdomainProbing: bool = False,
+        file = None, defaultFile: bool = False, number: int or None = None,
+        whoisxmlapi_key: str or None = None):
 
         self.__target = target
         self.__outputFormat = outputFormat
@@ -163,13 +166,16 @@ class ApiWrapper():
         if(self.__alive):
 
             self.__lookup_wrapper = LookupWrapper(1, self.__probingSleepTime)
-            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
+                                                  self.__colorize, self.__verbose, self.__file, self.__defaultFile,
+                                                  self.__lookup_wrapper.killThreads)
                     
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
         
         else:
-            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
+                                                  self.__colorize, self.__verbose, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)
 
         
@@ -264,11 +270,14 @@ class ApiWrapper():
         if(self.__alive):
 
             self.__lookup_wrapper = LookupWrapper(probingSleepTime=self.__probingSleepTime)
-            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
+                                                self.__colorize, self.__verbose, self.__file, self.__defaultFile,
+                                                self.__lookup_wrapper.killThreads)
 
             futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
 
         else:
-            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile)
+            self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
+                                                  self.__colorize, self.__verbose, self.__file, self.__defaultFile)
             self.__output_wrapper.outputSubdomains(subdomains)
