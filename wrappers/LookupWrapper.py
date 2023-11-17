@@ -39,7 +39,7 @@ class LookupWrapper():
             self.__executor.submit(self.__lookupSubdomain, subdomain) for subdomain in subdomains
         ]
         '''
-        
+
         if(number is not None):
             subdomains = subdomains[:number]
 
@@ -73,7 +73,7 @@ class LookupWrapper():
 
         try:
 
-            url = "http://{}".format(subdomain)
+            url = "http://{}/".format(subdomain)
 
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
