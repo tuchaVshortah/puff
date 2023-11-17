@@ -215,7 +215,11 @@ class OutputWrapper(Console):
             if table.row_count > 0:
                 Console.print(self, table)
             else:
-                Console.print(self, "[i]No data...[/i]")
+                Console.print(self, "[i]All probed subdomains were dead...[/i]")
+                if(self.__colorize):
+                    Console.print(self, "[bright_red]Try again...")
+                else:
+                    Console.print(self, "Try again...")
 
         if(self.__file is not None):
             self.__saveOutputToFile(output)
