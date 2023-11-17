@@ -1,3 +1,4 @@
+import random
 import requests
 import sys
 import queue
@@ -31,13 +32,19 @@ class LookupWrapper():
 
         self.__offsetSleepTime = 0.0
 
-    def lookupSubdomains(self, subdomains: list) -> list:
+    def lookupSubdomains(self, subdomains: list, number: int or None = None, randomizedSubdomainProbing: bool = False) -> list:
 
         '''
         futures = [
             self.__executor.submit(self.__lookupSubdomain, subdomain) for subdomain in subdomains
         ]
         '''
+        
+        if(number is not None):
+            subdomains = subdomains[:number]
+
+        if(randomizedSubdomainProbing):
+            random.shuffle(subdomains)
 
         futures = []
         for subdomain in subdomains:

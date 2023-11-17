@@ -11,8 +11,6 @@ from wrappers.OutputWrapper import OutputWrapper
 
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 
-import random
-
 from rich.progress import Progress
 from rich import print as rprint
 
@@ -30,6 +28,7 @@ class ApiWrapper():
     __randomizedSubdomainProbing = None
     __file = None
     __defaultFile = None
+    __number = None
 
     __whois_xml_client_api_requester = None
     __whois_xml_api_requester = None
@@ -46,7 +45,7 @@ class ApiWrapper():
 
     def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,\
         boost: bool = False, colorize: bool = False, verbose: bool = False, alive: bool = False, probingSleepTime: float or None = None,\
-        matchCode: list or None = None, randomizedSubdomainProbing: bool = False, file = None, defaultFile: bool = False, whoisxmlapi_key: str or None = None):
+        matchCode: list or None = None, randomizedSubdomainProbing: bool = False, file = None, defaultFile: bool = False, number: int or None = None, whoisxmlapi_key: str or None = None):
 
         self.__target = target
         self.__outputFormat = outputFormat
@@ -56,8 +55,10 @@ class ApiWrapper():
         self.__alive = alive
         self.__probingSleepTime = probingSleepTime
         self.__matchCode = matchCode
+        self.__randomizedSubdomainProbing = randomizedSubdomainProbing
         self.__file = file
         self.__defaultFile = defaultFile
+        self.__number = number
 
         if(whoisxmlapi_key is not None):
 
@@ -161,13 +162,10 @@ class ApiWrapper():
 
         if(self.__alive):
 
-            if(self.__randomizedSubdomainProbing):
-                subdomains = random.shuffle(subdomains)
-
             self.__lookup_wrapper = LookupWrapper(1, self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
                     
-            futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
+            futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
         
         else:
@@ -265,13 +263,10 @@ class ApiWrapper():
 
         if(self.__alive):
 
-            if(self.__randomizedSubdomainProbing):
-                subdomains = random.shuffle(subdomains)
-
             self.__lookup_wrapper = LookupWrapper(probingSleepTime=self.__probingSleepTime)
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat, self.__colorize, self.__verbose, self.__file, self.__defaultFile, self.__lookup_wrapper.killThreads)
 
-            futures = self.__lookup_wrapper.lookupSubdomains(subdomains)
+            futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
 
         else:
