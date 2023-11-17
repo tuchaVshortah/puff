@@ -3,8 +3,6 @@ from rich.table import Table
 from rich.progress import Progress
 from rich import print as rprint
 
-import random
-
 from concurrent.futures import as_completed
 from json import dumps
 
@@ -12,7 +10,6 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from constants.spinners import SPINNERS
 
 from errors.SubdomainLookupError import SubdomainLookupError
-
 
 class OutputWrapper(Console):
 
@@ -89,16 +86,28 @@ class OutputWrapper(Console):
             table = Table(title="Subdomains")
 
             if(self.__colorize):
+                table.add_column("Number", justify="left", style="light_sea_green")
                 table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
 
             else:
+                table.add_column("Number", justify="left", style="light_sea_green")
                 table.add_column("Subdomain", justify="left", no_wrap=True)
 
-            for subdomain in subdomains:
-                table.add_row(subdomain)
+            with Progress() as progress:
 
-            output = table
-            Console.print(self, output)
+                if(self.__colorize):
+                    task = progress.add_task("[red]Preparing subdomains...        ", total=len(subdomains))
+                else:
+                    task = progress.add_task("Preparing subdomains...        ", total=len(subdomains))
+
+                for index, subdomain in enumerate(subdomains):
+                    table.add_row(str(index), subdomain)
+                    progress.update(task, advance=1)
+
+            if table.row_count > 0:
+                Console.print(self, table)
+            else:
+                Console.print(self, "[i]No data...[/i]")
 
         if(self.__file is not None):
             self.__saveOutputToFile(output)
@@ -113,12 +122,14 @@ class OutputWrapper(Console):
             table = Table(title="Alive subdomains")
 
             if(self.__colorize):
+                table.add_column("Number", justify="left", style="light_sea_green")
                 table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
                 table.add_column("Status code", justify="center", style="magenta")
                 table.add_column("Title", justify="center", style="green")
                 table.add_column("Backend", justify="right", style="red")
 
             else:
+                table.add_column("Number", justify="left", style="light_sea_green")
                 table.add_column("Subdomain", justify="left", no_wrap=True)
                 table.add_column("Status code", justify="center")
                 table.add_column("Title", justify="center")
@@ -139,46 +150,57 @@ class OutputWrapper(Console):
                 for index, future in enumerate(as_completed(futures), start=1):
                     progress.update(task, advance=1)
                     completed_futures.append(future)
+
+            index = 0
+            with Progress() as progress:    
+
+                if(self.__colorize):
+                    task = progress.add_task("[red]Preparing alive subdomains...   ", total=len(completed_futures))
+                else:
+                    task = progress.add_task("Preparing alive subdomains...   ", total=len(completed_futures))
+
+                for future in completed_futures:
+                    if(subdomainLookupErrorCounter >= 10):
+
+                        if(self.__colorize):
+
+                            Console.print(self, "[bright_red]You might have been rate limited")
+                            Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
+
+                        else:
+
+                            Console.print(self, "You might have been rate limited")
+                            Console.print(self, "Outputing probed subdomains")
                     
-            for future in completed_futures:
-                if(subdomainLookupErrorCounter >= 10):
+                    result = None
 
-                    if(self.__colorize):
+                    progress.update(task, advance=1)
+                    try:
 
-                        Console.print(self, "[bright_red]You might have been rate limited")
-                        Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
+                        result = future.result()
+                        index += 1
 
-                    else:
+                        subdomainLookupErrorCounter = 0
 
-                        Console.print(self, "You might have been rate limited")
-                        Console.print(self, "Outputing probed subdomains")
-                
-                result = None
+                    except SubdomainLookupError:
 
-                try:
-
-                    result = future.result()
-                        
-                    subdomainLookupErrorCounter = 0
-
-                except SubdomainLookupError:
-
-                    subdomainLookupErrorCounter += 1
-                    continue
-                
-                if(self.__outputFormat == JSON_FORMAT):
-                    if(self.__matchCode is not None):
-                        if(result["statusCode"] in self.__matchCode):
+                        subdomainLookupErrorCounter += 1
+                        continue
+                    
+                    if(self.__outputFormat == JSON_FORMAT):
+                        if(self.__matchCode is not None):
+                            if(result["statusCode"] in self.__matchCode):
+                                output.append(result)
+                        else:
                             output.append(result)
-                    else:
-                        output.append(result)
-                    
-                elif(self.__outputFormat == TXT_FORMAT):
-                    if(self.__matchCode is not None):
-                        if(result["statusCode"] in self.__matchCode):
-                            table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
-                    else:
-                        table.add_row(result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                        
+                    elif(self.__outputFormat == TXT_FORMAT):
+                        if(self.__matchCode is not None):
+                            if(result["statusCode"] in self.__matchCode):
+                                table.add_row(str(index), result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                        else:
+                            table.add_row(str(index), result["subdomain"], result["statusCode"], result["title"], result["backend"])
+
                     
         if(self.__outputFormat == JSON_FORMAT):
             output = self.__listToJsonString(output)
@@ -190,8 +212,10 @@ class OutputWrapper(Console):
                 Console.print_json(self, output, highlight=False)
 
         elif(self.__outputFormat == TXT_FORMAT):
-            output = table
-            Console.print(self, output)
+            if table.row_count > 0:
+                Console.print(self, table)
+            else:
+                Console.print(self, "[i]No data...[/i]")
 
         if(self.__file is not None):
             self.__saveOutputToFile(output)
