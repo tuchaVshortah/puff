@@ -66,6 +66,15 @@ def puff():
 
 
     parser.add_argument(
+        "-n", "--number",
+        help="Specify the max number of subdomains to probe",
+        default=None,
+        type=int,
+        nargs="?"
+    )
+
+
+    parser.add_argument(
         "-c", "--colorize",
         help="Colorize output",
         default=False,
@@ -122,7 +131,8 @@ def puff():
     args = parser.parse_args()
 
     if(not args.alive):
-        if(args.match_code is not None or args.probing_sleep_time is not None or args.randomized_subdomain_probing):
+        if(args.match_code is not None or args.probing_sleep_time is not None\
+            or args.randomized_subdomain_probing or args.number is not None):
             parser.error("the -a/--alive flag has to be set")
     
     domain = None
@@ -142,9 +152,8 @@ def puff():
 
     elif(args.txt == True):
         outputFormat = TXT_FORMAT
-
-
-    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.probing_sleep_time, args.match_code, args.randomized_subdomain_probing, args.file, args.default_file, whoisxmlapi_key)
+        
+    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.probing_sleep_time, args.match_code, args.randomized_subdomain_probing, args.file, args.default_file, args.number, whoisxmlapi_key)
 
     api_wrapper.run()
 
