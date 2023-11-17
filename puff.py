@@ -67,7 +67,8 @@ def puff():
 
     parser.add_argument(
         "-n", "--number",
-        help="Specify the max number of subdomains to probe",
+        help="Specify the max number of subdomains to probe. Due to the fact that not all of the subdomains may be alive,\
+            you have to expect that the number of probed subdomains may be less than the specified number",
         default=None,
         type=int,
         nargs="?"
@@ -152,7 +153,7 @@ def puff():
 
     elif(args.txt == True):
         outputFormat = TXT_FORMAT
-        
+
     api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.probing_sleep_time, args.match_code, args.randomized_subdomain_probing, args.file, args.default_file, args.number, whoisxmlapi_key)
 
     api_wrapper.run()
