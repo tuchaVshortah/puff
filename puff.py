@@ -154,7 +154,10 @@ def puff():
     elif(args.txt == True):
         outputFormat = TXT_FORMAT
 
-    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize, args.verbose, args.alive, args.probing_sleep_time, args.match_code, args.randomized_subdomain_probing, args.file, args.default_file, args.number, whoisxmlapi_key)
+    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize,
+                            args.verbose, args.alive, args.probing_sleep_time, 
+                            args.match_code, args.randomized_subdomain_probing, 
+                            args.file, args.default_file, args.number, whoisxmlapi_key)
 
     api_wrapper.run()
 
