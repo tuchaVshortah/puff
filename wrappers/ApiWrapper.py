@@ -176,7 +176,7 @@ class ApiWrapper():
         else:
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
                                                   self.__colorize, self.__verbose, self.__file, self.__defaultFile)
-            self.__output_wrapper.outputSubdomains(subdomains)
+            self.__output_wrapper.outputSubdomains(subdomains, self.__number)
 
         
     def __fastTasks(self):
@@ -280,4 +280,4 @@ class ApiWrapper():
         else:
             self.__output_wrapper = OutputWrapper(self.__target, self.__matchCode, self.__outputFormat,
                                                   self.__colorize, self.__verbose, self.__file, self.__defaultFile)
-            self.__output_wrapper.outputSubdomains(subdomains)
+            self.__output_wrapper.outputSubdomains(subdomains, self.__number)
