@@ -221,6 +221,8 @@ class OutputWrapper(Console):
                 else:
                     Console.print(self, "Try again...")
 
+            output = table
+
         if(self.__file is not None):
             self.__saveOutputToFile(output)
         
