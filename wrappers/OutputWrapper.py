@@ -90,7 +90,7 @@ class OutputWrapper(Console):
                 table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
 
             else:
-                table.add_column("Number", justify="left", style="light_sea_green")
+                table.add_column("Number", justify="left")
                 table.add_column("Subdomain", justify="left", no_wrap=True)
 
             with Progress() as progress:
