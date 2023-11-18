@@ -105,7 +105,8 @@ class OutputWrapper(Console):
                     progress.update(task, advance=1)
 
             if table.row_count > 0:
-                Console.print(self, table)
+                output = table
+                Console.print(self, output)
             else:
                 Console.print(self, "[i]No data...[/i]")
 
@@ -213,16 +214,15 @@ class OutputWrapper(Console):
 
         elif(self.__outputFormat == TXT_FORMAT):
             if table.row_count > 0:
-                Console.print(self, table)
+                output = table
+                Console.print(self, output)
             else:
                 Console.print(self, "[i]All probed subdomains were dead...[/i]")
                 if(self.__colorize):
                     Console.print(self, "[bright_red]Try again...")
                 else:
                     Console.print(self, "Try again...")
-
-            output = table
-
+        
         if(self.__file is not None):
             self.__saveOutputToFile(output)
         
