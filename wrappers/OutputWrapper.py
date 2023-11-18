@@ -101,7 +101,7 @@ class OutputWrapper(Console):
                     task = progress.add_task("Preparing subdomains...        ", total=len(subdomains))
 
                 for index, subdomain in enumerate(subdomains):
-                    table.add_row(str(index), subdomain)
+                    table.add_row(str(index + 1), subdomain)
                     progress.update(task, advance=1)
 
             if table.row_count > 0:
