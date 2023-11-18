@@ -67,7 +67,7 @@ def puff():
 
     parser.add_argument(
         "-n", "--number",
-        help="Specify the max number of subdomains to probe. Due to the fact that not all of the subdomains may be alive,\
+        help="Specify the max number of subdomains to probe or the exact number of subdomains to output in passive mode. Due to the fact that not all of the subdomains may be alive,\
             you have to expect that the number of probed subdomains may be less than the specified number",
         default=None,
         type=int,
@@ -133,7 +133,7 @@ def puff():
 
     if(not args.alive):
         if(args.match_code is not None or args.probing_sleep_time is not None\
-            or args.randomized_subdomain_probing or args.number is not None):
+            or args.randomized_subdomain_probing):
             parser.error("the -a/--alive flag has to be set")
     
     domain = None

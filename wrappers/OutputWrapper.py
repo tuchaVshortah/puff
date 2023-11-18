@@ -1,3 +1,4 @@
+
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress
@@ -10,6 +11,7 @@ from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from constants.spinners import SPINNERS
 
 from errors.SubdomainLookupError import SubdomainLookupError
+import copy
 
 class OutputWrapper(Console):
 
@@ -67,23 +69,29 @@ class OutputWrapper(Console):
                 Console.print(self, "Killing unfinished lookup jobs...")
         self.__killLookupThreadsCallBack()
 
-    def outputSubdomains(self, subdomains):
+    def outputSubdomains(self, subdomains, number: int or None = None):
 
         output = None
-        
+        cli_output = None
+
         if(self.__outputFormat == JSON_FORMAT):
 
-            output = self.__listToJsonString(subdomains)
+            if(number is None or (number is not None and number > len(subdomains))):
+                output = self.__listToJsonString(subdomains)
+                cli_output = output
+            elif(number is not None and number <= len(subdomains)):
+                output = self.__listToJsonString(subdomains)
+                cli_output = self.__listToJsonString(subdomains[:number])
 
             if(self.__colorize):
-                Console.print_json(self, output)
-
+                Console.print_json(self, cli_output)
             else:
-                Console.print_json(self, output, highlight=False)
+                Console.print_json(self, cli_output, highlight=False)
         
         elif(self.__outputFormat == TXT_FORMAT):
             
             table = Table(title="Subdomains")
+            cli_table = None
 
             if(self.__colorize):
                 table.add_column("Number", justify="left", style="light_sea_green")
@@ -102,11 +110,16 @@ class OutputWrapper(Console):
 
                 for index, subdomain in enumerate(subdomains):
                     table.add_row(str(index + 1), subdomain)
+                    if(number is not None and index + 1 == number):
+                        cli_table = copy.deepcopy(table)
                     progress.update(task, advance=1)
+
+            if(number is None or (number is not None and number > len(subdomains))):
+                cli_table = table
 
             if table.row_count > 0:
                 output = table
-                Console.print(self, output)
+                Console.print(self, cli_table)
             else:
                 Console.print(self, "[i]No data...[/i]")
 
