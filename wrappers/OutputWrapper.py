@@ -98,7 +98,7 @@ class OutputWrapper(Console):
                 if(self.__colorize):
                     task = progress.add_task("[red]Preparing subdomains...        ", total=len(subdomains))
                 else:
-                    task = progress.add_task("Preparing subdomains...        ", total=len(subdomains))
+                    task = progress.add_task("Preparing subdomains...         ", total=len(subdomains))
 
                 for index, subdomain in enumerate(subdomains):
                     table.add_row(str(index + 1), subdomain)
