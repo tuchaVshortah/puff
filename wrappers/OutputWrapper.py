@@ -83,10 +83,11 @@ class OutputWrapper(Console):
                 output = self.__listToJsonString(subdomains)
                 cli_output = self.__listToJsonString(subdomains[:number])
 
-            if(self.__colorize):
-                Console.print_json(self, cli_output)
-            else:
-                Console.print_json(self, cli_output, highlight=False)
+            if(number is None or (number is not None and number > 0)):
+                if(self.__colorize):
+                    Console.print_json(self, cli_output)
+                else:
+                    Console.print_json(self, cli_output, highlight=False)
         
         elif(self.__outputFormat == TXT_FORMAT):
             
@@ -119,7 +120,8 @@ class OutputWrapper(Console):
 
             if table.row_count > 0:
                 output = table
-                Console.print(self, cli_table)
+                if(number is None or (number is not None and number > 0)):
+                    Console.print(self, cli_table)
             else:
                 Console.print(self, "[i]No data...[/i]")
 
