@@ -1,8 +1,7 @@
 import argparse
-from wrappers.apiwrapper import ApiWrapper
-from utils.savers import *
-from constants.outputformats import XML_FORMAT, JSON_FORMAT, RAW_FORMAT
-
+from wrappers.ApiWrapper import ApiWrapper
+from constants.outputformats import JSON_FORMAT, TXT_FORMAT
+from rich import print as rprint
 
 def puff():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another passive subdomain enumeration tool")
@@ -16,6 +15,39 @@ def puff():
         nargs=1
     )
 
+
+    parser.add_argument(
+        "-a", "--alive",
+        help="Check if subdomains are alive and get meta information about each one of them -> [statusCode, title, backend]",
+        default=False,
+        action="store_true"
+    )
+
+    parser.add_argument(
+        "-mc", "--match-code",
+        help="Match the specified status code/codes when testing for alive subdomains",
+        default=None,
+        type=int,
+        nargs="+"
+    )
+
+
+    parser.add_argument(
+        "-pst", "--probing-sleep-time",
+        help="Pass the time in seconds to stay in the sleep mode. May help in avoiding rate limiting",
+        default=None,
+        type=int,
+        nargs="?"
+    )
+
+
+    parser.add_argument(
+        "-rsp", "--randomized-subdomain-probing",
+        help="Randomize the order of subdomains to probe",
+        default=False,
+        action="store_true"
+    )
+
     
     parser.add_argument(
         "-b", "--boost",
@@ -24,25 +56,34 @@ def puff():
         action="store_true"
     )
 
-    verbosity_group = parser.add_mutually_exclusive_group()
 
-    verbosity_group.add_argument(
-        "-q","--quiet",
-        help="Do not show any output in the terminal",
-        default=False,
-        action="store_true"
-    )
-
-    verbosity_group.add_argument(
+    parser.add_argument(
         "-v", "--verbose",
         help="Allow puff to output status messages to the terminal",
         default=False,
         action="store_true"
     )
 
-    api_group = parser.add_mutually_exclusive_group()
 
-    api_group.add_argument(
+    parser.add_argument(
+        "-n", "--number",
+        help="Specify the max number of subdomains to probe or the exact number of subdomains to output in passive mode. Due to the fact that not all of the subdomains may be alive,\
+            you have to expect that the number of probed subdomains may be less than the specified number",
+        default=None,
+        type=int,
+        nargs="?"
+    )
+
+
+    parser.add_argument(
+        "-c", "--colorize",
+        help="Colorize output",
+        default=False,
+        action="store_true"
+    )
+
+
+    parser.add_argument(
         "-wak", "--whoisxmlapi-key",
         help="Specify your API key for whoisxmlapi.com",
         default=None,
@@ -50,21 +91,16 @@ def puff():
         nargs=1
     )
 
-    api_group.add_argument(
-        "-X", "--no-api-keys",
-        help="Pass this argument if you don't have API keys",
-        default=True,
-        action="store_true",
-    )
 
     format_group = parser.add_mutually_exclusive_group()
 
     format_group.add_argument(
-        "-r", "--raw",
-        help="Output raw data to the terminal",
+        "-t", "--txt",
+        help="Output data as text to the terminal",
         default=True,
         action="store_true"
     )
+    
 
     format_group.add_argument(
         "-j","--json",
@@ -73,21 +109,17 @@ def puff():
         action="store_true"
     )
 
-    format_group.add_argument(
-        "-x","--xml",
-        help="Output in the XML format",
-        default=False,
-        action="store_true"
-    )
 
     output_file_group = parser.add_mutually_exclusive_group()
+
     output_file_group.add_argument(
         "-f", "--file",
         help="Save results to the specified file",
         default=None,
-        nargs="?",
-        type=argparse.FileType(mode="a+",encoding="utf-8")
+        type=str,
+        nargs=1
     )
+
 
     output_file_group.add_argument(
         "-df", "--default-file",
@@ -96,8 +128,26 @@ def puff():
         action="store_true"
     )
 
+
     args = parser.parse_args()
-    
+
+    if(not args.alive):
+        if(args.match_code is not None or args.probing_sleep_time is not None\
+            or args.randomized_subdomain_probing):
+            if(args.colorize):
+                rprint("[red]the -a/--alive flag has to be set")
+            else:
+                print("the -a/--alive flag has to be set")
+            exit(0)
+
+    if (args.alive):
+        if(args.number == 0):
+            if(args.colorize):
+                rprint("[red]the -n/--number flag has to be greater than 0")
+            else:
+                print("the -n/--number flag has to be greater than 0")
+            exit(0)
+
     domain = None
     if(args.domain is not None):
         domain = args.domain[0]
@@ -106,60 +156,22 @@ def puff():
     if(args.whoisxmlapi_key is not None):
         whoisxmlapi_key = args.whoisxmlapi_key[0]
 
-    api_wrapper = None
     outputFormat = None
+    if(args.json == True):
+        outputFormat = JSON_FORMAT     
+    elif(args.txt == True):
+        outputFormat = TXT_FORMAT
 
-    if(whoisxmlapi_key is not None):
-
-        if(args.json == True):
-            outputFormat = JSON_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
-
-            
-        elif(args.xml == True):
-            outputFormat = XML_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
-            
-
-        elif(args.raw == True):
-            outputFormat = RAW_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose, whoisxmlapi_key)
-
-    
-    elif(args.no_api_keys == True):
-
-        if(args.json == True):
-            outputFormat = JSON_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
-
-            
-        elif(args.xml == True):
-            outputFormat = XML_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
-
-
-        elif(args.raw == True):
-            outputFormat = RAW_FORMAT
-
-            api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.verbose)
-            
-
-    response = api_wrapper.run()
-
-    if(not args.quiet):
-        print(response)
-
+    file = None
     if(args.file is not None):
+        file = args.file[0]
 
-        saveResponseToFile(args.file, domain, response)
+    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize,
+                            args.verbose, args.alive, args.probing_sleep_time, 
+                            args.match_code, args.randomized_subdomain_probing, 
+                            file, args.default_file, args.number, whoisxmlapi_key)
 
-    elif(args.default_file == True):
+    api_wrapper.run()
 
-        saveResponseToDefaultFile(domain, response, outputFormat)
-
-puff()
+if __name__ == "__main__":
+    puff()

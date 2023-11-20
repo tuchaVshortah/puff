@@ -25,9 +25,10 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 ## Features
 
 - Get subdomains from multiple sources 
-- Several formats of output
+- Output to TXT, JSON
 - Multithreading
 - Cross platform
+- Evade rate limiting with built-in timeout functionality
 
 
 ## Subdomain sources
@@ -43,7 +44,7 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 
 ## Requirements
 
- - [Python 3](https://www.python.org/)
+ - [Python 3.11](https://www.python.org/)
  - [subdomains-lookup](https://pypi.org/project/subdomains-lookup/)
  - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
  - [requests](https://pypi.org/project/requests/)
@@ -77,125 +78,125 @@ python puff.py -d <domain> --boost
 
 ## Usage examples
 
-Parse in multithreading mode and list all subdomains of the specified domain:
+❗***The -n flag limits the maximum amount of subdomains to probe. You may get less results than the specified number due to the fact that subdomains may be dead***
 
-```bash
-python puff.py -d google.com -b
-<subdomain>.google.com
-<subdomain>.google.com
-<subdomain>.google.com
-...
+Parse remotes in multithreading mode and perform active scanning on 3 subdomains of the specified domain:
+
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d google.com -b -a -n 3
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Completing concurrent.futures... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Preparing alive subdomains...    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+                                            Alive subdomains
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Number ┃ Subdomain                               ┃ Status code ┃           Title           ┃ Backend ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+│ 1      │ pub-1556105567536871.afd.ghs.google.com │     404     │ Error 404 (Not Found)!!1  │     ghs │
+│ 2      │ 36-98.docs.google.com                   │     200     │ Sign in - Google Accounts │     ESF │
+└────────┴─────────────────────────────────────────┴─────────────┴───────────────────────────┴─────────┘
 ```
 
-Parse, list and save all subdomains of the specified domain to the given file:
+Parse in multithreading mode and save 3 subdomains in the subdomains.\<domain\>.\<format\> files:
 
-```bash
-python puff.py -d google.com -f subdomains.google.txt
-<subdomain>.google.com
-<subdomain>.google.com
-<subdomain>.google.com
-...
-```
-Parse in multithreading and save all subdomains of the specified domain without showing output:
-
-```bash
-python puff.py -d google.com -f subdomains.google.txt -b -q
-```
-
-Parse and output all subdomains of the specified domain in JSON format:
-
-```bash
-python puff.py -d google.com -j
-{
-    "search": "google.com",
-    "result": {
-        "count": 10000,
-        "records": [
-            {
-                "domain": "<subdomain>.google.com",
-                "firstSeen": 0123456789,
-                "lastSeen": 0123456789
-            },
-            {
-                "domain": "<subdomain>.google.com",
-                "firstSeen": 0123456789,
-                "lastSeen": 0123456789
-            },
-            ...
-        ]
-    }
-}
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d google.com -b -n 3 -a -df
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Completing concurrent.futures... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Preparing alive subdomains...    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+                                                                      Alive subdomains
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Number ┃ Subdomain                                                                                              ┃ Status code ┃     Title      ┃ Backend ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+│ 1      │ o-o.preferreaccounts-ph.sn-35153iuxa-unxe.v9.lscache2.c.anaccounts-phroiaccounts-ph.clients.google.com │     404     │ Error 404 (Not │     N/A │
+│        │                                                                                                        │             │   Found)!!1    │         │
+└────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────┴────────────────┴─────────┘
 ```
 
-Parse and output all subdomains of the specified domain in XML format:
+❗***Functionality provided by the -n flag allows you to have a cleaner terminal while saving the full output to the specified file***  
+_In the example below only 5 subdomains are outputted to the CLI, but all of the found subdomains were saved into the specified file._  
+  
+Parse, list and save all subdomains of the specified domain to the given file but limit the CLI output with 5 subdomains only:
 
-```bash
-python puff.py -d google.com -x
-<?xml version="1.0" ?>
-<xml>
-	<search>google.com</search>
-	<result>
-		<count>10000</count>
-		<records>
-			<record>
-				<domain><subdomain>.google.com</domain>
-				<firstSeen>0123456789</firstSeen>
-				<lastSeen>0123456789</lastSeen>
-			</record>
-			<record>
-				<domain><subdomain>.google.com</domain>
-				<firstSeen>0123456789</firstSeen>
-				<lastSeen>0123456789</lastSeen>
-			</record>
-            ...
-        </records>
-	</result>
-</xml>
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d google.com -f subdomains.google.txt -n 5
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Preparing subdomains...          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+                                         Subdomains
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Number ┃ Subdomain                                                                       ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ 1      │ testing6.r4.sn-npoeenle.c.docs.google.com                                       │
+│ 2      │ 13q8faa.feedproxy.ghs.google.com                                                │
+│ 3      │ alt24468.xmpp.l.google.com                                                      │
+│ 4      │ alt-0243.upload.google.com                                                      │
+│ 5      │ payh2gjxuyyt2o3gsax5gcxri6d4nr7ts7xhepbxuxv3bxweuosa.mx-verification.google.com │
+└────────┴─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
+Parse and output 5 subdomains of the specified domain in JSON:
+
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d google.com -j -n 5
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[
+  "jmcnamara.r1.sn-npoeenl7.c.docs.google.com",
+  "pub-5461530528097278.afd.ghs.google.com",
+  "e3bxooh7aamclbxgyf2c5vcxe64xt5dajflll5bp4denufti5rna.mx-verification.google.com",
+  "google-proxy-74-125-211-40.google.com",
+  "google-proxy-66-249-93-40.google.com"
+]
+```
 
 ## Demos
 
 Number of found subdomains for [google.com](https://google.com/):
 
-```bash
-python puff.py -d google.com -b | wc -l
-15527
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d google.com -b -v -n 0
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+10000 subdomains from whoisxmlapi.com
+0 subdomains from crt.sh
+5 subdomains from] urlscan.io
+199 subdomains from otx.alienvault.com
+5197 subdomains from jonlu.ca
+136 subdomains from dnsrepo.noc.org
+         Total unique subdomains: 15422
+Preparing subdomains...          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 ```
 
 Multithreaded execution time:
 
-```bash
-time python puff.py -d google.com -b
-<subdomain>.google.com
-<subdomain>.google.com
-<subdomain>.google.com
-...
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> Measure-Command { python puff.py -d google.com -b } | Select-Object TotalSeconds
 
-real    0m12.750s
-user    0m4.570s
-sys     0m0.060s
+TotalSeconds
+------------
+   9.4502747
 ```
 
 Number of found subdomains for [yahoo.com](https://yahoo.com/):
 
-```bash
-python puff.py -d yahoo.com -b | wc -l
-19942
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> python puff.py -d yahoo.com -b -v -n 0 
+Parsing sites...                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+10000 subdomains from whoisxmlapi.com
+0 subdomains from crt.sh
+0 subdomains from] urlscan.io
+254 subdomains from otx.alienvault.com
+8232 subdomains from jonlu.ca
+145 subdomains from dnsrepo.noc.org
+         Total unique subdomains: 18320
+Preparing subdomains...          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 ```
 
 Multithreaded execution time:
 
-```bash
-time python puff.py -d yahoo.com -b
-<subdomain>.yahoo.com
-<subdomain>.yahoo.com
-<subdomain>.yahoo.com
-...
+```powershell
+(.venv) PS C:\Users\nuken\Projects\puff> Measure-Command { python puff.py -d yahoo.com -b } | Select-Object TotalSeconds 
 
-real    0m17.784s
-user    0m6.303s
-sys     0m0.095s
+TotalSeconds
+------------
+   9.8459897
 ```
 
 
@@ -211,43 +212,57 @@ and [dnsrepo.noc.org](https://dnsrepo.noc.org/) to get information about subdoma
 
 #### How many output formats are supported?
 
-Currently, three output formats are supported: **JSON**, **XML** and **TXT**. **TXT** 
-is a regular text format where subdomains are listed one per line wihtout any additional 
-information to make usage in scripts easier.
+Currently, two output formats are supported: **JSON** and **TXT**.
 
 #### How fast it is?
 
-It will run in multiple threads if the -b or --boost flag is set, 
-so the internet connection speed may be the bottleneck.
+Very fast IMHO. However, your connection speed might be its bottleneck.
 
-
-## Roadmap
+## Goals
 
 - Add an option to check for alive domains
 
-- [x] Multithreading
+- ✅ Multithreading 
 
-- Beautiful README
+- ✅ Good README
 
-- Beautiful code
+- Clean code
 
-- [x] Divide the code base into several files/modules
+- ✅ Modular codebase
 
-- Beautiful --help page 
+- Comprehensive --help page 
 
 - Comprehensive documentation
 
-- [x] Add functionality to parse another resources
+- ✅ Parse data
 
-- [x] Create requirements.txt
+- ✅ requirements.txt
 
 - Configurability
 
-- [x] Add functionality to log events happening while Puff is running
+- Logging
 
-- [x] Convenient usage in scripts
+- ✅ Check alive subdomains
 
-- [x] Add functionality to check whether the retrieved subdomains' are valid or not
+- ✅ Rate limiting evasion
+
+- Caching
+
+- Vulnerability searching
+
+- Threat detection
+
+- GUI
+
+- Full information about the target
+
+- Integrate paid APIs
+
+- CI/CD 🧐?
+
+- Github releases
+
+- Sponsoring 🧐?
 
 
 ## Authors

@@ -1,4 +1,4 @@
-from apis.Base import Base
+from apis.bases.Base import Base
 import requests
 from json import loads
 from threading import Thread
@@ -7,8 +7,7 @@ class AlienVaultApiRequester(Thread, Base):
 
     def __init__(self, domainName: str = None):
         Thread.__init__(self)
-
-        self._domainName = domainName
+        Base.__init__(self, domainName)
 
     def getSubdomains(self) -> list:
         

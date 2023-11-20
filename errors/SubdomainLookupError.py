@@ -1,0 +1,2 @@
+class SubdomainLookupError(Exception):
+    pass
