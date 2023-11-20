@@ -42,22 +42,14 @@ class OutputWrapper(Console):
     def __listToJsonString(self, someList: list) -> str:
         return dumps(someList, indent=2)
 
-    def __saveOutputToFile(self, output: str or Table):
+    def __saveOutputToFile(self, file_name: str, output: str or Table):
 
         if(type(output) is str):
-            self.__file.write(output)
-
-        elif(type(output) is Table):
-            rprint(output, file=self.__file)
-
-    def __saveOutputToDefaultFile(self, output: str or Table):
-
-        if(type(output) is str):
-            with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
+            with open(file_name, "w") as file:
                     file.write(output)
 
         elif(type(output) is Table):
-            with open("subdomains." + self.__domain + "." + self.__outputFormat, "w") as file:
+            with open(file_name, "w") as file:
                 rprint(output, file=file)
 
     def __killLookupThreadsSignal(self):
@@ -219,13 +211,20 @@ class OutputWrapper(Console):
 
                     
         if(self.__outputFormat == JSON_FORMAT):
-            output = self.__listToJsonString(output)
-            
-            if(self.__colorize):
-                Console.print_json(self, output)
-                
+            if len(output) > 0:
+                output = self.__listToJsonString(output)
+
+                if(self.__colorize):
+                    Console.print_json(self, output)             
+                else:
+                    Console.print_json(self, output, highlight=False)
             else:
-                Console.print_json(self, output, highlight=False)
+                Console.print(self, "[i]All probed subdomains were dead...[/i]")
+                
+                if(self.__colorize):
+                    Console.print(self, "[bright_red]Try again...")
+                else:
+                    Console.print(self, "Try again...")
 
         elif(self.__outputFormat == TXT_FORMAT):
             if table.row_count > 0:
@@ -239,9 +238,10 @@ class OutputWrapper(Console):
                     Console.print(self, "Try again...")
         
         if(self.__file is not None):
-            self.__saveOutputToFile(output)
+            self.__saveOutputToFile(self.__file, output)
         
         elif(self.__defaultFile):
-            self.__saveOutputToDefaultFile(output)
+            file_name = f"subdomains.{self.__domain}.{self.__outputFormat}"
+            self.__saveOutputToFile(file_name, output)
 
     

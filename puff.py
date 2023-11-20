@@ -1,7 +1,7 @@
 import argparse
 from wrappers.ApiWrapper import ApiWrapper
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
-
+from rich import print as rprint
 
 def puff():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another passive subdomain enumeration tool")
@@ -116,8 +116,8 @@ def puff():
         "-f", "--file",
         help="Save results to the specified file",
         default=None,
-        nargs="?",
-        type=argparse.FileType(mode="a+",encoding="utf-8")
+        type=str,
+        nargs=1
     )
 
 
@@ -134,8 +134,20 @@ def puff():
     if(not args.alive):
         if(args.match_code is not None or args.probing_sleep_time is not None\
             or args.randomized_subdomain_probing):
-            parser.error("the -a/--alive flag has to be set")
-    
+            if(args.colorize):
+                rprint("[red]the -a/--alive flag has to be set")
+            else:
+                print("the -a/--alive flag has to be set")
+            exit(0)
+
+    if (args.alive):
+        if(args.number == 0):
+            if(args.colorize):
+                rprint("[red]the -n/--number flag has to be greater than 0")
+            else:
+                print("the -n/--number flag has to be greater than 0")
+            exit(0)
+
     domain = None
     if(args.domain is not None):
         domain = args.domain[0]
@@ -144,21 +156,22 @@ def puff():
     if(args.whoisxmlapi_key is not None):
         whoisxmlapi_key = args.whoisxmlapi_key[0]
 
-    api_wrapper = None
     outputFormat = None
-
     if(args.json == True):
         outputFormat = JSON_FORMAT     
-
-
     elif(args.txt == True):
         outputFormat = TXT_FORMAT
+
+    file = None
+    if(args.file is not None):
+        file = args.file[0]
 
     api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize,
                             args.verbose, args.alive, args.probing_sleep_time, 
                             args.match_code, args.randomized_subdomain_probing, 
-                            args.file, args.default_file, args.number, whoisxmlapi_key)
+                            file, args.default_file, args.number, whoisxmlapi_key)
 
     api_wrapper.run()
 
-puff()
+if __name__ == "__main__":
+    puff()

@@ -47,7 +47,7 @@ class ApiWrapper():
         boost: bool = False, colorize: bool = False, verbose: bool = False,
         alive: bool = False, probingSleepTime: float or None = None,
         matchCode: list or None = None, randomizedSubdomainProbing: bool = False,
-        file = None, defaultFile: bool = False, number: int or None = None,
+        file: str or None = None, defaultFile: bool = False, number: int or None = None,
         whoisxmlapi_key: str or None = None):
 
         self.__target = target
