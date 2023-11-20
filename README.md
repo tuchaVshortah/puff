@@ -212,7 +212,7 @@ and [dnsrepo.noc.org](https://dnsrepo.noc.org/) to get information about subdoma
 
 #### How many output formats are supported?
 
-Currently, three output formats are supported: **JSON** and **TXT**.
+Currently, two output formats are supported: **JSON** and **TXT**.
 
 #### How fast it is?
 
