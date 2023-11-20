@@ -43,7 +43,7 @@ class ApiWrapper():
     __output_wrapper = None
 
 
-    def __init__(self, target: str = None, outputFormat: str = JSON_FORMAT,
+    def __init__(self, target: str or None = None, outputFormat: str = JSON_FORMAT,
         boost: bool = False, colorize: bool = False, verbose: bool = False,
         alive: bool = False, probingSleepTime: float or None = None,
         matchCode: list or None = None, randomizedSubdomainProbing: bool = False,
