@@ -11,7 +11,7 @@ def puff():
 
     scan_group.add_argument(
         "-d", "--domain",
-        help="Specify the domain to enumerate",
+        help="Specify a domain to enumerate",
         default=None,
         type=str,
         nargs=1
@@ -184,7 +184,6 @@ def puff():
 
     elif(args.probing_targets is not None):
         probing_targets = args.probing_targets
-        print(probing_targets)
 
         probing_wrapper = ProbingWrapper(probing_targets, outputFormat, args.boost, args.colorize, 
                                         args.verbose, args.probing_sleep_time, args.match_code, 
