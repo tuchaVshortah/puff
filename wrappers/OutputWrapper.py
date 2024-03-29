@@ -62,12 +62,13 @@ class OutputWrapper(Console):
         
         else:
             #handle json output for probing wrapper
-            json_output = loads(output)
+            if(output):
+                json_output = loads(output)
 
-            for j in json_output:
-                subdomain = j["subdomain"]
-                with open(f"{OUTPUT_DIR}backend.{subdomain}.json", "w") as file:
-                    file.write(dumps(j, indent=2))
+                for j in json_output:
+                    subdomain = j["subdomain"]
+                    with open(f"{OUTPUT_DIR}backend.{subdomain}.json", "w") as file:
+                        file.write(dumps(j, indent=2))
 
     def __killLookupThreadsSignal(self):
         if(self.__verbose):
