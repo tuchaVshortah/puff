@@ -138,7 +138,8 @@ class OutputWrapper(Console):
             self.__saveOutputToFile(output)
         
         elif(self.__defaultFile):
-            self.__saveOutputToDefaultFile(output)
+            file_name = f"subdomains.{self.__domain}.{self.__outputFormat}"
+            self.__saveOutputToFile(file_name, output)
 
 
     def outputFutures(self, futures):
