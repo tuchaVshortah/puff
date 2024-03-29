@@ -262,6 +262,7 @@ class OutputWrapper(Console):
                 file_name = f"subdomains.{self.__domain}.{self.__outputFormat}"
                 self.__saveOutputToFile(file_name, output)
             elif(type(self.__domain) is list):
+                #handle output of ProbingWrapper
                 self.__saveOutputToFile(None, output)
 
     
