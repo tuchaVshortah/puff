@@ -156,7 +156,7 @@ def puff():
             else:
                 print("the -n/--number flag has to be greater than 0")
             exit(0)
-    
+
     whoisxmlapi_key = None
     if(args.whoisxmlapi_key is not None):
         whoisxmlapi_key = args.whoisxmlapi_key[0]
@@ -170,6 +170,10 @@ def puff():
     file = None
     if(args.file is not None):
         file = args.file[0]
+
+    if(args.default_file and outputFormat != JSON_FORMAT):
+        print("The default file option is only available for JSON format")
+        exit(0)
 
     domain = None
     if(args.domain is not None):
