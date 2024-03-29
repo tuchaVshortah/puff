@@ -260,7 +260,7 @@ class OutputWrapper(Console):
         
         elif(self.__defaultFile):
             if(type(self.__domain) is not list):
-                file_name = f"subdomains.{self.__domain}.{self.__outputFormat}"
+                file_name = f"alive_subdomains.{self.__domain}.{self.__outputFormat}"
                 self.__saveOutputToFile(file_name, output)
             elif(type(self.__domain) is list):
                 #handle output of ProbingWrapper
