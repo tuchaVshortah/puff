@@ -170,7 +170,7 @@ class ApiWrapper():
                                                   self.__colorize, self.__verbose, self.__file, self.__defaultFile,
                                                   self.__lookup_wrapper.killThreads)
                     
-            futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
+            futures = self.__lookup_wrapper.lookupDomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
         
         else:
@@ -274,7 +274,7 @@ class ApiWrapper():
                                                 self.__colorize, self.__verbose, self.__file, self.__defaultFile,
                                                 self.__lookup_wrapper.killThreads)
 
-            futures = self.__lookup_wrapper.lookupSubdomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
+            futures = self.__lookup_wrapper.lookupDomains(subdomains, self.__number, self.__randomizedSubdomainProbing)
             self.__output_wrapper.outputFutures(futures)
 
         else:

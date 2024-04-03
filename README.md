@@ -222,6 +222,10 @@ Very fast IMHO. However, your connection speed might be its bottleneck.
 
 - Add an option to check for alive domains
 
+- Add a class named ConfigWrapper make management of arguments easier and add support for config files
+
+- Add a universal ConsoleWrapper class which will  manage output styles and options (such as --quiet)
+
 - ✅ Multithreading 
 
 - ✅ Good README

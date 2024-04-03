@@ -10,10 +10,12 @@ from json import dumps, loads
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from constants.spinners import SPINNERS
 
-from errors.SubdomainLookupError import SubdomainLookupError
+from errors.DomainLookupError import DomainLookupError
 import copy
 
 import os
+
+from constants.DomainMeta import DomainMetaInformation
 
 class OutputWrapper(Console):
 
@@ -66,7 +68,7 @@ class OutputWrapper(Console):
                 json_output = loads(output)
 
                 for j in json_output:
-                    subdomain = j["subdomain"]
+                    subdomain = j["domain"]
                     with open(f"{OUTPUT_DIR}backend.{subdomain}.json", "w") as file:
                         file.write(dumps(j, indent=2))
 
@@ -127,9 +129,7 @@ class OutputWrapper(Console):
 
             if(number is None or (number is not None and number > len(subdomains))):
                 cli_table = table
-
             if table.row_count > 0:
-                output = table
                 if(number is None or (number is not None and number > 0)):
                     Console.print(self, cli_table)
             else:
@@ -150,21 +150,20 @@ class OutputWrapper(Console):
 
             if(self.__colorize):
                 table.add_column("Number", justify="left", style="light_sea_green")
-                table.add_column("Subdomain", justify="left", style="cyan", no_wrap=True)
+                table.add_column("Domain", justify="left", style="cyan", no_wrap=True)
                 table.add_column("Status code", justify="center", style="magenta")
                 table.add_column("Title", justify="center", style="green")
                 table.add_column("Backend", justify="right", style="red")
 
             else:
                 table.add_column("Number", justify="left", style="light_sea_green")
-                table.add_column("Subdomain", justify="left", no_wrap=True)
+                table.add_column("Domain", justify="left", no_wrap=True)
                 table.add_column("Status code", justify="center")
                 table.add_column("Title", justify="center")
                 table.add_column("Backend", justify="right")
 
         output = []
         subdomainLookupErrorCounter = 0
-
         if(futures):
             completed_futures = []
             with Progress() as progress: 
@@ -190,29 +189,23 @@ class OutputWrapper(Console):
                     if(subdomainLookupErrorCounter >= 10):
 
                         if(self.__colorize):
-
                             Console.print(self, "[bright_red]You might have been rate limited")
                             Console.print(self, "[deep_sky_blue3]Outputing probed subdomains")
-
                         else:
-
                             Console.print(self, "You might have been rate limited")
                             Console.print(self, "Outputing probed subdomains")
                     
                     result = None
-
                     progress.update(task, advance=1)
                     try:
-
-                        result = future.result()
+                        result = future.result().toDictionary()
                         index += 1
 
                         subdomainLookupErrorCounter = 0
 
-                    except SubdomainLookupError:
-
+                    except DomainLookupError as e:
                         subdomainLookupErrorCounter += 1
-                        continue
+                        result = DomainMetaInformation(e.domain).toDictionary()
                     
                     if(self.__outputFormat == JSON_FORMAT):
                         if(self.__matchCode is not None):
@@ -224,38 +217,23 @@ class OutputWrapper(Console):
                     elif(self.__outputFormat == TXT_FORMAT):
                         if(self.__matchCode is not None):
                             if(result["statusCode"] in self.__matchCode):
-                                table.add_row(str(index), result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                                table.add_row(str(index), result["domain"], result["statusCode"], result["title"], result["backend"])
                         else:
-                            table.add_row(str(index), result["subdomain"], result["statusCode"], result["title"], result["backend"])
+                            table.add_row(str(index), result["domain"], result["statusCode"], result["title"], result["backend"])
 
                     
         if(self.__outputFormat == JSON_FORMAT):
-            if len(output) > 0:
-                output = self.__listToJsonString(output)
+            output = self.__listToJsonString(output)
 
-                if(self.__colorize):
-                    Console.print_json(self, output)             
-                else:
-                    Console.print_json(self, output, highlight=False)
+            if(self.__colorize):
+                Console.print_json(self, output)             
             else:
-                Console.print(self, "[i]All probed subdomains were dead...[/i]")
-                
-                if(self.__colorize):
-                    Console.print(self, "[bright_red]Try again...")
-                else:
-                    Console.print(self, "Try again...")
+                Console.print_json(self, output, highlight=False)
 
-        elif(self.__outputFormat == TXT_FORMAT):
-            if table.row_count > 0:
-                output = table
-                Console.print(self, output)
-            else:
-                Console.print(self, "[i]All probed subdomains were dead...[/i]")
-                if(self.__colorize):
-                    Console.print(self, "[bright_red]Try again...")
-                else:
-                    Console.print(self, "Try again...")
-        
+        elif(self.__outputFormat == TXT_FORMAT):  
+            output = table
+            Console.print(self, output)
+    
         if(self.__file is not None):
             self.__saveOutputToFile(self.__file, output)
         
