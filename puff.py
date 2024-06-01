@@ -1,20 +1,29 @@
 import argparse
 from wrappers.ApiWrapper import ApiWrapper
+from wrappers.ProbingWrapper import ProbingWrapper
 from constants.outputformats import JSON_FORMAT, TXT_FORMAT
 from rich import print as rprint
 
 def puff():
     parser = argparse.ArgumentParser(prog="puff", description="Yet another passive subdomain enumeration tool")
 
-    parser.add_argument(
+    scan_group = parser.add_mutually_exclusive_group()
+
+    scan_group.add_argument(
         "-d", "--domain",
-        help="Specify the domain to enumerate",
+        help="Specify a domain to enumerate",
         default=None,
-        required=True,
         type=str,
         nargs=1
     )
 
+    scan_group.add_argument(
+        "-pt", "--probing-targets",
+        help="Specify custom targets to probe. Use this if you want to probe a list of subdomains",
+        default=None,
+        type=str,
+        nargs="+"
+    )
 
     parser.add_argument(
         "-a", "--alive",
@@ -148,10 +157,6 @@ def puff():
                 print("the -n/--number flag has to be greater than 0")
             exit(0)
 
-    domain = None
-    if(args.domain is not None):
-        domain = args.domain[0]
-    
     whoisxmlapi_key = None
     if(args.whoisxmlapi_key is not None):
         whoisxmlapi_key = args.whoisxmlapi_key[0]
@@ -166,12 +171,29 @@ def puff():
     if(args.file is not None):
         file = args.file[0]
 
-    api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize,
-                            args.verbose, args.alive, args.probing_sleep_time, 
-                            args.match_code, args.randomized_subdomain_probing, 
-                            file, args.default_file, args.number, whoisxmlapi_key)
+    if(args.default_file and outputFormat != JSON_FORMAT):
+        print("The default file option is only available for JSON format")
+        exit(0)
 
-    api_wrapper.run()
+    domain = None
+    if(args.domain is not None):
+        domain = args.domain[0]
+
+        api_wrapper = ApiWrapper(domain, outputFormat, args.boost, args.colorize,
+                                args.verbose, args.alive, args.probing_sleep_time, 
+                                args.match_code, args.randomized_subdomain_probing, 
+                                file, args.default_file, args.number, whoisxmlapi_key)
+
+        api_wrapper.run()
+
+    elif(args.probing_targets is not None):
+        probing_targets = args.probing_targets
+
+        probing_wrapper = ProbingWrapper(probing_targets, outputFormat, args.boost, args.colorize, 
+                                        args.verbose, args.probing_sleep_time, args.match_code, 
+                                        args.randomized_subdomain_probing, file, args.default_file, args.number)
+
+        probing_wrapper.run()
 
 if __name__ == "__main__":
     puff()

@@ -5,9 +5,10 @@ import queue
 import time
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+from constants.DomainMeta import DomainMetaInformation
 
 from requests.exceptions import RequestException
-from errors.SubdomainLookupError import SubdomainLookupError
+from errors.DomainLookupError import DomainLookupError
 
 class LookupWrapper():
 
@@ -32,24 +33,24 @@ class LookupWrapper():
 
         self.__offsetSleepTime = 0.0
 
-    def lookupSubdomains(self, subdomains: list, number: int or None = None, randomizedSubdomainProbing: bool = False) -> list:
+    def lookupDomains(self, domains: list, number: int or None = None, randomizedSubdomainProbing: bool = False) -> list:
 
         '''
         futures = [
-            self.__executor.submit(self.__lookupSubdomain, subdomain) for subdomain in subdomains
+            self.__executor.submit(self.__lookupDomain, domain) for domain in domains
         ]
         '''
 
         if(number is not None):
-            subdomains = subdomains[:number]
+            domains = domains[:number]
 
         if(randomizedSubdomainProbing):
-            random.shuffle(subdomains)
+            random.shuffle(domains)
 
         futures = []
-        for subdomain in subdomains:
+        for domain in domains:
 
-            future = self.__executor.submit(self.__lookupSubdomain, subdomain, self.__offsetSleepTime)
+            future = self.__executor.submit(self.__lookupDomain, domain, self.__offsetSleepTime)
             futures.append(future)
 
             self.__offsetSleepTime += self.__probingSleepTime
@@ -60,32 +61,23 @@ class LookupWrapper():
 
         
 
-    def __lookupSubdomain(self, subdomain: str, sleepTime: float = 0.0) -> dict:
+    def __lookupDomain(self, domain: str, sleepTime: float = 0.0) -> DomainMetaInformation:
         
         time.sleep(sleepTime)
-
-        output = {
-            "subdomain": subdomain,
-            "statusCode": "N/A",
-            "title": "N/A",
-            "backend": "N/A"
-        }
-
+        output = DomainMetaInformation()
+        output.domain = domain
         try:
 
-            url = "http://{}/".format(subdomain)
-
+            url = "http://{}/".format(domain)
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
                 "Connection": "keep-alive"
             }
-
             response = requests.get(url, headers=headers, timeout=10)
 
-            output["statusCode"] = str(response.status_code)
+            output.statusCode = str(response.status_code)
 
             soup = BeautifulSoup(response.text, "lxml")
-
             title = None
             title = soup.find("title")
 
@@ -105,15 +97,15 @@ class LookupWrapper():
                 pass
             
             if(title is not None):
-                output["title"] = str(title)
+                output.title = str(title)
 
             if(backend is not None):
-                output["backend"] = str(backend)
-
-            return output
+                output.backend = str(backend)
         
         except RequestException:
-            raise SubdomainLookupError()
+            raise DomainLookupError(domain=domain)
+        
+        return output
 
     def killThreads(self):
         py_version = sys.version_info
