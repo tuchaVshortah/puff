@@ -90,26 +90,25 @@ class ApiWrapper():
             
     def __slowTasks(self):
 
-        if(self.__whois_xml_client_api_requester is None):
-
-            whoisxmlapi_subdomains = self.__whois_xml_api_requester.getSubdomains()
-        
-        elif(self.__whois_xml_client_api_requester is not None):
-
-            whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.getSubdomains()
-
         with Progress() as progress:
 
             task = None
             if(self.__colorize):
-                task = progress.add_task("[red]Paring sites...                ", total=600)
+                task = progress.add_task("[red]Paring sites...                ", total=700)
             
             else:
-                task = progress.add_task("Parsing sites...                ", total=600)
+                task = progress.add_task("Parsing sites...                ", total=700)
 
             progress.update(task, advance=20)
-            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
+            whoisxmlapi_subdomains = None
+            if(self.__whois_xml_client_api_requester is None):
+                whoisxmlapi_subdomains = self.__whois_xml_api_requester.getSubdomains()
+            elif(self.__whois_xml_client_api_requester is not None):
+                whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.getSubdomains()
             progress.update(task, advance=80)
+            
+            crtsh_subdomains = self.__crtsh_api_requester.getSubdomains()
+            progress.update(task, advance=100)
 
             urlscan_subdomains = self.__urlscan_api_requester.getSubdomains()
             progress.update(task, advance=100)
@@ -188,32 +187,27 @@ class ApiWrapper():
         self.__hackertarget_api_requester.start()
         self.__dnsrepo_api_requester.start()
 
-        whoisxmlapi_subdomains = None
-
-        if(self.__whois_xml_client_api_requester is None):
-
-            self.__whois_xml_api_requester.start()
-            
-            whoisxmlapi_subdomains = self.__whois_xml_api_requester.join()
-            
-        elif(self.__whois_xml_client_api_requester is not None):
-
-            self.__whois_xml_client_api_requester.start()
-
-            whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.join()
-
         with Progress() as progress:
 
             task = None
             if(self.__colorize):
-                task = progress.add_task("[red]Parsing sites...                ", total=600)
+                task = progress.add_task("[red]Parsing sites...                ", total=700)
             
             else:
-                task = progress.add_task("Parsing sites...                ", total=600)
-            
+                task = progress.add_task("Parsing sites...                ", total=700)
+
             progress.update(task, advance=20)
-            crtsh_subdomains = self.__crtsh_api_requester.join()
+            whoisxmlapi_subdomains = None
+            if(self.__whois_xml_client_api_requester is None):
+                self.__whois_xml_api_requester.start()
+                whoisxmlapi_subdomains = self.__whois_xml_api_requester.join() 
+            elif(self.__whois_xml_client_api_requester is not None):
+                self.__whois_xml_client_api_requester.start()
+                whoisxmlapi_subdomains = self.__whois_xml_client_api_requester.join()
             progress.update(task, advance=80)
+            
+            crtsh_subdomains = self.__crtsh_api_requester.join()
+            progress.update(task, advance=100)
 
             urlscan_subdomains = self.__urlscan_api_requester.join()
             progress.update(task, advance=100)
