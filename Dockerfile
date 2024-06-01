@@ -11,4 +11,4 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run app.py when the container launches
-CMD ["python", "puff.py", "-h"]
+CMD ["python", "puff.py"]
