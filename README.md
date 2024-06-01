@@ -24,11 +24,12 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 
 ## Features
 
-- Get subdomains from multiple sources 
-- Output to TXT, JSON
+- Subdomains from multiple sources 
+- JSON and regular output
 - Multithreading
 - Cross platform
-- Evade rate limiting with built-in timeout functionality
+- Rate-limiting evasion functionality
+- Docker image
 
 
 ## Subdomain sources
@@ -51,7 +52,7 @@ Yet another passive subdomain enumeration tool written in Python from scratch.
 
 
 ## Run Locally
-
+### Install with Git
 Clone the project
 
 ```bash
@@ -76,7 +77,18 @@ Start puff
 python puff.py -d <domain> --boost
 ```
 
+### Install with Docker
+
+```bash
+docker pull tuchavshortah/puff:latest
+```
+
 ## Usage examples
+
+⚠️ ***Usage examples are provided for the Git installation. The Docker method is not recommended for daily driving. Use it if you are a developer.***
+
+ℹ️ ***The same arguments can be used in the Docker installation.***  
+Replace \"python puff.py\" with \"docker run --rm tuchavshortah/puff\" to run the Docker container.
 
 ❗***The -n flag limits the maximum amount of subdomains to probe. You may get less results than the specified number due to the fact that subdomains may be dead***
 
@@ -220,9 +232,9 @@ Very fast IMHO. However, your connection speed might be its bottleneck.
 
 ## Goals
 
-- Add an option to check for alive domains
+- ✅ Add an option to check for alive domains
 
-- Add a class named ConfigWrapper make management of arguments easier and add support for config files
+- Add a class named ConfigWrapper to make management of arguments easier and add support for config files
 
 - Add a universal ConsoleWrapper class which will  manage output styles and options (such as --quiet)
 
@@ -234,7 +246,7 @@ Very fast IMHO. However, your connection speed might be its bottleneck.
 
 - ✅ Modular codebase
 
-- Comprehensive --help page 
+- ✅ Comprehensive --help page 
 
 - Comprehensive documentation
 
@@ -252,11 +264,11 @@ Very fast IMHO. However, your connection speed might be its bottleneck.
 
 - Caching
 
-- Vulnerability searching
+- Vulnerability searching 🧐
 
-- Threat detection
+- Threat detection 🧐
 
-- GUI
+- GUI 🧐
 
 - Full information about the target
 
@@ -264,7 +276,7 @@ Very fast IMHO. However, your connection speed might be its bottleneck.
 
 - CI/CD 🧐?
 
-- Github releases
+- ✅ Github releases
 
 - Sponsoring 🧐?
 
