@@ -46,31 +46,24 @@ class OutputWrapper(Console):
     def __listToJsonString(self, someList: list) -> str:
         return dumps(someList, indent=2)
 
-    def __saveOutputToFile(self, file_name: str or None, output: str or Table):
+    def __saveOutputToFile(self, file_name: str, output: str or Table):
 
         OUTPUT_DIR = "./scan/"
 
         if(not os.path.exists(OUTPUT_DIR)):
             os.makedirs(OUTPUT_DIR)
 
-        if(file_name is not None):
+        if(self.__defaultFile):
+            file_name = f"{OUTPUT_DIR}{file_name}"
+
+        if(file_name):
             if(type(output) is str):
-                with open(OUTPUT_DIR + file_name, "w") as file:
+                with open(file_name, "w") as file:
                     file.write(output)
 
             elif(type(output) is Table):
-                with open(OUTPUT_DIR + file_name, "w") as file:
+                with open(file_name, "w") as file:
                     rprint(output, file=file)
-        
-        else:
-            #handle json output for probing wrapper
-            if(output):
-                json_output = loads(output)
-
-                for j in json_output:
-                    subdomain = j["domain"]
-                    with open(f"{OUTPUT_DIR}backend.{subdomain}.json", "w") as file:
-                        file.write(dumps(j, indent=2))
 
     def __killLookupThreadsSignal(self):
         if(self.__verbose):
@@ -243,6 +236,13 @@ class OutputWrapper(Console):
                 self.__saveOutputToFile(file_name, output)
             elif(type(self.__domain) is list):
                 #handle output of ProbingWrapper
-                self.__saveOutputToFile(None, output)
+                json_output = loads(output)
+                for j in json_output:
+                    subdomain = j["domain"]
+
+                    file_name = f"backend.{subdomain}.json"
+                    output = dumps(j, indent=2)
+
+                    self.__saveOutputToFile(file_name, output)
 
     
