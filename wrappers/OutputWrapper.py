@@ -136,7 +136,7 @@ class OutputWrapper(Console):
                 Console.print(self, "[i]No data...[/i]")
 
         if(self.__file is not None):
-            self.__saveOutputToFile(output)
+            self.__saveOutputToFile(self.__file, output)
         
         elif(self.__defaultFile):
             file_name = f"subdomains.{self.__domain}.{self.__outputFormat}"
