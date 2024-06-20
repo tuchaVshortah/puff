@@ -118,3 +118,5 @@ coverage/
 *.mpx
 *.dsp
 *.dsw
+
+scan/
